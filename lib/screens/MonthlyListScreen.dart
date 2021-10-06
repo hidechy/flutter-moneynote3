@@ -1,12 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
-
-//TODO
-// import 'package:charts_flutter/flutter.dart' as charts;
-//
-//
-
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../utilities/utility.dart';
@@ -29,10 +24,10 @@ class MonthlyListScreen extends StatefulWidget {
 
 //graph
 class MoneyData {
-  DateTime time;
-  int sales;
+  double day;
+  double total;
 
-  MoneyData(this.time, this.sales);
+  MoneyData(this.day, this.total);
 }
 
 class _MonthlyListScreenState extends State<MonthlyListScreen> {
@@ -56,15 +51,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
 
   int _monthTotal = 0;
 
-  //graph
-  bool _graphDisplay = false;
-
-  //TODO
-  //
-  // List<charts.Series<MoneyData, DateTime>> seriesList = [];
-  //
-  //
-  //
+  List<MoneyData> _chartData = [];
 
   /// 初期動作
   @override
@@ -102,9 +89,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
 
     apiData.MoneyOfDate = {};
     /////////////////////////////////////
-
-    //graph
-    final _graphdata = <MoneyData>[];
 
     /////////////////////////////////////
     await apiData.getMoneyOfAll();
@@ -153,6 +137,9 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
           _map['total'] = _utility.total;
           //-------------------------------------//
 
+          _chartData.add(MoneyData(double.parse(_map["date"]),
+              double.parse(_map['total'].toString())));
+
           if (j == 0) {
             _map['diff'] = (_prevMonthEndTotal - _utility.total);
             _monthTotal += (_prevMonthEndTotal - _utility.total);
@@ -164,17 +151,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
           _monthlyData.add(_map);
 
           _yesterdayTotal = _utility.total;
-          //graph
-          _graphDisplay = true;
-          _graphdata.add(
-            MoneyData(
-                DateTime(
-                  int.parse(_utility.year),
-                  int.parse(_utility.month),
-                  int.parse(_utility.day),
-                ),
-                _utility.total),
-          );
 
           j++;
         }
@@ -182,23 +158,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
     }
     apiData.MoneyOfAll = {};
     /////////////////////////////////////
-
-    //TODO
-    //
-    // //graph
-    // seriesList.add(
-    //   charts.Series<MoneyData, DateTime>(
-    //     id: 'Sales',
-    //     colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-    //     domainFn: (MoneyData sales, _) => sales.time,
-    //     measureFn: (MoneyData sales, _) => sales.sales,
-    //     data: _graphdata,
-    //   ),
-    // );
-    //
-    //
-    //
-    //
 
     //----------------------------//
     await apiData.getHolidayOfAll();
@@ -216,45 +175,16 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
     setState(() {});
   }
 
-  /// 画面描画
+  ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text(_yearmonth),
-        centerTitle: true,
-
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.greenAccent,
-        ),
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.skip_previous),
-            tooltip: '前日',
-            onPressed: () => _goMonthlyListScreen(
-                context: context, date: _prevMonth.toString()),
-          ),
-          IconButton(
-            icon: const Icon(Icons.skip_next),
-            tooltip: '翌日',
-            onPressed: () => _goMonthlyListScreen(
-                context: context, date: _nextMonth.toString()),
-          ),
-        ],
-      ),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           _utility.getBackGround(context: context),
-
           ClipPath(
             clipper: CustomShapeClipper(),
             child: Container(
@@ -268,51 +198,21 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
               ),
             ),
           ),
-
-          //----------------------//graph
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            color: Colors.white.withOpacity(0.8),
-            child: (_graphDisplay == false)
-                ? Container()
-                : Container(
-                    height: size.height - 40,
-                    padding: const EdgeInsets.all(10),
-
-                    //TODO
-                    //
-                    // child: charts.TimeSeriesChart(
-                    //   seriesList,
-                    //   animate: false,
-                    //   dateTimeFactory: const charts.LocalDateTimeFactory(),
-                    //   defaultRenderer: charts.LineRendererConfig(
-                    //     includePoints: true,
-                    //   ),
-                    // ),
-                    //
-                    //
-                    //
-                  ),
-          ),
-          //----------------------//graph
-
           Column(
-            children: <Widget>[
+            children: [
+              _dispMonthlyGraph(),
               Container(
-                height: 250,
-              ),
-              Expanded(
-                child: _utility.getBackGround(context: context),
-              ),
-            ],
-          ),
-
-          Column(
-            children: <Widget>[
-              Container(
-                height: 250,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.close),
+                    ),
+                    Text(_yearmonth),
+                  ],
+                ),
               ),
               Container(
                 margin: const EdgeInsets.only(
@@ -320,7 +220,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                 ),
                 padding: const EdgeInsets.symmetric(
                   vertical: 5,
-                  horizontal: 20,
+                  horizontal: 10,
                 ),
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -332,11 +232,33 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: () => _goMonthlySpendItemScreen(date: widget.date),
-                      child: const Icon(Icons.list),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () =>
+                              _goMonthlySpendItemScreen(date: widget.date),
+                          child: const Icon(Icons.list),
+                        ),
+                        SizedBox(width: 10),
+                        Text(_utility
+                            .makeCurrencyDisplay(_monthTotal.toString())),
+                      ],
                     ),
-                    Text(_utility.makeCurrencyDisplay(_monthTotal.toString())),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _goMonthlyListScreen(
+                              context: context, date: _prevMonth.toString()),
+                          child: const Icon(Icons.skip_previous),
+                        ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () => _goMonthlyListScreen(
+                              context: context, date: _nextMonth.toString()),
+                          child: const Icon(Icons.skip_next),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -345,6 +267,30 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  ///
+  Widget _dispMonthlyGraph() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.3),
+      ),
+      height: 250,
+      child: SfCartesianChart(
+        title: ChartTitle(
+          textStyle: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        series: <ChartSeries>[
+          LineSeries<MoneyData, double>(
+              color: Colors.yellowAccent,
+              dataSource: _chartData,
+              xValueMapper: (MoneyData data, _) => data.day,
+              yValueMapper: (MoneyData data, _) => data.total)
         ],
       ),
     );

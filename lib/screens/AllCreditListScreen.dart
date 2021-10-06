@@ -101,58 +101,55 @@ class _AllCreditListScreenState extends State<AllCreditListScreen> {
               ),
             ),
           ),
-          Container(
-//            margin: const EdgeInsets.only(top: 50),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.topLeft,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.yellowAccent.withOpacity(0.3),
-                    border: Border.all(color: Colors.white.withOpacity(0.3)),
-                  ),
-                  child: Table(
-                    children: [
-                      TableRow(children: [
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                              icon: const Icon(Icons.list),
-                              onPressed: () => _goAllCreditItemListScreen(),
-                              color: Colors.greenAccent,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.arrow_downward),
-                              color: Colors.greenAccent,
-                              onPressed: () => _scroll(),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            IconButton(
-                              icon: const Icon(FontAwesomeIcons.amazon),
-                              color: Colors.greenAccent,
-                              onPressed: () => _goAmazonPurchaseListScreen(),
-                            ),
-                            IconButton(
-                              icon: const Icon(FontAwesomeIcons.bullseye),
-                              color: Colors.greenAccent,
-                              onPressed: () => _goSeiyuuPurchaseListScreen(),
-                            ),
-                          ],
-                        ),
-                      ]),
-                    ],
-                  ),
+          Column(
+            children: <Widget>[
+              Container(
+                alignment: Alignment.topLeft,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent.withOpacity(0.3),
+                  border: Border.all(color: Colors.white.withOpacity(0.3)),
                 ),
-                Expanded(
-                  child: _creditCardSpendList(),
+                child: Table(
+                  children: [
+                    TableRow(children: [
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            icon: const Icon(Icons.list),
+                            onPressed: () => _goAllCreditItemListScreen(),
+                            color: Colors.greenAccent,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.arrow_downward),
+                            color: Colors.greenAccent,
+                            onPressed: () => _scroll(),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          IconButton(
+                            icon: const Icon(FontAwesomeIcons.amazon),
+                            color: Colors.greenAccent,
+                            onPressed: () => _goAmazonPurchaseListScreen(),
+                          ),
+                          IconButton(
+                            icon: const Icon(FontAwesomeIcons.bullseye),
+                            color: Colors.greenAccent,
+                            onPressed: () => _goSeiyuuPurchaseListScreen(),
+                          ),
+                        ],
+                      ),
+                    ]),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: _creditCardSpendList(),
+              ),
+            ],
           ),
         ],
       ),

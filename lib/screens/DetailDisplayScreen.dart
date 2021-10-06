@@ -395,7 +395,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     IconButton(
