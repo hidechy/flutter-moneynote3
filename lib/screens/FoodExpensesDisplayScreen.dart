@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unused_local_variable, avoid_init_to_null, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 
@@ -43,8 +43,6 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
     DateTime _today = DateTime.now();
     _utility.makeYMDYData(_today.toString(), 0);
 
-    var __year = null;
-    var __month = null;
     if (_utility.year == widget.year && _utility.month == widget.month) {
       _monthEndDay = int.parse(_utility.day);
 

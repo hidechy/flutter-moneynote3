@@ -202,7 +202,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
             children: [
               _dispMonthlyGraph(),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -239,7 +239,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                               _goMonthlySpendItemScreen(date: widget.date),
                           child: const Icon(Icons.list),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text(_utility
                             .makeCurrencyDisplay(_monthTotal.toString())),
                       ],

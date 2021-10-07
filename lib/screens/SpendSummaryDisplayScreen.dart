@@ -1,9 +1,7 @@
-// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison, prefer_is_empty
+// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
-
-//TODO
-//import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -23,12 +21,11 @@ class SpendSummaryDisplayScreen extends StatefulWidget {
       _SpendSummaryDisplayScreenState();
 }
 
-//graph
 class SpendSummary {
-  String item;
-  int sales;
+  final String item;
+  final num sum;
 
-  SpendSummary(this.item, this.sales);
+  SpendSummary(this.item, this.sum);
 }
 
 class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
@@ -45,20 +42,12 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
   num _total = 0;
   List<Map<dynamic, dynamic>> _summaryData = [];
 
-  //graph
-  bool _graphDisplay = false;
-
-  //TODO
-  //
-  //
-  //
-  // List<charts.Series<SpendSummary, String>> seriesList = [];
-  //
-  //
-  //
+  List<SpendSummary> _chartData = [];
 
   List<Map<dynamic, dynamic>> _timeplace1000over = [];
-  int _totalTm1000over = 0;
+  num _totalTm1000over = 0;
+
+  TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
 
   /// 初期動作
   @override
@@ -87,29 +76,13 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
 
     _makeMonthButton();
 
+    num _piechartOther = 0;
     ///////////////////////
     await apiData.getYearSummaryOfDate(date: widget.date);
     if (apiData.YearSummaryOfDate != null) {
-      //graph
-      final _graphdata = <SpendSummary>[];
-
-      //TODO
-      //
-      //
-      //
-      //
-      // seriesList = [];
-      //
-      //
-      //
-
       _total = 0;
       num _piechartOther = 0;
       for (var i = 0; i < apiData.YearSummaryOfDate['data'].length; i++) {
-        _total += (apiData.YearSummaryOfDate['data'][i]['sum'] != null)
-            ? apiData.YearSummaryOfDate['data'][i]['sum']
-            : 0;
-
         Map _map = {};
         _map['item'] = apiData.YearSummaryOfDate['data'][i]['item'];
         _map['sum'] = apiData.YearSummaryOfDate['data'][i]['sum'];
@@ -117,134 +90,34 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
         _map['total'] = _total;
         _summaryData.add(_map);
 
-        //graph
-        _graphDisplay = true;
+        _total += (_map['sum'] != null) ? _map['sum'] : 0;
 
-        if (apiData.YearSummaryOfDate['data'][i]['percent'] > 5) {
-          _graphdata.add(
-            SpendSummary(
-              apiData.YearSummaryOfDate['data'][i]['item'],
-              apiData.YearSummaryOfDate['data'][i]['sum'],
-            ),
-          );
+        if (_map['percent'] > 5) {
+          _chartData.add(SpendSummary(_map['item'], _map['sum']));
         } else {
-          _piechartOther +=
-              (apiData.YearSummaryOfDate['data'][i]['sum'] != null)
-                  ? apiData.YearSummaryOfDate['data'][i]['sum']
-                  : 0;
+          _piechartOther += (_map['sum'] != null) ? _map['sum'] : 0;
         }
       }
-
-      //graph
-      if (_graphdata.length > 0) {
-        //
-        //
-        // TODO
-        //
-        // _graphdata.add(
-        //   SpendSummary(
-        //     'その他',
-        //     _piechartOther,
-        //   ),
-        //
-        //
-
-        _graphdata.add(
-          SpendSummary(
-            'その他',
-            0,
-          ),
-        );
-      } else {
-        _graphDisplay = false;
-      }
-
-      //TODO
-      //
-      //
-      //
-      // //graph
-      // seriesList.add(
-      //   charts.Series<SpendSummary, String>(
-      //     id: 'Sales',
-      //     colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-      //     domainFn: (SpendSummary sales, _) => sales.item,
-      //     measureFn: (SpendSummary sales, _) => sales.sales,
-      //     data: _graphdata,
-      //   ),
-      // );
-      //
-      //
-      //
-
     }
     apiData.YearSummaryOfDate = {};
     ///////////////////////
+
+    if (_piechartOther > 0) {
+      _chartData.add(SpendSummary('その他', _piechartOther));
+    }
 
     setState(() {});
   }
 
   ///
-  void _makeMonthButton() {
-    _monthButton = [];
-
-    for (int i = 1; i <= 12; i++) {
-      _monthButton.add(
-        GestureDetector(
-          onTap: () =>
-              _monthSummaryDisplay(month: i.toString().padLeft(2, '0')),
-          child: Container(
-            width: 40,
-            margin: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: (i.toString().padLeft(2, '0') == _selectedMonth)
-                  ? Colors.yellowAccent.withOpacity(0.3)
-                  : Colors.black.withOpacity(0.3),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-              ),
-            ),
-            child: Center(child: Text(i.toString().padLeft(2, '0'))),
-          ),
-        ),
-      );
-    }
-  }
-
-  ///
   @override
   Widget build(BuildContext context) {
-    var _dispDate = _selectedYear;
-    if (_selectedMonth != '') {
-      _dispDate += '-' + _selectedMonth;
-    }
-
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black.withOpacity(0.1),
-        title: Text(_dispDate),
-        centerTitle: true,
-
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: const Icon(
-          Icons.check_box_outline_blank,
-          color: Color(0xFF2e2e2e),
-        ),
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-            color: Colors.greenAccent,
-          ),
-        ],
-      ),
       body: Stack(
         fit: StackFit.expand,
-        children: <Widget>[
+        children: [
           _utility.getBackGround(context: context),
           ClipPath(
             clipper: CustomShapeClipper(),
@@ -260,104 +133,43 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
             ),
           ),
           Column(
-            children: <Widget>[
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                color: Colors.white.withOpacity(0.8),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  child: (_graphDisplay == false)
-                      ? const SizedBox(
-                          width: double.infinity,
-                          height: 200,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : SizedBox(
-                          height: 200,
-
-                          //TODO
-                          //
-                          //
-                          //
-                          //
-                          // child: charts.PieChart(
-                          //   seriesList,
-                          //   animate: false,
-                          //   behaviors: [
-                          //     charts.DatumLegend(
-                          //       position: charts.BehaviorPosition.end,
-                          //       outsideJustification:
-                          //           charts.OutsideJustification.endDrawArea,
-                          //       horizontalFirst: false,
-                          //       cellPadding: const EdgeInsets.only(
-                          //           right: 4.0, bottom: 4.0),
-                          //       entryTextStyle: charts.TextStyleSpec(
-                          //         color: charts
-                          //             .MaterialPalette.purple.shadeDefault,
-                          //         fontSize: 11,
-                          //       ),
-                          //     )
-                          //   ],
-                          // ),
-                          //
-                          //
-                          //
-                          //
-                          //
-                          //
-                          //
-                        ),
-                ),
-              ),
-            ],
-          ),
-          Column(
-            children: <Widget>[
-              (_graphDisplay == false)
-                  ? Container(height: 230)
-                  : Container(height: 200),
-              Row(
-                children: <Widget>[
-                  (_graphDisplay == false)
-                      ? Container()
-                      : Container(
-                          padding: const EdgeInsets.only(left: 20, bottom: 10),
-                          child: Text(
-                            _utility.makeCurrencyDisplay(_total.toString()),
-                            style: const TextStyle(
-                              color: Colors.black,
-                            ),
+            children: [
+              _dispGraph(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.greenAccent,
                           ),
                         ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                ],
-              ),
-              (_selectedMonth != "")
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () => _showBankRecord(),
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 20),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.green[900]!.withOpacity(0.5)),
-                            child: const Icon(Icons.keyboard_arrow_up),
-                          ),
+                        SizedBox(
+                          width: 20,
                         ),
+                        (_selectedMonth != "")
+                            ? GestureDetector(
+                                onTap: () => _showBankRecord(),
+                                child: Icon(
+                                  Icons.keyboard_arrow_up,
+                                  color: Colors.greenAccent,
+                                ),
+                              )
+                            : Container(),
                       ],
-                    )
-                  : Container(),
+                    ),
+                    Text(
+                      '${_total}',
+                      style: TextStyle(color: Colors.yellowAccent),
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
@@ -385,18 +197,7 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                 ),
               ),
               Expanded(
-                child: Container(
-                  child: (_graphDisplay == false)
-                      ? Container(
-                          padding: const EdgeInsets.only(left: 20),
-                          alignment: Alignment.topLeft,
-                          child: const Text(
-                            'no data',
-                            style: TextStyle(color: Colors.yellowAccent),
-                          ),
-                        )
-                      : _summaryList(),
-                ),
+                child: _summaryList(),
               ),
             ],
           ),
@@ -486,33 +287,69 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
   }
 
   ///
+  Widget _dispGraph() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.3),
+      ),
+      height: 250,
+      child: SfCircularChart(
+        tooltipBehavior: _tooltipBehavior,
+        series: <CircularSeries>[
+          PieSeries<SpendSummary, String>(
+            dataSource: _chartData,
+            xValueMapper: (SpendSummary data, _) => data.item,
+            yValueMapper: (SpendSummary data, _) => data.sum,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
+            enableTooltip: true,
+          )
+        ],
+      ),
+    );
+  }
+
+  ///
+  void _makeMonthButton() {
+    _monthButton = [];
+
+    for (int i = 1; i <= 12; i++) {
+      _monthButton.add(
+        GestureDetector(
+          onTap: () =>
+              _monthSummaryDisplay(month: i.toString().padLeft(2, '0')),
+          child: Container(
+            width: 40,
+            margin: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: (i.toString().padLeft(2, '0') == _selectedMonth)
+                  ? Colors.yellowAccent.withOpacity(0.3)
+                  : Colors.black.withOpacity(0.3),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+              ),
+            ),
+            child: Center(child: Text(i.toString().padLeft(2, '0'))),
+          ),
+        ),
+      );
+    }
+  }
+
+  ///
   Future<void> _monthSummaryDisplay({required String month}) async {
     _selectedMonth = month;
     _makeMonthButton();
+
+    _chartData = [];
 
     List<Map<dynamic, dynamic>> _summaryData2 = [];
 
     String date = "$_selectedYear-$month-01";
     await apiData.getMonthSummaryOfDate(date: date);
     if (apiData.MonthSummaryOfDate != null) {
-      //graph
-      final _graphdata = <SpendSummary>[];
-
-      //TODO
-      //
-      //
-      // seriesList = [];
-      //
-      //
-
       _total = 0;
-
       num _piechartOther = 0;
       for (var i = 0; i < apiData.MonthSummaryOfDate['data'].length; i++) {
-        _total += (apiData.MonthSummaryOfDate['data'][i]['sum'] != null)
-            ? apiData.MonthSummaryOfDate['data'][i]['sum']
-            : 0;
-
         Map _map = {};
         _map['item'] = apiData.MonthSummaryOfDate['data'][i]['item'];
         _map['sum'] = apiData.MonthSummaryOfDate['data'][i]['sum'];
@@ -520,64 +357,18 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
         _map['total'] = _total;
         _summaryData2.add(_map);
 
-        //graph
-        _graphDisplay = true;
+        _total += (_map['sum'] != null) ? _map['sum'] : 0;
 
-        if (apiData.MonthSummaryOfDate['data'][i]['percent'] > 5) {
-          _graphdata.add(
-            SpendSummary(
-              apiData.MonthSummaryOfDate['data'][i]['item'],
-              apiData.MonthSummaryOfDate['data'][i]['sum'],
-            ),
-          );
+        if (_map['percent'] > 5) {
+          _chartData.add(SpendSummary(_map['item'], _map['sum']));
         } else {
-          _piechartOther +=
-              (apiData.MonthSummaryOfDate['data'][i]['sum'] != null)
-                  ? apiData.MonthSummaryOfDate['data'][i]['sum']
-                  : 0;
+          _piechartOther += (_map['sum'] != null) ? _map['sum'] : 0;
         }
       }
 
-      //graph
-      if (_graphdata.length > 0) {
-        _graphdata.add(
-          //
-          // TODO
-          //
-          // SpendSummary(
-          //   'その他',
-          //   _piechartOther,
-          // ),
-          //
-          //
-
-          SpendSummary(
-            'その他',
-            0,
-          ),
-        );
-      } else {
-        _graphDisplay = false;
+      if (_piechartOther > 0) {
+        _chartData.add(SpendSummary('その他', _piechartOther));
       }
-
-      //TODO
-      //
-      //
-      //
-      // //graph
-      // seriesList.add(
-      //   charts.Series<SpendSummary, String>(
-      //     id: 'Sales',
-      //     colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-      //     domainFn: (SpendSummary sales, _) => sales.item,
-      //     measureFn: (SpendSummary sales, _) => sales.sales,
-      //     data: _graphdata,
-      //   ),
-      // );
-      //
-      //
-      //
-
     }
     apiData.MonthSummaryOfDate = {};
 
@@ -622,7 +413,7 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
             _timeplace1000over.add(_map);
 
             _totalTm1000over +=
-                (value[i]['price'] != null) ? int.parse(value[i]['price']) : 0;
+                (value[i]['price'] != null) ? value[i]['price'] : 0;
           }
         }
       });
