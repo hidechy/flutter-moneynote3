@@ -32,8 +32,8 @@ class _WeeklyDataAccordionScreenState extends State<WeeklyDataAccordionScreen> {
 
   List<WeekDay> _weekDayList = <WeekDay>[];
 
-  late String _benefitDate;
-  late String _benefit;
+  late String _benefitDate = "";
+  late String _benefit = "";
 
   List _holidayList = [];
 

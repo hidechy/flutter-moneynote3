@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -136,7 +136,7 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
             children: [
               _dispGraph(),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -144,18 +144,18 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                       children: [
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
-                          child: Icon(
+                          child: const Icon(
                             Icons.close,
                             color: Colors.greenAccent,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         (_selectedMonth != "")
                             ? GestureDetector(
                                 onTap: () => _showBankRecord(),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.keyboard_arrow_up,
                                   color: Colors.greenAccent,
                                 ),
@@ -164,8 +164,8 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                       ],
                     ),
                     Text(
-                      '${_total}',
-                      style: TextStyle(color: Colors.yellowAccent),
+                      '$_total',
+                      style: const TextStyle(color: Colors.yellowAccent),
                     ),
                   ],
                 ),
@@ -197,7 +197,16 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                 ),
               ),
               Expanded(
-                child: _summaryList(),
+                child: (_summaryData.length > 0)
+                    ? _summaryList()
+                    : Container(
+                        alignment: Alignment.topLeft,
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'No Data.',
+                          style: TextStyle(color: Colors.yellowAccent),
+                        ),
+                      ),
               ),
             ],
           ),

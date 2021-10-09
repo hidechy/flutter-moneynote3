@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, non_constant_identifier_names, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
   List<Map<dynamic, dynamic>> _scoreData = [];
 
-  int StartMoney = 1333926;
+  int startMoney = 1333926;
 
   int _allGain = 0;
 
@@ -44,25 +44,24 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
     await apiData.getBenefitOfAll();
     if (apiData.BenefitOfAll != null) {
       for (var i = 0; i < apiData.BenefitOfAll['data'].length; i++) {
-        var ex_data = (apiData.BenefitOfAll['data'][i]).split('|');
+        var exData = (apiData.BenefitOfAll['data'][i]).split('|');
         Map _map = {};
-        _map['ym'] = ex_data[1];
-        _map['benefit'] = ex_data[2];
+        _map['ym'] = exData[1];
+        _map['benefit'] = exData[2];
         _benefitData.add(_map);
       }
     }
     apiData.BenefitOfAll = {};
     ///////////////////////////////////benefit
-
     //-----------------------------------//
     List<List<String>> _scoreDayInfo = [];
 
     await apiData.getMoneyOfAll();
     if (apiData.MoneyOfAll != null) {
       for (var i = 0; i < apiData.MoneyOfAll['data'].length; i++) {
-        var ex_data2 = (apiData.MoneyOfAll['data'][i]).split('|');
+        var exData2 = (apiData.MoneyOfAll['data'][i]).split('|');
 
-        _utility.makeYMDYData(ex_data2[0], 0);
+        _utility.makeYMDYData(exData2[0], 0);
         if (_utility.day == '01') {
           //先月末の日付
           _utility.makeMonthEnd(
@@ -72,14 +71,14 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               '${_utility.year}-${_utility.month}-${_utility.day}';
 
           //今月末の日付
-          _utility.makeYMDYData(ex_data2[0], 0);
+          _utility.makeYMDYData(exData2[0], 0);
           _utility.makeMonthEnd(
               int.parse(_utility.year), int.parse(_utility.month) + 1, 0);
           _utility.makeYMDYData(_utility.monthEndDateTime, 0);
           var thisMonthEnd =
               '${_utility.year}-${_utility.month}-${_utility.day}';
 
-          _scoreDayInfo.add([ex_data2[0], prevMonthEnd, thisMonthEnd]);
+          _scoreDayInfo.add([exData2[0], prevMonthEnd, thisMonthEnd]);
         }
       }
     }
@@ -103,7 +102,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
           if (apiData.MoneyOfDate['data'] != "-") {
             switch (j) {
               case 1: //先月末の日付
-                prevTotal = StartMoney;
+                prevTotal = startMoney;
                 _utility.makeTotal(apiData.MoneyOfDate['data']);
                 prevTotal = _utility.total;
                 break;
@@ -151,7 +150,6 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       }
     }
     //////////////////////////////////////////////////
-
     setState(() {
       _loading = true;
     });

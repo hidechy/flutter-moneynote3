@@ -50,7 +50,6 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
   void _makeDefaultDisplayData() async {
     //------------------------------//
 
-    //TODO
     Map zerousedate = {};
 
     String url = "http://toyohide.work/BrainLog/api/timeplacezerousedate";

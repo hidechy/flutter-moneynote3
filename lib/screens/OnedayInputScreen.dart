@@ -30,10 +30,12 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
   String _year = '';
   String _month = '';
   String _day = '';
+  String _youbiStr = '';
 
   String _date = '';
 
   DateTime _prevDate = DateTime.now();
+  DateTime _nextDate = DateTime.now();
 
   String _text = "";
 
@@ -86,9 +88,13 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
     _month = _utility.month;
     _day = _utility.day;
     _date = '$_year-$_month-$_day';
+    _youbiStr = _utility.youbiStr;
 
     _prevDate =
         DateTime(int.parse(_year), int.parse(_month), int.parse(_day) - 1);
+
+    _nextDate =
+        DateTime(int.parse(_year), int.parse(_month), int.parse(_day) + 1);
 
     ////////////////////////////////////////////////////
     await apiData.getMoneyOfDate(date: _date);
@@ -135,45 +141,33 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      //
-      //
-      //
-      //
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   title: Text('${_date}(${_youbiStr})'),
-      //   centerTitle: true,
-      //
-      //   //-------------------------//これを消すと「←」が出てくる（消さない）
-      //   leading: IconButton(
-      //     icon: Icon(Icons.close),
-      //     onPressed: () => Navigator.pop(context),
-      //     color: Colors.greenAccent,
-      //   ),
-      //
-      //   //-------------------------//これを消すと「←」が出てくる（消さない）
-      //
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon: const Icon(Icons.skip_previous),
-      //       tooltip: '前日',
-      //       onPressed: () => _goPrevDate(context: context),
-      //     ),
-      //     IconButton(
-      //       icon: const Icon(Icons.skip_next),
-      //       tooltip: '翌日',
-      //       onPressed: () => _goNextDate(context: context),
-      //     ),
-      //   ],
-      // ),
-      //
-      //
-      //
-      //
-      //
-      //
-      //
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text('$_date($_youbiStr)'),
+        centerTitle: true,
 
+        //-------------------------//これを消すと「←」が出てくる（消さない）
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.greenAccent,
+        ),
+
+        //-------------------------//これを消すと「←」が出てくる（消さない）
+
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.skip_previous),
+            tooltip: '前日',
+            onPressed: () => _goPrevDate(context: context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.skip_next),
+            tooltip: '翌日',
+            onPressed: () => _goNextDate(context: context),
+          ),
+        ],
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -194,6 +188,31 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
           SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                //
+                //
+                //
+                //
+                //
+                // Card(
+                //   shape: const RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.only(
+                //       bottomLeft: Radius.circular(20),
+                //       bottomRight: Radius.circular(20),
+                //     ),
+                //   ),
+                //   color: Colors.black.withOpacity(0.3),
+                //   child: Row(
+                //     children: [
+                //       Text('${_date}(${_youbiStr})'),
+                //     ],
+                //   ),
+                // ),
+                //
+                //
+                //
+                //
+                //
+
                 Card(
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
@@ -525,7 +544,6 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
     _uploadData['pay_d'] = _teContPayD.text != "" ? _teContPayD.text : '0';
     _uploadData['pay_e'] = _teContPayE.text != "" ? _teContPayE.text : '0';
 
-    //TODO
     String url = "http://toyohide.work/BrainLog/api/moneyinsert";
     Map<String, String> headers = {'content-type': 'application/json'};
     String body = json.encode(_uploadData);
@@ -601,6 +619,16 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
   }
 
   ///////////////////////////////////////////////////////////////////// 画面遷移
+
+  /// 画面遷移（前日）
+  void _goPrevDate({required BuildContext context}) {
+    _goAnotherDate(context: context, date: _prevDate.toString());
+  }
+
+  /// 画面遷移（翌日）
+  void _goNextDate({required BuildContext context}) {
+    _goAnotherDate(context: context, date: _nextDate.toString());
+  }
 
   /// 画面遷移（指定日）
   void _goAnotherDate({required BuildContext context, required String date}) {
