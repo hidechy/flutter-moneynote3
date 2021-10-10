@@ -1,59 +1,57 @@
+// ignore_for_file: file_names
+
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class PurchaseDataController extends GetxController {}
+import 'dart:convert';
 
-/*
-  ///
-  Map AmazonPurchaseOfDate = {};
+class PurchaseDataController extends GetxController {
+  List data = [].obs;
 
-  Future<void> getAmazonPurchaseOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/amazonPurchaseList";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    AmazonPurchaseOfDate =
-        (response != null) ? jsonDecode(response.body) : null;
+  RxBool loading = false.obs;
+
+  loadData({required String kind, var date}) async {
+    loading(true);
+
+    var url = "";
+    switch (kind) {
+      case "DateAmazonPurchaseData":
+        //getAmazonPurchaseOfDate    //PurchaseDataController->loadData('DateAmazonPurchaseData', YMD);
+        url = "http://toyohide.work/BrainLog/api/amazonPurchaseList";
+        break;
+
+      case "DateSeiyuuPurchaseData":
+        //getSeiyuuPurchaseOfDate    //PurchaseDataController->loadData('DateSeiyuuPurchaseData', YMD);
+        url = "http://toyohide.work/BrainLog/api/seiyuuPurchaseList";
+        break;
+
+      case "DateSeiyuuPurchaseItemData":
+        //getSeiyuuPurchaseItemOfDate    //PurchaseDataController->loadData('DateSeiyuuPurchaseItemData', YMD);
+        url = "http://toyohide.work/BrainLog/api/seiyuuPurchaseItemList";
+        break;
+
+      case "AllMercariPurchaseData":
+        //getListOfMercariData    //PurchaseDataController->loadData('AllMercariPurchaseData', null);
+        url = "http://toyohide.work/BrainLog/api/mercaridata";
+        break;
+    }
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+
+    String body = "";
+    if (date == null) {
+      body = json.encode({});
+    } else {
+      body = json.encode({"date": date});
+    }
+
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    var decoded = json.decode(response.body);
+
+    data = decoded['data'];
+
+    loading(false);
   }
-
-*/
-
-/*
-  ///
-  Map SeiyuuPurchaseOfDate = {};
-
-  Future<void> getSeiyuuPurchaseOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/seiyuuPurchaseList";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    SeiyuuPurchaseOfDate =
-        (response != null) ? jsonDecode(response.body) : null;
-  }
-
-  ///
-  Map SeiyuuPurchaseItemOfDate = {};
-
-  Future<void> getSeiyuuPurchaseItemOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/seiyuuPurchaseItemList";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    SeiyuuPurchaseItemOfDate =
-        (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
-
-/*
-  ///
-  Map ListOfMercariData = {};
-
-  Future<void> getListOfMercariData() async {
-    String url = "http://toyohide.work/BrainLog/api/mercaridata";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfMercariData = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
+}

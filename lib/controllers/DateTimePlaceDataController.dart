@@ -1,61 +1,57 @@
+// ignore_for_file: file_names
+
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class DateTimePlaceDataController extends GetxController {}
+import 'dart:convert';
 
-/*
-  ///
-  Map DateOfTimePlaceZeroUse = {};
+class DateTimePlaceDataController extends GetxController {
+  List data = [].obs;
 
-  Future<void> getDateOfTimePlaceZeroUse() async {
-    String url = "http://toyohide.work/BrainLog/api/timeplacezerousedate";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    DateOfTimePlaceZeroUse =
-        (response != null) ? jsonDecode(response.body) : null;
+  RxBool loading = false.obs;
+
+  loadData({required String kind, var date}) async {
+    loading(true);
+
+    var url = "";
+    switch (kind) {
+      case "AllTimePlaceZeroUseData":
+        //getDateOfTimePlaceZeroUse    //DateTimePlaceDataController->loadData('AllTimePlaceZeroUse', null);
+        url = "http://toyohide.work/BrainLog/api/timeplacezerousedate";
+        break;
+
+      case "DateTimePlaceData":
+        //getListOfPlaceTimeData    //DateTimePlaceDataController->loadData('DateTimePlace', YMD);
+        url = "http://toyohide.work/BrainLog/api/timeplace";
+        break;
+
+      case "DateMonthTimePlaceData":
+        //getMonthlyTimePlaceDataOfDate    //DateTimePlaceDataController->loadData('DateMonthTimePlace', YMD);
+        url = "http://toyohide.work/BrainLog/api/monthlytimeplace";
+        break;
+
+      case "DateTimePlaceWeeklyData":
+        //getWeeklyTimePlaceOfDate    //DateTimePlaceDataController->loadData('DateTimePlaceWeekly', YMD);
+        url = "http://toyohide.work/BrainLog/api/timeplaceweekly";
+        break;
+    }
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+
+    String body = "";
+    if (date == null) {
+      body = json.encode({});
+    } else {
+      body = json.encode({"date": date});
+    }
+
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    var decoded = json.decode(response.body);
+
+    data = decoded['data'];
+
+    loading(false);
   }
-*/
-
-/*
-  ///
-  Map ListOfPlaceTimeData = {};
-
-  Future<void> getListOfPlaceTimeData({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/timeplace";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfPlaceTimeData = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
-
-/*
-  ///
-  Map MonthlyTimePlaceDataOfDate = {};
-
-  Future<void> getMonthlyTimePlaceDataOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/monthlytimeplace";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    MonthlyTimePlaceDataOfDate =
-        (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
-
-/*
-  ///
-  Map WeeklyTimePlaceOfDate = {};
-
-  Future<void> getWeeklyTimePlaceOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/timeplaceweekly";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    WeeklyTimePlaceOfDate =
-        (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
+}

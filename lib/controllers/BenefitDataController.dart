@@ -1,29 +1,47 @@
+// ignore_for_file: file_names
+
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class BenefitDataController extends GetxController {}
+import 'dart:convert';
 
-/*
-  ///
-  Map BenefitOfAll = {};
+class BenefitDataController extends GetxController {
+  List data = [].obs;
 
-  Future<void> getBenefitOfAll() async {
-    String url = "http://toyohide.work/BrainLog/api/getAllBenefit";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    BenefitOfAll = (response != null) ? jsonDecode(response.body) : null;
+  RxBool loading = false.obs;
+
+  loadData({required String kind, var date}) async {
+    loading(true);
+
+    var url = "";
+    switch (kind) {
+      case "AllBenefitData":
+        //getBenefitOfAll    //BenefitDataController->loadData('AllBenefitData', null);
+        url = "http://toyohide.work/BrainLog/api/getAllBenefit";
+        break;
+
+      case "AllSalaryData":
+        //getListOfSalaryData    //BenefitDataController->loadData('AllSalaryData', null);
+        url = "http://toyohide.work/BrainLog/api/getsalary";
+        break;
+    }
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+
+    String body = "";
+    if (date == null) {
+      body = json.encode({});
+    } else {
+      body = json.encode({"date": date});
+    }
+
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    var decoded = json.decode(response.body);
+
+    data = decoded['data'];
+
+    loading(false);
   }
-*/
-
-/*
-  ///
-  Map ListOfSalaryData = {};
-
-  Future<void> getListOfSalaryData() async {
-    String url = "http://toyohide.work/BrainLog/api/getsalary";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfSalaryData = (response != null) ? jsonDecode(response.body) : null;
-  }
-*/
+}

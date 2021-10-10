@@ -1,72 +1,62 @@
+// ignore_for_file: file_names
+
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class SummaryDataController extends GetxController {}
+import 'dart:convert';
 
-/*
-  ///
-  Map MonthSummaryOfDate = {};
+class SummaryDataController extends GetxController {
+  List data = [].obs;
 
-  Future<void> getMonthSummaryOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/monthsummary";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    MonthSummaryOfDate = (response != null) ? jsonDecode(response.body) : null;
+  RxBool loading = false.obs;
+
+  loadData({required String kind, var date}) async {
+    loading(true);
+
+    var url = "";
+    switch (kind) {
+      case "DateMonthSummaryData":
+        //getMonthSummaryOfDate    //SummaryDataController->loadData('DateMonthSummaryData', YMD);
+        url = "http://toyohide.work/BrainLog/api/monthsummary";
+        break;
+
+      case "AllDutyData":
+        //getListOfDutyData    //SummaryDataController->loadData('AllDutyData', null);
+        url = "http://toyohide.work/BrainLog/api/dutyData";
+        break;
+
+      case "DateYearSummaryData":
+        //getYearSummaryOfDate    //SummaryDataController->loadData('DateYearSummaryData', YMD);
+        url = "http://toyohide.work/BrainLog/api/yearsummary";
+        break;
+
+      case "DateMonthlyWeekNumData":
+        //getWeekNumOfDate    //SummaryDataController->loadData('DateMonthlyWeekNumData', YMD);
+        url = "http://toyohide.work/BrainLog/api/monthlyweeknum";
+        break;
+
+      case "AllHomeFixData":
+        //getListOfHomeFixData    //SummaryDataController->loadData('AllHomeFixData', null);
+        url = "http://toyohide.work/BrainLog/api/homeFixData";
+        break;
+    }
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+
+    String body = "";
+    if (date == null) {
+      body = json.encode({});
+    } else {
+      body = json.encode({"date": date});
+    }
+
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    var decoded = json.decode(response.body);
+
+    data = decoded['data'];
+
+    loading(false);
   }
-*/
-
-/*
-  ///
-  Map ListOfDutyData = {};
-
-  Future<void> getListOfDutyData() async {
-    String url = "http://toyohide.work/BrainLog/api/dutyData";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfDutyData = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
-
-/*
-  ///
-  Map YearSummaryOfDate = {};
-
-  Future<void> getYearSummaryOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/yearsummary";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    YearSummaryOfDate = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
-
-/*
-  ///
-  Map WeekNumOfDate = {};
-
-  Future<void> getWeekNumOfDate({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/monthlyweeknum";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    WeekNumOfDate = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
-
-/*
-  ///
-  Map ListOfHomeFixData = {};
-
-  Future<void> getListOfHomeFixData() async {
-    String url = "http://toyohide.work/BrainLog/api/homeFixData";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfHomeFixData = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-*/
+}

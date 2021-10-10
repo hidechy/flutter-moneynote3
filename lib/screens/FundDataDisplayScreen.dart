@@ -1,48 +1,27 @@
-// ignore_for_file: file_names, use_key_in_widget_constructors, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
+import '../controllers/InvestmentDataController.dart';
 
-class FundDataDisplayScreen extends StatefulWidget {
-  @override
-  _FundDataDisplayScreenState createState() => _FundDataDisplayScreenState();
-}
+class FundDataDisplayScreen extends StatelessWidget {
+  final InvestmentDataController investmentDataController =
+      Get.put(InvestmentDataController());
 
-class _FundDataDisplayScreenState extends State<FundDataDisplayScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+  final Utility _utility = Utility();
 
-  Map funddata = {};
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    //----------------------------//
-    await apiData.getListOfFundData();
-    if (apiData.ListOfFundData != null) {
-      funddata = apiData.ListOfFundData;
-    }
-    apiData.ListOfFundData = {};
-    //----------------------------//
-
-    setState(() {});
-  }
+  FundDataDisplayScreen({Key? key}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    investmentDataController.loadData(kind: 'AllFundData');
 
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +63,17 @@ class _FundDataDisplayScreenState extends State<FundDataDisplayScreen> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: _fundList(),
+            child: Obx(
+              () {
+                if (investmentDataController.loading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return _fundList(data: investmentDataController.data);
+              },
+            ),
           ),
         ],
       ),
@@ -92,20 +81,17 @@ class _FundDataDisplayScreenState extends State<FundDataDisplayScreen> {
   }
 
   ///
-  Widget _fundList() {
-    if (funddata['data'] != null) {
-      return ListView.builder(
-        itemCount: funddata['data'].length,
-        itemBuilder: (context, int position) => _listItem(position: position),
-      );
-    } else {
-      return Container();
-    }
+  Widget _fundList({data}) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, int position) =>
+          _listItem(position: position, data: data),
+    );
   }
 
   ///
-  Widget _listItem({required int position}) {
-    var exFunddata = (funddata['data'][position]).split(':');
+  Widget _listItem({required int position, required List data}) {
+    var exFunddata = (data[position]).split(':');
 
     return Card(
       color: Colors.black.withOpacity(0.3),

@@ -1,72 +1,57 @@
+// ignore_for_file: file_names
+
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class CreditDataController extends GetxController {}
+import 'dart:convert';
 
-/*
-  ///
-  Map ListOfCardItemData = {};
+class CreditDataController extends GetxController {
+  List data = [].obs;
 
-  Future<void> getListOfCardItemData() async {
-    String url = "http://toyohide.work/BrainLog/api/carditemlist";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfCardItemData = (response != null) ? jsonDecode(response.body) : null;
+  RxBool loading = false.obs;
+
+  loadData({required String kind, var date}) async {
+    loading(true);
+
+    var url = "";
+    switch (kind) {
+      case "AllCardItemData":
+        //getListOfCardItemData    //CreditDataController->loadData('AllCardItemData', null);
+        url = "http://toyohide.work/BrainLog/api/carditemlist";
+        break;
+
+      case "AllCardSpendData":
+        //getListOfCardSpendData    //CreditDataController->loadData('AllCardSpendData', null);
+        url = "http://toyohide.work/BrainLog/api/allcardspend";
+        break;
+
+      case "DateCardSpendData":
+        //getUcCardSpendOfDate    //CreditDataController->loadData('DateCardSpendData', YMD);
+        url = "http://toyohide.work/BrainLog/api/uccardspend";
+        break;
+
+      case "DateCreditData":
+        //getListOfCreditDateData    //CreditDataController->loadData('DateCreditData', YMD);
+        url = "http://toyohide.work/BrainLog/api/getCreditDateData";
+        break;
+    }
+
+    Map<String, String> headers = {'content-type': 'application/json'};
+
+    String body = "";
+    if (date == null) {
+      body = json.encode({});
+    } else {
+      body = json.encode({"date": date});
+    }
+
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    var decoded = json.decode(response.body);
+
+    data = decoded['data'];
+
+    loading(false);
   }
-
-  ///
-  Map ListOfCardSpendData = {};
-
-  Future<void> getListOfCardSpendData() async {
-    String url = "http://toyohide.work/BrainLog/api/allcardspend";
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfCardSpendData = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-  ///
-  Map UcCardSpendOfDate = {};
-
-  Future<void> getUcCardSpendOfDate({required String date}) async {
-    String url = "http://toyohide.work/BrainLog/api/uccardspend";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    UcCardSpendOfDate = (response != null) ? jsonDecode(response.body) : null;
-  }
-
-
-
-
-
-
-
-
- */
-
-/*
-  ///
-  Map ListOfCreditDateData = {};
-
-  Future<void> getListOfCreditDateData({String? date}) async {
-    String url = "http://toyohide.work/BrainLog/api/getCreditDateData";
-    String body = json.encode({"date": date});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-    ListOfCreditDateData =
-        (response != null) ? jsonDecode(response.body) : null;
-  }
-*/
+}

@@ -197,12 +197,12 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                 ),
               ),
               Expanded(
-                child: (_summaryData.length > 0)
+                child: (_summaryData.isNotEmpty)
                     ? _summaryList()
                     : Container(
                         alignment: Alignment.topLeft,
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: const Text(
                           'No Data.',
                           style: TextStyle(color: Colors.yellowAccent),
                         ),
