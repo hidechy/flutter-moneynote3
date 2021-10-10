@@ -1,67 +1,44 @@
-// ignore_for_file: file_names, import_of_legacy_library_into_null_safe, must_be_immutable, unnecessary_null_comparison, prefer_final_fields
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
-import 'AllCreditListScreen.dart';
+import '../controllers/CreditDataController.dart';
+
 import 'AmazonPurchaseListScreen.dart';
 import 'SeiyuuPurchaseListScreen.dart';
 
-class AllCreditItemListScreen extends StatefulWidget {
-  String date;
+class AllCreditItemListScreen extends StatelessWidget {
+  CreditDataController creditDataController = Get.put(
+    CreditDataController(),
+  );
 
-  AllCreditItemListScreen({Key? key, required this.date}) : super(key: key);
+  final Utility _utility = Utility();
 
-  @override
-  _AllCreditItemListScreenState createState() =>
-      _AllCreditItemListScreenState();
-}
+  final ItemScrollController _itemScrollController = ItemScrollController();
 
-class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
-
-  List<Map<dynamic, dynamic>> _creditCardItemData = [];
-
-  ItemScrollController _itemScrollController = ItemScrollController();
-
-  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
 
   int maxNo = 0;
 
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
+  String date;
 
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    await apiData.getListOfCardItemData();
-    if (apiData.ListOfCardItemData != null) {
-      for (var i = 0; i < apiData.ListOfCardItemData['data'].length; i++) {
-        _creditCardItemData.add(apiData.ListOfCardItemData['data'][i]);
-      }
-    }
-    apiData.ListOfCardItemData = {};
-
-    setState(() {});
-  }
+  AllCreditItemListScreen({Key? key, required this.date}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    creditDataController.loadData(kind: 'AllCardItemData');
+
     return Scaffold(
-//      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: const Text('All Credit（種別順）'),
@@ -91,11 +68,16 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
             child: Container(
               height: size.height * 0.7,
               width: size.width * 0.7,
-              margin: const EdgeInsets.only(top: 5, left: 6),
+              margin: const EdgeInsets.only(
+                top: 5,
+                left: 6,
+              ),
               color: Colors.yellowAccent.withOpacity(0.2),
               child: Text(
                 '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.1),
+                ),
               ),
             ),
           ),
@@ -106,32 +88,37 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.yellowAccent.withOpacity(0.3),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                  ),
                 ),
                 child: Table(
                   children: [
                     TableRow(children: [
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                            icon: const Icon(Icons.list),
-                            onPressed: () => _goAllCreditListScreen(),
-                            color: Colors.greenAccent,
-                          ),
-                        ],
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           IconButton(
                             icon: const Icon(FontAwesomeIcons.amazon),
                             color: Colors.greenAccent,
-                            onPressed: () => _goAmazonPurchaseListScreen(),
+                            onPressed: () {
+                              Get.to(
+                                AmazonPurchaseListScreen(
+                                  date: date,
+                                ),
+                              );
+                            },
                           ),
                           IconButton(
                             icon: const Icon(FontAwesomeIcons.bullseye),
                             color: Colors.greenAccent,
-                            onPressed: () => _goSeiyuuPurchaseListScreen(),
+                            onPressed: () {
+                              Get.to(
+                                SeiyuuPurchaseListScreen(
+                                  date: date,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -143,7 +130,17 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
                 height: 20,
               ),
               Expanded(
-                child: _creditCardItemList(),
+                child: Obx(
+                  () {
+                    if (creditDataController.loading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    return _creditCardItemList(data: creditDataController.data);
+                  },
+                ),
               ),
             ],
           ),
@@ -153,31 +150,34 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
   }
 
   ///
-  Widget _creditCardItemList() {
+  Widget _creditCardItemList({data}) {
     return ScrollablePositionedList.builder(
       itemBuilder: (context, index) {
-        return _listItem(position: index);
+        return _listItem(position: index, data: data);
       },
-      itemCount: _creditCardItemData.length,
+      itemCount: data.length,
       itemScrollController: _itemScrollController,
       itemPositionsListener: _itemPositionsListener,
     );
   }
 
   ///
-  Widget _listItem({required int position}) {
-    var exPm = (_creditCardItemData[position]['pay_month']).split('-');
+  Widget _listItem({required int position, required List data}) {
+    var exPm = (data[position]['pay_month']).split('-');
 
     return Column(
       children: <Widget>[
-        (_creditCardItemData[position]['flag'] == 1)
+        (data[position]['flag'] == 1)
             ? Container(
-                decoration:
-                    BoxDecoration(color: Colors.greenAccent.withOpacity(0.3)),
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent.withOpacity(0.3),
+                ),
                 width: double.infinity,
                 child: Text(
                   'x',
-                  style: TextStyle(color: Colors.greenAccent.withOpacity(0.3)),
+                  style: TextStyle(
+                    color: Colors.greenAccent.withOpacity(0.3),
+                  ),
                 ),
               )
             : Container(),
@@ -205,8 +205,7 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
                 ],
               ),
             ),
-            trailing:
-                _getCreditTrailing(kind: _creditCardItemData[position]['kind']),
+            trailing: _getCreditTrailing(kind: data[position]['kind']),
             title: Row(
               children: <Widget>[
                 Expanded(
@@ -215,13 +214,15 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('${_creditCardItemData[position]['date']}'),
-                        Text('${_creditCardItemData[position]['item']}'),
+                        Text('${data[position]['date']}'),
+                        Text('${data[position]['item']}'),
                         Container(
                           width: double.infinity,
                           alignment: Alignment.topRight,
-                          child: Text(_utility.makeCurrencyDisplay(
-                              _creditCardItemData[position]['price'])),
+                          child: Text(
+                            _utility
+                                .makeCurrencyDisplay(data[position]['price']),
+                          ),
                         ),
                       ],
                     ),
@@ -238,7 +239,7 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
                     ),
                   ),
                   child: Text(
-                    '${_creditCardItemData[position]['month_diff']}',
+                    '${data[position]['month_diff']}',
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
@@ -291,43 +292,5 @@ class _AllCreditItemListScreenState extends State<AllCreditItemListScreen> {
       default:
         return Container();
     }
-  }
-
-  ///////////////////////////////////////////////
-
-  ///
-  void _goAllCreditListScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AllCreditListScreen(
-          date: widget.date,
-        ),
-      ),
-    );
-  }
-
-  ///
-  void _goAmazonPurchaseListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AmazonPurchaseListScreen(
-          date: widget.date,
-        ),
-      ),
-    );
-  }
-
-  ///
-  void _goSeiyuuPurchaseListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SeiyuuPurchaseListScreen(
-          date: widget.date,
-        ),
-      ),
-    );
   }
 }

@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:moneynote5/screens/AllCreditItemListScreen.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -249,6 +250,24 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
                   Container(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
+                      onTap: () => _goAllCreditItemListScreen(),
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent.withOpacity(0.3),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                        child: const Text('All Credit Item'),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
                       onTap: () => _goMonthlyCreditListScreen(),
                       child: Container(
                         margin: const EdgeInsets.all(5),
@@ -410,6 +429,16 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
       MaterialPageRoute(
         builder: (context) => CreditSpendDisplayScreen(
             date: '${_utility.year}-${_utility.month}-${_utility.day}'),
+      ),
+    );
+  }
+
+  ///
+  void _goAllCreditItemListScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AllCreditItemListScreen(date: widget.date),
       ),
     );
   }
