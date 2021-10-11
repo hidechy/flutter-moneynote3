@@ -1,50 +1,27 @@
-// ignore_for_file: file_names, use_key_in_widget_constructors, prefer_final_fields, unnecessary_null_comparison, non_constant_identifier_names
+// ignore_for_file: file_names, non_constant_identifier_names, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
+import '../controllers/PurchaseDataController.dart';
 
-class MercariDataDisplayScreen extends StatefulWidget {
-  @override
-  _MercariDataDisplayScreenState createState() =>
-      _MercariDataDisplayScreenState();
-}
+class MercariDataDisplayScreen extends StatelessWidget {
+  PurchaseDataController purchaseDataController = Get.put(
+    PurchaseDataController(),
+  );
+  final Utility _utility = Utility();
 
-class _MercariDataDisplayScreenState extends State<MercariDataDisplayScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
-
-  List<Map<dynamic, dynamic>> _mercariData = [];
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    //----------------------------//
-    await apiData.getListOfMercariData();
-    if (apiData.ListOfMercariData != null) {
-      for (var i = 0; i < apiData.ListOfMercariData['data'].length; i++) {
-        _mercariData.add(apiData.ListOfMercariData['data'][i]);
-      }
-    }
-    apiData.ListOfMercariData = {};
-
-    setState(() {});
-  }
+  MercariDataDisplayScreen({Key? key}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    purchaseDataController.loadData(kind: 'AllMercariPurchaseData');
 
     return Scaffold(
       appBar: AppBar(
@@ -76,31 +53,49 @@ class _MercariDataDisplayScreenState extends State<MercariDataDisplayScreen> {
             child: Container(
               height: size.height * 0.7,
               width: size.width * 0.7,
-              margin: const EdgeInsets.only(top: 5, left: 6),
+              margin: const EdgeInsets.only(
+                top: 5,
+                left: 6,
+              ),
               color: Colors.yellowAccent.withOpacity(0.2),
               child: Text(
                 '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.1),
+                ),
               ),
             ),
           ),
-          _mercariList(),
+          Obx(
+            () {
+              if (purchaseDataController.loading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return _mercariList(data: purchaseDataController.data);
+            },
+          ),
         ],
       ),
     );
   }
 
   /// リスト表示
-  Widget _mercariList() {
+  Widget _mercariList({data}) {
     return ListView.builder(
-      itemCount: _mercariData.length,
-      itemBuilder: (context, int position) => _listItem(position: position),
+      itemCount: data.length,
+      itemBuilder: (context, int position) => _listItem(
+        position: position,
+        data: data,
+      ),
     );
   }
 
   /// リストアイテム表示
-  Widget _listItem({required int position}) {
-    _utility.makeYMDYData(_mercariData[position]['date'], 0);
+  Widget _listItem({required int position, required List data}) {
+    _utility.makeYMDYData(data[position]['date'], 0);
 
     return Card(
       color: Colors.black.withOpacity(0.3),
@@ -117,23 +112,28 @@ class _MercariDataDisplayScreenState extends State<MercariDataDisplayScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  Text('${data[position]['date']}（${_utility.youbiStr}）'),
                   Text(
-                      '${_mercariData[position]['date']}（${_utility.youbiStr}）'),
-                  Text(_utility.makeCurrencyDisplay(
-                      _mercariData[position]['day_total'].toString())),
+                    _utility.makeCurrencyDisplay(
+                      data[position]['day_total'].toString(),
+                    ),
+                  ),
                 ],
               ),
               _dispDailyItem(
-                date: _mercariData[position]['date'],
-                record: _mercariData[position]['record'],
+                date: data[position]['date'],
+                record: data[position]['record'],
               ),
               Container(
                 padding: const EdgeInsets.only(top: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Text(_utility.makeCurrencyDisplay(
-                        _mercariData[position]['total'].toString())),
+                    Text(
+                      _utility.makeCurrencyDisplay(
+                        data[position]['total'].toString(),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -181,8 +181,10 @@ class _MercariDataDisplayScreenState extends State<MercariDataDisplayScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               (exOneline[0] == 'sell')
-                                  ? Text(_utility
-                                      .makeCurrencyDisplay(exOneline[5]))
+                                  ? Text(
+                                      _utility
+                                          .makeCurrencyDisplay(exOneline[5]),
+                                    )
                                   : Text(
                                       '-${_utility.makeCurrencyDisplay(exOneline[5])}'),
                             ],

@@ -1,59 +1,28 @@
-// ignore_for_file: file_names, use_key_in_widget_constructors, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
+import '../controllers/InvestmentDataController.dart';
 
-class InvestmentStockListScreen extends StatefulWidget {
-  @override
-  _InvestmentStockListScreenState createState() =>
-      _InvestmentStockListScreenState();
-}
+class InvestmentStockListScreen extends StatelessWidget {
+  InvestmentDataController investmentDataController = Get.put(
+    InvestmentDataController(),
+  );
 
-class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+  final Utility _utility = Utility();
 
-  List<Map<dynamic, dynamic>> _stockDetailData = [];
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    await apiData.getListOfStockDetailData();
-    if (apiData.ListOfStockDetailData != null) {
-      for (var i = 0; i < apiData.ListOfStockDetailData['data'].length; i++) {
-        var exData = (apiData.ListOfStockDetailData['data'][i]).split(';');
-
-        Map _map = {};
-        _map['name'] = exData[0];
-        _map['date'] = exData[1];
-        _map['suuryou'] = exData[2];
-        _map['cost'] = exData[3];
-        _map['result'] = exData[4];
-        _map['score'] = exData[5];
-        _map['data'] = exData[6];
-        _stockDetailData.add(_map);
-      }
-    }
-    apiData.ListOfStockDetailData = {};
-
-    setState(() {});
-  }
+  InvestmentStockListScreen({Key? key}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    investmentDataController.loadData(kind: 'AllStockDetailData');
 
     return Scaffold(
       body: Stack(
@@ -65,30 +34,50 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
             child: Container(
               height: size.height * 0.7,
               width: size.width * 0.7,
-              margin: const EdgeInsets.only(top: 5, left: 6),
+              margin: const EdgeInsets.only(
+                top: 5,
+                left: 6,
+              ),
               color: Colors.yellowAccent.withOpacity(0.2),
               child: Text(
                 '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.1),
+                ),
               ),
             ),
           ),
-          _stockList(),
+          Obx(
+            () {
+              if (investmentDataController.loading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return _stockList(data: investmentDataController.data);
+            },
+          ),
         ],
       ),
     );
   }
 
   ///
-  Widget _stockList() {
+  Widget _stockList({data}) {
     return ListView.builder(
-      itemCount: _stockDetailData.length,
-      itemBuilder: (context, int position) => _listItem(position: position),
+      itemCount: data.length,
+      itemBuilder: (context, int position) => _listItem(
+        position: position,
+        data2: data,
+      ),
     );
   }
 
   ///
-  Widget _listItem({required int position}) {
+  Widget _listItem({required int position, required List data2}) {
+    var data = _makeData(data: data2);
+
     return Card(
       color: Colors.black.withOpacity(0.3),
       elevation: 10.0,
@@ -101,36 +90,37 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('${_stockDetailData[position]['name']}'),
+              Text('${data[position]['name']}'),
               Container(
-                decoration:
-                    BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent.withOpacity(0.3),
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 margin: const EdgeInsets.only(top: 10),
                 child: Row(
                   children: <Widget>[
                     SizedBox(
                       width: 60,
-                      child: Text('${_stockDetailData[position]['suuryou']}'),
+                      child: Text('${data[position]['suuryou']}'),
                     ),
                     SizedBox(
                       width: 60,
-                      child: Text('${_stockDetailData[position]['cost']}'),
+                      child: Text('${data[position]['cost']}'),
                     ),
                     SizedBox(
                       width: 60,
-                      child: Text('${_stockDetailData[position]['result']}'),
+                      child: Text('${data[position]['result']}'),
                     ),
                     SizedBox(
                       width: 60,
-                      child: Text('${_stockDetailData[position]['score']}'),
+                      child: Text('${data[position]['score']}'),
                     ),
-                    Text('${_stockDetailData[position]['date']}'),
+                    Text('${data[position]['date']}'),
                   ],
                 ),
               ),
               const Divider(color: Colors.indigo),
-              _dispDetail(data: _stockDetailData[position]['data']),
+              _dispDetail(data: data[position]['data']),
             ],
           ),
         ),
@@ -171,10 +161,34 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      padding: const EdgeInsets.symmetric(
+        vertical: 5,
+        horizontal: 5,
+      ),
       child: Column(
         children: _list,
       ),
     );
+  }
+
+  ///
+  List _makeData({data}) {
+    List<Map<dynamic, dynamic>> _stockDetailData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var exData = (data[i]).split(';');
+
+      Map _map = {};
+      _map['name'] = exData[0];
+      _map['date'] = exData[1];
+      _map['suuryou'] = exData[2];
+      _map['cost'] = exData[3];
+      _map['result'] = exData[4];
+      _map['score'] = exData[5];
+      _map['data'] = exData[6];
+      _stockDetailData.add(_map);
+    }
+
+    return _stockDetailData;
   }
 }

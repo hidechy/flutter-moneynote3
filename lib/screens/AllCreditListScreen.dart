@@ -2,16 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
 import '../controllers/CreditDataController.dart';
-
-import 'AmazonPurchaseListScreen.dart';
-import 'SeiyuuPurchaseListScreen.dart';
 
 class AllCreditListScreen extends StatelessWidget {
   CreditDataController creditDataController = Get.put(
@@ -81,67 +77,18 @@ class AllCreditListScreen extends StatelessWidget {
               ),
             ),
           ),
-          Column(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.topLeft,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.yellowAccent.withOpacity(0.3),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                ),
-                child: Table(
-                  children: [
-                    TableRow(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          IconButton(
-                            icon: const Icon(FontAwesomeIcons.amazon),
-                            color: Colors.greenAccent,
-                            onPressed: () {
-                              Get.to(
-                                AmazonPurchaseListScreen(
-                                  date: date,
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(FontAwesomeIcons.bullseye),
-                            color: Colors.greenAccent,
-                            onPressed: () {
-                              Get.to(
-                                SeiyuuPurchaseListScreen(
-                                  date: date,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Obx(
-                  () {
-                    if (creditDataController.loading.value) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+          Obx(
+            () {
+              if (creditDataController.loading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-                    return _creditCardSpendList(
-                      data: creditDataController.data,
-                    );
-                  },
-                ),
-              ),
-            ],
+              return _creditCardSpendList(
+                data: creditDataController.data,
+              );
+            },
           ),
         ],
       ),

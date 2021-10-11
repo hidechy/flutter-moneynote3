@@ -278,7 +278,6 @@ class _SeiyuuPurchaseListScreenState extends State<SeiyuuPurchaseListScreen> {
   }
 
   /////////////////////////////////////////
-
   /// 画面遷移（前年）
   void _goPrevYear({required BuildContext context}) {
     Navigator.pushReplacement(

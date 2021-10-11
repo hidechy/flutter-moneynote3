@@ -1,14 +1,18 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
-import 'package:moneynote5/screens/AllCreditItemListScreen.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
+
 import 'AllCreditListScreen.dart';
 import 'CreditMonthlyListScreen.dart';
+import 'AllCreditItemListScreen.dart';
+import 'AmazonPurchaseListScreen.dart';
+import 'SeiyuuPurchaseListScreen.dart';
 
 class CreditSpendDisplayScreen extends StatefulWidget {
   String date;
@@ -226,62 +230,81 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
               ),
             ),
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () => _goAllCreditListScreen(),
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent.withOpacity(0.3),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () => _goAllCreditListScreen(),
+                          child: Container(
+                            margin: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent.withOpacity(0.3),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                            ),
+                            child: const Text('All Credit'),
                           ),
                         ),
-                        child: const Text('All Credit'),
                       ),
-                    ),
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () => _goAllCreditItemListScreen(),
+                          child: Container(
+                            margin: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent.withOpacity(0.3),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                            ),
+                            child: const Text('All Credit Item'),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () => _goMonthlyCreditListScreen(),
+                          child: Container(
+                            margin: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent.withOpacity(0.3),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                            ),
+                            child: const Text('Monthly List'),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () => _goAllCreditItemListScreen(),
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent.withOpacity(0.3),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                          ),
-                        ),
-                        child: const Text('All Credit Item'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(FontAwesomeIcons.amazon),
+                        color: Colors.greenAccent,
+                        onPressed: () => _goAmazonPurchaseListScreen(),
                       ),
-                    ),
-                  ),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: GestureDetector(
-                      onTap: () => _goMonthlyCreditListScreen(),
-                      child: Container(
-                        margin: const EdgeInsets.all(5),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent.withOpacity(0.3),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                          ),
-                        ),
-                        child: const Text('Monthly List'),
+                      IconButton(
+                        icon: const Icon(FontAwesomeIcons.bullseye),
+                        color: Colors.greenAccent,
+                        onPressed: () => _goSeiyuuPurchaseListScreen(),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -439,6 +462,26 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => AllCreditItemListScreen(date: widget.date),
+      ),
+    );
+  }
+
+  ///
+  void _goAmazonPurchaseListScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AmazonPurchaseListScreen(date: widget.date),
+      ),
+    );
+  }
+
+  ///
+  void _goSeiyuuPurchaseListScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SeiyuuPurchaseListScreen(date: widget.date),
       ),
     );
   }

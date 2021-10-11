@@ -1,62 +1,28 @@
-// ignore_for_file: file_names, use_key_in_widget_constructors, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
+import '../controllers/InvestmentDataController.dart';
 
-class InvestmentShintakuListScreen extends StatefulWidget {
-  @override
-  _InvestmentShintakuListScreenState createState() =>
-      _InvestmentShintakuListScreenState();
-}
+class InvestmentShintakuListScreen extends StatelessWidget {
+  final Utility _utility = Utility();
 
-class _InvestmentShintakuListScreenState
-    extends State<InvestmentShintakuListScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+  InvestmentDataController investmentDataController = Get.put(
+    InvestmentDataController(),
+  );
 
-  List<Map<dynamic, dynamic>> _shintakuDetailData = [];
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    await apiData.getListOfShintakuDetailData();
-    if (apiData.ListOfShintakuDetailData != null) {
-      for (var i = 0;
-          i < apiData.ListOfShintakuDetailData['data'].length;
-          i++) {
-        var exData = (apiData.ListOfShintakuDetailData['data'][i]).split(';');
-
-        Map _map = {};
-        _map['name'] = exData[0];
-        _map['date'] = exData[1];
-        _map['suuryou'] = exData[2];
-        _map['cost'] = exData[3];
-        _map['result'] = exData[4];
-        _map['score'] = exData[5];
-        _map['data'] = exData[6];
-        _shintakuDetailData.add(_map);
-      }
-    }
-    apiData.ListOfShintakuDetailData = {};
-
-    setState(() {});
-  }
+  InvestmentShintakuListScreen({Key? key}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    investmentDataController.loadData(kind: 'AllShintakuDetailData');
 
     return Scaffold(
       body: Stack(
@@ -68,30 +34,50 @@ class _InvestmentShintakuListScreenState
             child: Container(
               height: size.height * 0.7,
               width: size.width * 0.7,
-              margin: const EdgeInsets.only(top: 5, left: 6),
+              margin: const EdgeInsets.only(
+                top: 5,
+                left: 6,
+              ),
               color: Colors.yellowAccent.withOpacity(0.2),
               child: Text(
                 '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.1),
+                ),
               ),
             ),
           ),
-          _shintakuList(),
+          Obx(
+            () {
+              if (investmentDataController.loading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return _shintakuList(data: investmentDataController.data);
+            },
+          ),
         ],
       ),
     );
   }
 
   ///
-  Widget _shintakuList() {
+  Widget _shintakuList({data}) {
     return ListView.builder(
-      itemCount: _shintakuDetailData.length,
-      itemBuilder: (context, int position) => _listItem(position: position),
+      itemCount: data.length,
+      itemBuilder: (context, int position) => _listItem(
+        position: position,
+        data2: data,
+      ),
     );
   }
 
   ///
-  Widget _listItem({required int position}) {
+  Widget _listItem({required int position, required List data2}) {
+    var data = _makeData(data: data2);
+
     return Card(
       color: Colors.black.withOpacity(0.3),
       elevation: 10.0,
@@ -104,37 +90,40 @@ class _InvestmentShintakuListScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('${_shintakuDetailData[position]['name']}'),
+              Text('${data[position]['name']}'),
               Container(
-                decoration:
-                    BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent.withOpacity(0.3),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 5,
+                ),
                 margin: const EdgeInsets.only(top: 10),
                 child: Row(
                   children: <Widget>[
                     SizedBox(
                       width: 60,
-                      child:
-                          Text('${_shintakuDetailData[position]['suuryou']}'),
+                      child: Text('${data[position]['suuryou']}'),
                     ),
                     SizedBox(
                       width: 60,
-                      child: Text('${_shintakuDetailData[position]['cost']}'),
+                      child: Text('${data[position]['cost']}'),
                     ),
                     SizedBox(
                       width: 60,
-                      child: Text('${_shintakuDetailData[position]['result']}'),
+                      child: Text('${data[position]['result']}'),
                     ),
                     SizedBox(
                       width: 60,
-                      child: Text('${_shintakuDetailData[position]['score']}'),
+                      child: Text('${data[position]['score']}'),
                     ),
-                    Text('${_shintakuDetailData[position]['date']}'),
+                    Text('${data[position]['date']}'),
                   ],
                 ),
               ),
               const Divider(color: Colors.indigo),
-              _dispDetail(data: _shintakuDetailData[position]['data']),
+              _dispDetail(data: data[position]['data']),
             ],
           ),
         ),
@@ -175,10 +164,34 @@ class _InvestmentShintakuListScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      padding: const EdgeInsets.symmetric(
+        vertical: 5,
+        horizontal: 5,
+      ),
       child: Column(
         children: _list,
       ),
     );
+  }
+
+  ///
+  List _makeData({data}) {
+    List<Map<dynamic, dynamic>> _shintakuDetailData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var exData = (data[i]).split(';');
+
+      Map _map = {};
+      _map['name'] = exData[0];
+      _map['date'] = exData[1];
+      _map['suuryou'] = exData[2];
+      _map['cost'] = exData[3];
+      _map['result'] = exData[4];
+      _map['score'] = exData[5];
+      _map['data'] = exData[6];
+      _shintakuDetailData.add(_map);
+    }
+
+    return _shintakuDetailData;
   }
 }
