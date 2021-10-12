@@ -1,7 +1,9 @@
 // ignore_for_file: file_names
 
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+
+//import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 import 'dart:convert';
 
@@ -29,27 +31,26 @@ class TrainDataController extends GetxController {
 
     Map<String, String> headers = {'content-type': 'application/json'};
 
-    String body = "";
-    if (date == null) {
-      body = json.encode({});
-    } else {
-      body = json.encode({"date": date});
-    }
+    var dio = Dio();
 
-    var response =
-        await http.post(Uri.parse(url), headers: headers, body: body);
+    await dio
+        .post(
+      url,
+      options: Options(headers: headers),
+    )
+        .then(
+      (response) {
+        switch (kind) {
+          case "DateMonthlyTrainData":
+            data = response.data['data'];
+            break;
 
-    var decoded = json.decode(response.body);
-
-    switch (kind) {
-      case "DateMonthlyTrainData":
-        data = decoded['data'];
-        break;
-
-      case "AllTrainData":
-        data2 = decoded['data'];
-        break;
-    }
+          case "AllTrainData":
+            data2 = response.data['data'];
+            break;
+        }
+      },
+    );
 
     loading(false);
   }
