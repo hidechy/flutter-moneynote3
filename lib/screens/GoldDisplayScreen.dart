@@ -1,73 +1,42 @@
-// ignore_for_file: file_names, import_of_legacy_library_into_null_safe, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
+import '../controllers/InvestmentDataController.dart';
+import '../controllers/HolidayDataController.dart';
 
-class GoldDisplayScreen extends StatefulWidget {
-  const GoldDisplayScreen({Key? key}) : super(key: key);
+class GoldDisplayScreen extends StatelessWidget {
+  InvestmentDataController investmentDataController = Get.put(
+    InvestmentDataController(),
+  );
 
-  @override
-  _GoldDisplayScreenState createState() => _GoldDisplayScreenState();
-}
+  HolidayDataController holidayDataController = Get.put(
+    HolidayDataController(),
+  );
 
-class _GoldDisplayScreenState extends State<GoldDisplayScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+  final Utility _utility = Utility();
 
-  List<Map<dynamic, dynamic>> _goldData = [];
+  final ItemScrollController _itemScrollController = ItemScrollController();
 
-  Map<String, dynamic> _holidayList = {};
-
-  ItemScrollController _itemScrollController = ItemScrollController();
-
-  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
 
   int maxNo = 0;
 
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    //----------------------------//
-    await apiData.getListOfGoldData();
-    if (apiData.ListOfGoldData != null) {
-      for (var i = 0; i < apiData.ListOfGoldData['data'].length; i++) {
-        _goldData.add(apiData.ListOfGoldData['data'][i]);
-      }
-    }
-    apiData.ListOfGoldData = {};
-    //----------------------------//
-
-    //----------------------------//
-    await apiData.getHolidayOfAll();
-    if (apiData.HolidayOfAll != null) {
-      for (var i = 0; i < apiData.HolidayOfAll['data'].length; i++) {
-        _holidayList[apiData.HolidayOfAll['data'][i]] = '';
-      }
-    }
-    apiData.HolidayOfAll = {};
-    //----------------------------//
-
-    maxNo = _goldData.length;
-
-    setState(() {});
-  }
+  GoldDisplayScreen({Key? key}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
+    investmentDataController.loadData(kind: 'AllGoldData');
+    holidayDataController.loadData(kind: 'AllHolidayData');
 
     return Scaffold(
       appBar: AppBar(
@@ -80,11 +49,6 @@ class _GoldDisplayScreenState extends State<GoldDisplayScreen> {
           onPressed: () => _scroll(),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => _goGoldDisplayScreen(),
-            color: Colors.greenAccent,
-          ),
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.pop(context),
@@ -109,12 +73,20 @@ class _GoldDisplayScreenState extends State<GoldDisplayScreen> {
               ),
             ),
           ),
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: _goldList(),
-              ),
-            ],
+          Obx(
+            () {
+              if (investmentDataController.loading.value ||
+                  holidayDataController.loading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return _goldList(
+                data10: investmentDataController.data,
+                data20: holidayDataController.data,
+              );
+            },
           ),
         ],
       ),
@@ -131,24 +103,28 @@ class _GoldDisplayScreenState extends State<GoldDisplayScreen> {
   }
 
   ///
-  Widget _goldList() {
+  Widget _goldList({data10, data20}) {
     return ScrollablePositionedList.builder(
       itemBuilder: (context, index) {
-        return _listItem(position: index);
+        return _listItem(position: index, data10: data10, data20: data20);
       },
-      itemCount: _goldData.length,
+      itemCount: data10.length,
       itemScrollController: _itemScrollController,
       itemPositionsListener: _itemPositionsListener,
     );
   }
 
   ///
-  Widget _listItem({required int position}) {
+  Widget _listItem(
+      {required int position, required List data10, required List data20}) {
+    var data = _makeData(data: data10);
+    var _holidayList = _makeHolidayList(data: data20);
+
     var date =
-        '${_goldData[position]['year']}-${_goldData[position]['month']}-${_goldData[position]['day']}';
+        '${data[position]['year']}-${data[position]['month']}-${data[position]['day']}';
     _utility.makeYMDYData(date, 0);
 
-    return (_goldData[position]['gold_value'] == "-")
+    return (data[position]['gold_value'] == "-")
         ? Row(
             children: <Widget>[
               Container(
@@ -156,7 +132,9 @@ class _GoldDisplayScreenState extends State<GoldDisplayScreen> {
                 margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: _utility.getBgColor(date, _holidayList),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                  ),
                 ),
                 child: Text(
                   '$date（${_utility.youbiStr}）',
@@ -176,134 +154,159 @@ class _GoldDisplayScreenState extends State<GoldDisplayScreen> {
             ),
             child: ListTile(
               title: DefaultTextStyle(
-                  style: const TextStyle(fontSize: 12),
-                  child: Column(
-                    children: <Widget>[
-                      //----------------------------------
-                      Container(
-                        padding: const EdgeInsets.only(right: 80),
-                        child: Table(
-                          children: [
-                            TableRow(
-                              children: [
-                                Text('$date（${_utility.youbiStr}）'),
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: <Widget>[
-                                          Text(
-                                              '1g　${_utility.makeCurrencyDisplay(_goldData[position]['gold_tanka'])}'),
-                                          Text(
-                                              '${_goldData[position]['diff']}'),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5),
-                                      child: _getUpDownMark(
-                                          updown: _goldData[position]
-                                              ['up_down']),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      //----------------------------------
-
-                      const Divider(
-                          color: Colors.indigo, indent: 10.0, endIndent: 10.0),
-                      //----------------------------------
-                      Container(
-                        padding: const EdgeInsets.only(left: 30),
-                        child: Table(
-                          children: [
-                            TableRow(
-                              children: [
-                                Text(_utility.makeCurrencyDisplay(
-                                    _goldData[position]['gold_value']
-                                        .toString())),
-                                Text(_utility.makeCurrencyDisplay(
-                                    _goldData[position]['pay_price']
-                                        .toString())),
-                                Text(
-                                  _utility.makeCurrencyDisplay(
-                                      (_goldData[position]['gold_value'] -
-                                              _goldData[position]['pay_price'])
-                                          .toString()),
-                                  style: (_goldData[position]['gold_value'] -
-                                              _goldData[position]['pay_price'] >
-                                          0)
-                                      ? const TextStyle(
-                                          color: Colors.yellowAccent)
-                                      : const TextStyle(
-                                          color: Colors.redAccent),
-                                ),
-                                const Text(''),
-                                const Text(''),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      //----------------------------------
-
-                      //----------------------------------
-                      Table(
+                style: const TextStyle(fontSize: 12),
+                child: Column(
+                  children: <Widget>[
+                    //----------------------------------
+                    Container(
+                      padding: const EdgeInsets.only(right: 80),
+                      child: Table(
                         children: [
                           TableRow(
                             children: [
-                              const Text(''),
-                              const Text(''),
-                              Text(_utility.makeCurrencyDisplay(
-                                  _goldData[position]['gold_price'])),
-                              Container(
-                                alignment: Alignment.topRight,
-                                child:
-                                    Text('${_goldData[position]['gram_num']}g'),
-                              ),
-                              Container(
-                                alignment: Alignment.topRight,
-                                child: Text(
-                                    '${_goldData[position]['total_gram']}g'),
+                              Text('$date（${_utility.youbiStr}）'),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: <Widget>[
+                                        Text(
+                                            '1g　${_utility.makeCurrencyDisplay(data[position]['gold_tanka'])}'),
+                                        Text('${data[position]['diff']}'),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: _getUpDownMark(
+                                        updown: data[position]['up_down']),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                      //----------------------------------
-                    ],
-                  )),
+                    ),
+                    //----------------------------------
+
+                    const Divider(
+                        color: Colors.indigo, indent: 10.0, endIndent: 10.0),
+                    //----------------------------------
+                    Container(
+                      padding: const EdgeInsets.only(left: 30),
+                      child: Table(
+                        children: [
+                          TableRow(
+                            children: [
+                              Text(
+                                _utility.makeCurrencyDisplay(
+                                  data[position]['gold_value'].toString(),
+                                ),
+                              ),
+                              Text(
+                                _utility.makeCurrencyDisplay(
+                                  data[position]['pay_price'].toString(),
+                                ),
+                              ),
+                              Text(
+                                _utility.makeCurrencyDisplay((data[position]
+                                            ['gold_value'] -
+                                        data[position]['pay_price'])
+                                    .toString()),
+                                style: (data[position]['gold_value'] -
+                                            data[position]['pay_price'] >
+                                        0)
+                                    ? const TextStyle(
+                                        color: Colors.yellowAccent)
+                                    : const TextStyle(color: Colors.redAccent),
+                              ),
+                              const Text(''),
+                              const Text(''),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    //----------------------------------
+
+                    //----------------------------------
+                    Table(
+                      children: [
+                        TableRow(
+                          children: [
+                            const Text(''),
+                            const Text(''),
+                            Text(
+                              _utility.makeCurrencyDisplay(
+                                  data[position]['gold_price']),
+                            ),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text('${data[position]['gram_num']}g'),
+                            ),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text('${data[position]['total_gram']}g'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    //----------------------------------
+                  ],
+                ),
+              ),
             ),
           );
+  }
+
+  ///
+  List _makeData({data}) {
+    List<Map<dynamic, dynamic>> _goldData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      _goldData.add(data[i]);
+    }
+
+    maxNo = _goldData.length;
+
+    return _goldData;
+  }
+
+  ///
+  Map _makeHolidayList({data}) {
+    Map<String, dynamic> _holidayList = {};
+
+    for (var i = 0; i < data.length; i++) {
+      _holidayList[data[i]] = '';
+    }
+
+    return _holidayList;
   }
 
   ///
   Widget _getUpDownMark({updown}) {
     switch (updown) {
       case 0:
-        return const Icon(Icons.arrow_downward, color: Colors.redAccent);
+        return const Icon(
+          Icons.arrow_downward,
+          color: Colors.redAccent,
+        );
       case 1:
-        return const Icon(Icons.arrow_upward, color: Colors.greenAccent);
+        return const Icon(
+          Icons.arrow_upward,
+          color: Colors.greenAccent,
+        );
       case 9:
-        return const Icon(Icons.crop_square, color: Colors.black);
+        return const Icon(
+          Icons.crop_square,
+          color: Colors.black,
+        );
     }
     return Container();
-  }
-
-  ///
-  void _goGoldDisplayScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const GoldDisplayScreen(),
-      ),
-    );
   }
 }

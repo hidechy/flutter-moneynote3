@@ -7,6 +7,7 @@ import 'dart:convert';
 
 class TrainDataController extends GetxController {
   List data = [].obs;
+  Map data2 = {}.obs;
 
   RxBool loading = false.obs;
 
@@ -40,7 +41,15 @@ class TrainDataController extends GetxController {
 
     var decoded = json.decode(response.body);
 
-    data = decoded['data'];
+    switch (kind) {
+      case "DateMonthlyTrainData":
+        data = decoded['data'];
+        break;
+
+      case "AllTrainData":
+        data2 = decoded['data'];
+        break;
+    }
 
     loading(false);
   }

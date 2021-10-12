@@ -1,86 +1,41 @@
-// ignore_for_file: file_names, import_of_legacy_library_into_null_safe, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
+import '../controllers/TrainDataController.dart';
+import '../controllers/HolidayDataController.dart';
 
-class TrainDataDisplayScreen extends StatefulWidget {
-  const TrainDataDisplayScreen({Key? key}) : super(key: key);
+class TrainDataDisplayScreen extends StatelessWidget {
+  TrainDataController trainDataController = Get.put(
+    TrainDataController(),
+  );
 
-  @override
-  _TrainDataDisplayScreenState createState() => _TrainDataDisplayScreenState();
-}
+  HolidayDataController holidayDataController = Get.put(
+    HolidayDataController(),
+  );
 
-class _TrainDataDisplayScreenState extends State<TrainDataDisplayScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+  final Utility _utility = Utility();
 
-  List<Map<dynamic, dynamic>> _trainData = [];
+  final ItemScrollController _itemScrollController = ItemScrollController();
 
-  ItemScrollController _itemScrollController = ItemScrollController();
-
-  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
 
   int maxNo = 0;
 
-  Map<String, dynamic> _holidayList = {};
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    //----------------------------//
-    await apiData.getListOfTrainData();
-    if (apiData.ListOfTrainData != null) {
-      apiData.ListOfTrainData['data'].forEach((key, value) {
-        Map _map = {};
-        _map['date'] = key;
-
-        if (value == '') {
-          _map['value'] = '';
-          _map['price'] = '';
-          _map['oufuku'] = '';
-        } else {
-          var exValue = (value).split('|');
-          _map['value'] = exValue[0];
-          _map['price'] = (exValue[1] != '') ? exValue[1] : '';
-          _map['oufuku'] = exValue[2];
-        }
-
-        _trainData.add(_map);
-      });
-    }
-    apiData.ListOfTrainData = {};
-    //----------------------------//
-
-    //----------------------------//
-    await apiData.getHolidayOfAll();
-    if (apiData.HolidayOfAll != null) {
-      for (var i = 0; i < apiData.HolidayOfAll['data'].length; i++) {
-        _holidayList[apiData.HolidayOfAll['data'][i]] = '';
-      }
-    }
-    apiData.HolidayOfAll = {};
-    //----------------------------//
-
-    maxNo = _trainData.length;
-
-    setState(() {});
-  }
+  TrainDataDisplayScreen({Key? key}) : super(key: key);
 
   ///
   @override
   Widget build(BuildContext context) {
+    trainDataController.loadData(kind: 'AllTrainData');
+    holidayDataController.loadData(kind: 'AllHolidayData');
+
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -94,11 +49,6 @@ class _TrainDataDisplayScreenState extends State<TrainDataDisplayScreen> {
           onPressed: () => _scroll(),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => _goTrainDataDisplayScreen(),
-            color: Colors.greenAccent,
-          ),
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.pop(context),
@@ -119,16 +69,26 @@ class _TrainDataDisplayScreenState extends State<TrainDataDisplayScreen> {
               color: Colors.yellowAccent.withOpacity(0.2),
               child: Text(
                 '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.1),
+                ),
               ),
             ),
           ),
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: _trainList(),
-              ),
-            ],
+          Obx(
+            () {
+              if (trainDataController.loading.value ||
+                  holidayDataController.loading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return _trainList(
+                data10: trainDataController.data2,
+                data20: holidayDataController.data,
+              );
+            },
           ),
         ],
       ),
@@ -145,34 +105,40 @@ class _TrainDataDisplayScreenState extends State<TrainDataDisplayScreen> {
   }
 
   /// リスト表示
-  Widget _trainList() {
+  Widget _trainList({data10, data20}) {
     return ScrollablePositionedList.builder(
       itemBuilder: (context, index) {
-        return _listItem(position: index);
+        return _listItem(position: index, data10: data10, data20: data20);
       },
-      itemCount: _trainData.length,
+      itemCount: data10.length,
       itemScrollController: _itemScrollController,
       itemPositionsListener: _itemPositionsListener,
     );
   }
 
   ///
-  Widget _listItem({required int position}) {
-    _utility.makeYMDYData(_trainData[position]['date'], 0);
+  Widget _listItem(
+      {required int position, required Map data10, required List data20}) {
+    var data = _makeData(data: data10);
+    var _holidayList = _makeHolidayList(data: data20);
 
-    return (_trainData[position]['value'] == '')
+    _utility.makeYMDYData(data[position]['date'], 0);
+
+    return (data[position]['value'] == '')
         ? Row(
             children: <Widget>[
               Container(
                 width: 100,
                 margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: _utility.getBgColor(
-                      _trainData[position]['date'], _holidayList),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  color:
+                      _utility.getBgColor(data[position]['date'], _holidayList),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                  ),
                 ),
                 child: Text(
-                  '${_trainData[position]['date']}（${_utility.youbiStr}）',
+                  '${data[position]['date']}（${_utility.youbiStr}）',
                   style: const TextStyle(fontSize: 10),
                 ),
               ),
@@ -182,64 +148,97 @@ class _TrainDataDisplayScreenState extends State<TrainDataDisplayScreen> {
             ],
           )
         : Card(
-            color:
-                _utility.getBgColor(_trainData[position]['date'], _holidayList),
+            color: _utility.getBgColor(data[position]['date'], _holidayList),
             elevation: 10.0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: ListTile(
-                title: DefaultTextStyle(
-              style: const TextStyle(fontSize: 12),
-              child: Table(
-                children: [
-                  TableRow(children: [
-                    Text(
-                        '${_utility.year}-${_utility.month}-${_utility.day}（${_utility.youbiStr}）'),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('${_trainData[position]['value']}'),
-                        Row(
-                          children: <Widget>[
-                            Container(
-                              width: 80,
-                              alignment: Alignment.topCenter,
-                              child: (_trainData[position]['oufuku'] == '1')
-                                  ? const Text('＜往復＞')
-                                  : const Text('＜片道＞'),
-                            ),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.topRight,
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.3)),
-                                ),
-                                child: Text(_utility.makeCurrencyDisplay(
-                                    _trainData[position]['price'])),
+              title: DefaultTextStyle(
+                style: const TextStyle(fontSize: 12),
+                child: Table(
+                  children: [
+                    TableRow(children: [
+                      Text(
+                          '${_utility.year}-${_utility.month}-${_utility.day}（${_utility.youbiStr}）'),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('${data[position]['value']}'),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: 80,
+                                alignment: Alignment.topCenter,
+                                child: (data[position]['oufuku'] == '1')
+                                    ? const Text('＜往復＞')
+                                    : const Text('＜片道＞'),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ]),
-                ],
+                              Expanded(
+                                child: Container(
+                                  alignment: Alignment.topRight,
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.1),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.3),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    _utility.makeCurrencyDisplay(
+                                        data[position]['price']),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ]),
+                  ],
+                ),
               ),
-            )),
+            ),
           );
   }
 
   ///
-  void _goTrainDataDisplayScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const TrainDataDisplayScreen(),
-      ),
+  List _makeData({data}) {
+    List<Map<dynamic, dynamic>> _trainData = [];
+
+    data.forEach(
+      (key, value) {
+        Map _map = {};
+        _map['date'] = key;
+
+        if (value == '') {
+          _map['value'] = '';
+          _map['price'] = '';
+          _map['oufuku'] = '';
+        } else {
+          var exValue = (value).split('|');
+          _map['value'] = exValue[0];
+          _map['price'] = (exValue[1] != '') ? exValue[1] : '';
+          _map['oufuku'] = exValue[2];
+        }
+
+        _trainData.add(_map);
+      },
     );
+
+    maxNo = _trainData.length;
+
+    return _trainData;
+  }
+
+  ///
+  Map _makeHolidayList({data}) {
+    Map<String, dynamic> _holidayList = {};
+
+    for (var i = 0; i < data.length; i++) {
+      _holidayList[data[i]] = '';
+    }
+
+    return _holidayList;
   }
 }

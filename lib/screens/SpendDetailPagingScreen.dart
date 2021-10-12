@@ -1086,7 +1086,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const GoldDisplayScreen(),
+        builder: (context) => GoldDisplayScreen(),
       ),
     );
   }
@@ -1096,7 +1096,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const TrainDataDisplayScreen(),
+        builder: (context) => TrainDataDisplayScreen(),
       ),
     );
   }

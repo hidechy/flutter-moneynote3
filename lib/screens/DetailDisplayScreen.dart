@@ -37,8 +37,6 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
   Utility _utility = Utility();
   ApiData apiData = ApiData();
 
-  bool _loading = false;
-
   String _displayYear = '';
   String _displayMonth = '';
 
@@ -254,9 +252,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
     apiData.ListOfShintakuData = {};
     //>>>>>>>>>>>>>>>>>>>>>>>>
 
-    setState(() {
-      _loading = true;
-    });
+    setState(() {});
   }
 
   ///
@@ -282,12 +278,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
               ),
             ),
           ),
-          (_loading == false)
-              ? Container(
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(),
-                )
-              : _detailDisplayBox(context),
+          _detailDisplayBox(context),
         ],
       ),
     );
@@ -1137,45 +1128,50 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
 
   /// リスト表示
   Widget _monthDaysList() {
-    return ListView(
-      scrollDirection: Axis.vertical,
-      controller: _controller,
-      children: _monthDays.map<Widget>((data) {
-        var _bgColor = _utility.getBgColor(
-            '$_displayYear-$_displayMonth-${data[1]}', _holidayList);
+    return MediaQuery.removePadding(
+      removeTop: true,
+      context: context,
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        controller: _controller,
+        children: _monthDays.map<Widget>((data) {
+          var _bgColor = _utility.getBgColor(
+              '$_displayYear-$_displayMonth-${data[1]}', _holidayList);
 
-        var exDisplayDate = (_displayDate).split('-');
-        if (data[1] == exDisplayDate[2]) {
-          _bgColor = Colors.yellowAccent.withOpacity(0.3);
-        }
+          var exDisplayDate = (_displayDate).split('-');
+          if (data[1] == exDisplayDate[2]) {
+            _bgColor = Colors.yellowAccent.withOpacity(0.3);
+          }
 
-        return (data[0] == 0)
-            ? Container()
-            : Card(
-                color: _bgColor,
-                elevation: 10.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: ListTile(
-                  onTap: () => _goMonthDay(context: context, position: data[0]),
-                  title: AutoScrollTag(
-                    index: data[0],
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${data[1]}',
-                        style: const TextStyle(
-                          fontSize: 12,
+          return (data[0] == 0)
+              ? Container()
+              : Card(
+                  color: _bgColor,
+                  elevation: 10.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ListTile(
+                    onTap: () =>
+                        _goMonthDay(context: context, position: data[0]),
+                    title: AutoScrollTag(
+                      index: data[0],
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          '${data[1]}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
                         ),
                       ),
+                      key: ValueKey(data[0]),
+                      controller: _controller,
                     ),
-                    key: ValueKey(data[0]),
-                    controller: _controller,
                   ),
-                ),
-              );
-      }).toList(),
+                );
+        }).toList(),
+      ),
     );
   }
 

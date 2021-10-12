@@ -41,6 +41,8 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
 
   int _sumprice = 0;
 
+  bool _loading = false;
+
   /// 初期動作
   @override
   void initState() {
@@ -85,7 +87,9 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
 
     _selectedDiff = _total;
 
-    setState(() {});
+    setState(() {
+      _loading = true;
+    });
   }
 
   @override
@@ -132,7 +136,12 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
               ),
             ),
           ),
-          _spendDisplayBox(),
+          (_loading == false)
+              ? Container(
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(),
+                )
+              : _spendDisplayBox(),
         ],
       ),
     );
@@ -140,7 +149,7 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
 
   ///
   Widget _spendDisplayBox() {
-    int _diff = (_sumprice - _total);
+    int _diff = (_sumprice - _total) * -1;
 
     return Column(
       children: <Widget>[
@@ -152,162 +161,138 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
               color: Colors.white.withOpacity(0.3),
             ),
           ),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Table(
+          child: Container(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TableRow(children: [
-                      const Text('list total'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(
-                            _utility.makeCurrencyDisplay(_total.toString())),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      const Text('sumprice'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(
-                            _utility.makeCurrencyDisplay(_sumprice.toString())),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      const Text('diff'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(
-                            _utility.makeCurrencyDisplay(_diff.toString())),
-                      ),
-                    ]),
+                    const Text('今月の支払い'),
+                    Text(_utility.makeCurrencyDisplay(_total.toString())),
                   ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Table(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TableRow(children: [
-                      const Text('select total'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(_utility
-                            .makeCurrencyDisplay(_selectedTotal.toString())),
+                    Expanded(
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('支払い済み'),
+                            Text(_utility
+                                .makeCurrencyDisplay(_sumprice.toString())),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                       ),
-                    ]),
-                    TableRow(children: [
-                      const Text('select diff'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(_utility
-                            .makeCurrencyDisplay(_selectedDiff.toString())),
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('残金'),
+                            Text(
+                                _utility.makeCurrencyDisplay(_diff.toString())),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                       ),
-                    ]),
+                    ),
                   ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.blueAccent.withOpacity(0.3),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('selected'),
+                      Text(_utility
+                          .makeCurrencyDisplay(_selectedTotal.toString())),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('rest'),
+                      Text(_utility
+                          .makeCurrencyDisplay(_selectedDiff.toString())),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                 ),
               ),
             ],
           ),
         ),
         Row(
-          children: <Widget>[
-            SizedBox(
-              width: 100,
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.skip_previous),
-                    tooltip: '前月',
-                    onPressed: () => _goPrevMonth(context: context),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.skip_next),
-                    tooltip: '翌月',
-                    onPressed: () => _goNextMonth(context: context),
-                  ),
-                ],
-              ),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.skip_previous),
+                  tooltip: '前月',
+                  onPressed: () => _goPrevMonth(context: context),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_next),
+                  tooltip: '翌月',
+                  onPressed: () => _goNextMonth(context: context),
+                ),
+              ],
             ),
-            Expanded(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: GestureDetector(
-                          onTap: () => _goAllCreditListScreen(),
-                          child: Container(
-                            margin: const EdgeInsets.all(5),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent.withOpacity(0.3),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ),
-                            child: const Text('All Credit'),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: GestureDetector(
-                          onTap: () => _goAllCreditItemListScreen(),
-                          child: Container(
-                            margin: const EdgeInsets.all(5),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent.withOpacity(0.3),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ),
-                            child: const Text('All Credit Item'),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: GestureDetector(
-                          onTap: () => _goMonthlyCreditListScreen(),
-                          child: Container(
-                            margin: const EdgeInsets.all(5),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent.withOpacity(0.3),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ),
-                            child: const Text('Monthly List'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(FontAwesomeIcons.amazon),
-                        color: Colors.greenAccent,
-                        onPressed: () => _goAmazonPurchaseListScreen(),
-                      ),
-                      IconButton(
-                        icon: const Icon(FontAwesomeIcons.bullseye),
-                        color: Colors.greenAccent,
-                        onPressed: () => _goSeiyuuPurchaseListScreen(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.all_inbox_rounded),
+                  color: Colors.yellowAccent,
+                  onPressed: () => _goAllCreditListScreen(),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.integration_instructions_sharp),
+                  color: Colors.yellowAccent,
+                  onPressed: () => _goAllCreditItemListScreen(),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.calendar_view_month_rounded),
+                  color: Colors.yellowAccent,
+                  onPressed: () => _goMonthlyCreditListScreen(),
+                ),
+                IconButton(
+                  icon: const Icon(FontAwesomeIcons.amazon),
+                  color: Colors.greenAccent,
+                  onPressed: () => _goAmazonPurchaseListScreen(),
+                ),
+                IconButton(
+                  icon: const Icon(FontAwesomeIcons.bullseye),
+                  color: Colors.greenAccent,
+                  onPressed: () => _goSeiyuuPurchaseListScreen(),
+                ),
+              ],
             ),
           ],
         ),
