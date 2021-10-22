@@ -2,9 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:http/http.dart';
-
-import 'dart:convert';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -48,21 +45,12 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
 
   /// 初期データ作成
   void _makeDefaultDisplayData() async {
-    //------------------------------//
-
     Map zerousedate = {};
-
-    String url = "http://toyohide.work/BrainLog/api/timeplacezerousedate";
-    Map<String, String> headers = {'content-type': 'application/json'};
-    String body = json.encode({});
-    Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
-
-    if (response != null) {
-      Map data = jsonDecode(response.body);
-      zerousedate = data;
+    await apiData.getDateOfTimePlaceZeroUse();
+    if (apiData.DateOfTimePlaceZeroUse != null) {
+      zerousedate = apiData.DateOfTimePlaceZeroUse;
     }
-    //------------------------------//
+    apiData.DateOfTimePlaceZeroUse = {};
 
     //全データ取得
     await apiData.getMoneyOfAll();
@@ -306,6 +294,8 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
     }
     return _btnList;
   }
+
+////////////////////////////////////////////////////////
 
   ///
   void _goAlldayListScreen(BuildContext context) {

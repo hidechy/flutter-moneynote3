@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -274,7 +275,11 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
       switch (_summaryData[position]['item']) {
         case "credit":
           return GestureDetector(
-            onTap: () => _goCreditSpendDisplayScreen(),
+//            onTap: () => _goCreditSpendDisplayScreen(),
+            onTap: () {
+              Get.to(() => CreditSpendDisplayScreen(
+                  date: '$_selectedYear-$_selectedMonth-01'));
+            },
             child: const Icon(
               Icons.credit_card,
               color: Colors.greenAccent,
@@ -282,7 +287,11 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
           );
         case "食費":
           return GestureDetector(
-            onTap: () => _goFoodExpensesDisplayScreen(),
+//            onTap: () => _goFoodExpensesDisplayScreen(),
+            onTap: () {
+              Get.to(() => FoodExpensesDisplayScreen(
+                  year: _selectedYear, month: _selectedMonth));
+            },
             child: const Icon(
               Icons.fastfood,
               color: Colors.greenAccent,
@@ -612,25 +621,25 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
   }
 
   ///
-  void _goCreditSpendDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            CreditSpendDisplayScreen(date: '$_selectedYear-$_selectedMonth-01'),
-      ),
-    );
-  }
+// void _goCreditSpendDisplayScreen() {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) =>
+//           CreditSpendDisplayScreen(date: '$_selectedYear-$_selectedMonth-01'),
+//     ),
+//   );
+// }
 
   ///
-  void _goFoodExpensesDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => FoodExpensesDisplayScreen(
-                year: _selectedYear,
-                month: _selectedMonth,
-              )),
-    );
-  }
+// void _goFoodExpensesDisplayScreen() {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//         builder: (context) => FoodExpensesDisplayScreen(
+//               year: _selectedYear,
+//               month: _selectedMonth,
+//             )),
+//   );
+// }
 }

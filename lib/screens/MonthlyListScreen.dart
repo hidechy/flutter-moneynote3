@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -235,8 +236,14 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () =>
-                              _goMonthlySpendItemScreen(date: widget.date),
+                          // onTap: () =>
+                          //     _goMonthlySpendItemScreen(date: widget.date),
+                          onTap: () {
+                            Get.to(() => MonthlySpendItemScreen(
+                                date: widget.date,
+                                monthlyData: _monthlyData,
+                                yearmonth: _yearmonth));
+                          },
                           child: const Icon(Icons.list),
                         ),
                         const SizedBox(width: 10),
@@ -553,9 +560,14 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
               _yearmonth + '-' + _monthlyData[position]['date'], _holidayList),
           foregroundColor: Colors.blueAccent,
           icon: Icons.input,
-          onTap: () => _goOnedayInputScreen(
-              context: context,
-              date: _yearmonth + '-' + _monthlyData[position]['date']),
+          // onTap: () =>
+          //     _goOnedayInputScreen(
+          //         context: context,
+          //         date: _yearmonth + '-' + _monthlyData[position]['date']),
+          onTap: () {
+            Get.to(() => OnedayInputScreen(
+                date: '$_yearmonth-${_monthlyData[position]['date']}'));
+          },
         ),
       ],
     );
@@ -587,33 +599,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
           date: date,
           index: int.parse(_utility.day),
           detailDisplayArgs: detailDisplayArgs,
-        ),
-      ),
-    );
-  }
-
-  /// 画面遷移（OnedayInputScreen）
-  void _goOnedayInputScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OnedayInputScreen(
-          date: date,
-        ),
-      ),
-    );
-  }
-
-  ///
-  void _goMonthlySpendItemScreen({required String date}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MonthlySpendItemScreen(
-          date: date,
-          monthlyData: _monthlyData,
-          yearmonth: _yearmonth,
         ),
       ),
     );

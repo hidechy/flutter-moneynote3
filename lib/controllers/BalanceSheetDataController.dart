@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import '../models/BalanceSheet.dart';
+
 class BalanceSheetDataController extends GetxController {
   List data = [].obs;
 
@@ -33,9 +35,8 @@ class BalanceSheetDataController extends GetxController {
     var response =
         await http.post(Uri.parse(url), headers: headers, body: body);
 
-    var decoded = json.decode(response.body);
-
-    data = decoded['data'];
+    final balanceSheet = balanceSheetFromJson(response.body);
+    data = balanceSheet.data;
 
     loading(false);
   }

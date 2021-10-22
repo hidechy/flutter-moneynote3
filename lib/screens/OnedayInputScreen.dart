@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 
 import 'dart:convert';
 
@@ -310,8 +311,11 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
                           IconButton(
                             icon: const Icon(Icons.list),
                             tooltip: 'list',
-                            onPressed: () => _goMonthlyListScreen(
-                                context: context, date: _date),
+                            // onPressed: () => _goMonthlyListScreen(
+                            //     context: context, date: _date),
+                            onPressed: () {
+                              Get.to(() => MonthlyListScreen(date: _date));
+                            },
                             color: Colors.blueAccent,
                           ),
                           IconButton(
@@ -643,17 +647,17 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
   }
 
   /// 画面遷移（MonthlyListScreen）
-  void _goMonthlyListScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MonthlyListScreen(
-          date: date,
-        ),
-      ),
-    );
-  }
+  // void _goMonthlyListScreen(
+  //     {required BuildContext context, required String date}) {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => MonthlyListScreen(
+  //         date: date,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   /// 画面遷移（DetailDisplayScreen）
   void _goDetailDisplayScreen(

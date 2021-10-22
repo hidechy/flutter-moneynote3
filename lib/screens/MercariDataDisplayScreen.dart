@@ -95,7 +95,7 @@ class MercariDataDisplayScreen extends StatelessWidget {
 
   /// リストアイテム表示
   Widget _listItem({required int position, required List data}) {
-    _utility.makeYMDYData(data[position]['date'], 0);
+    _utility.makeYMDYData(data[position].date.toString(), 0);
 
     return Card(
       color: Colors.black.withOpacity(0.3),
@@ -112,17 +112,17 @@ class MercariDataDisplayScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('${data[position]['date']}（${_utility.youbiStr}）'),
+                  Text('${data[position].date}（${_utility.youbiStr}）'),
                   Text(
                     _utility.makeCurrencyDisplay(
-                      data[position]['day_total'].toString(),
+                      data[position].dayTotal.toString(),
                     ),
                   ),
                 ],
               ),
               _dispDailyItem(
-                date: data[position]['date'],
-                record: data[position]['record'],
+                date: data[position].date,
+                record: data[position].record,
               ),
               Container(
                 padding: const EdgeInsets.only(top: 10),
@@ -131,7 +131,7 @@ class MercariDataDisplayScreen extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       _utility.makeCurrencyDisplay(
-                        data[position]['total'].toString(),
+                        data[position].total.toString(),
                       ),
                     ),
                   ],

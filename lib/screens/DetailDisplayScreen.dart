@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bubble/bubble.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -16,6 +17,7 @@ import 'MonthlyListScreen.dart';
 import 'OnedayInputScreen.dart';
 import 'ScoreListScreen.dart';
 import 'InvestmentTabScreen.dart';
+import 'BankInputScreen.dart';
 
 class DetailDisplayScreen extends StatefulWidget {
   String date;
@@ -577,8 +579,9 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                 child: IconButton(
                   color: Colors.greenAccent,
                   icon: const Icon(Icons.info),
-                  onPressed: () => _goSpendDetailPagingScreen(
-                      context: context, date: _displayDate),
+                  onPressed: () {
+                    Get.to(() => SpendDetailPagingScreen(date: _displayDate));
+                  },
                 ),
               ),
             ],
@@ -829,7 +832,9 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () => _goInvestmentTabScreen(),
+                      onTap: () {
+                        Get.to(() => InvestmentTabScreen());
+                      },
                       child: const Icon(
                         Icons.comment,
                         color: Colors.greenAccent,
@@ -999,15 +1004,15 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                 //
                 //
                 //
-                // ListTile(
-                //   leading: const Icon(Icons.business),
-                //   title: const Text(
-                //     'Bank Input',
-                //     style: TextStyle(fontSize: 14),
-                //   ),
-                //   onTap: () =>
-                //       _goBankInputScreen(context: context, date: _displayDate),
-                // ),
+                ListTile(
+                  leading: const Icon(Icons.business),
+                  title: const Text(
+                    'Bank Input',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  onTap: () =>
+                      _goBankInputScreen(context: context, date: _displayDate),
+                ),
                 // ListTile(
                 //   leading: const Icon(Icons.beenhere),
                 //   title: const Text(
@@ -1044,8 +1049,11 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     'Score List',
                     style: TextStyle(fontSize: 14),
                   ),
-                  onTap: () =>
-                      _goScoreListScreen(context: context, date: _displayDate),
+                  // onTap: () =>
+                  //     _goScoreListScreen(context: context, date: _displayDate),
+                  onTap: () {
+                    Get.to(() => ScoreListScreen(date: _displayDate));
+                  },
                 ),
 
                 //
@@ -1070,8 +1078,11 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     'AllDay List',
                     style: TextStyle(fontSize: 14),
                   ),
-                  onTap: () =>
-                      _goAlldayListScreen(context: context, date: _displayDate),
+                  // onTap: () =>
+                  //     _goAlldayListScreen(context: context, date: _displayDate),
+                  onTap: () {
+                    Get.to(() => AlldayListScreen(date: _displayDate));
+                  },
                 ),
                 //
                 //
@@ -1398,16 +1409,46 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
     );
   }
 
-  ///
-  _goSpendDetailPagingScreen(
+  /// 画面遷移（BankInputScreen）
+  void _goBankInputScreen(
       {required BuildContext context, required String date}) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => SpendDetailPagingScreen(date: date),
+        builder: (context) => BankInputScreen(
+          date: date,
+        ),
       ),
     );
   }
+
+  /**
+   * 画面遷移（BenefitInputScreen）
+   */
+// void _goBenefitInputScreen({BuildContext context, String date}) {
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => BenefitInputScreen(
+//         date: date,
+//       ),
+//     ),
+//   );
+// }
+
+  /**
+   * 画面遷移（SamedayDisplayScreen）
+   */
+// void _goSamedayListScreen({BuildContext context, String date}) {
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => SamedayListScreen(
+//         date: date,
+//       ),
+//     ),
+//   );
+// }
 
   /// 画面遷移（OnedayInputScreen）
   void _goOnedayInputScreen(
@@ -1431,84 +1472,6 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
         builder: (context) => MonthlyListScreen(
           date: date,
         ),
-      ),
-    );
-  }
-
-  /**
-   * 画面遷移（BankInputScreen）
-   */
-  // void _goBankInputScreen({BuildContext context, String date}) {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => BankInputScreen(
-  //         date: date,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  /**
-   * 画面遷移（BenefitInputScreen）
-   */
-  // void _goBenefitInputScreen({BuildContext context, String date}) {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => BenefitInputScreen(
-  //         date: date,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  /// 画面遷移（ScoreListScreen）
-  void _goScoreListScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ScoreListScreen(
-          date: date,
-        ),
-      ),
-    );
-  }
-
-  /**
-   * 画面遷移（SamedayDisplayScreen）
-   */
-  // void _goSamedayListScreen({BuildContext context, String date}) {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => SamedayListScreen(
-  //         date: date,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  /// 画面遷移（AlldayListScreen）
-  void _goAlldayListScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AlldayListScreen(
-          date: date,
-        ),
-      ),
-    );
-  }
-
-  ///
-  void _goInvestmentTabScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => InvestmentTabScreen(),
       ),
     );
   }

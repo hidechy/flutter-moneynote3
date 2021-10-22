@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import '../models/MercariRecord.dart';
+
 class PurchaseDataController extends GetxController {
   List data = [].obs;
 
@@ -48,9 +50,19 @@ class PurchaseDataController extends GetxController {
     var response =
         await http.post(Uri.parse(url), headers: headers, body: body);
 
-    var decoded = json.decode(response.body);
+    switch (kind) {
+      case "AllMercariPurchaseData":
+        final mercariRecord = mercariRecordFromJson(response.body);
+        data = mercariRecord.data;
+        break;
 
-    data = decoded['data'];
+      case "DateAmazonPurchaseData":
+      case "DateSeiyuuPurchaseData":
+      case "DateSeiyuuPurchaseItemData":
+        var decoded = json.decode(response.body);
+        data = decoded['data'];
+        break;
+    }
 
     loading(false);
   }

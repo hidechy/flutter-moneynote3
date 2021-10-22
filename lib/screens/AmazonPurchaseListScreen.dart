@@ -7,6 +7,8 @@ import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
 
+import '../models/AmazonPurchaseRecord.dart';
+
 class AmazonPurchaseListScreen extends StatefulWidget {
   String date;
 
@@ -21,7 +23,7 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
   Utility _utility = Utility();
   ApiData apiData = ApiData();
 
-  List<Map<dynamic, dynamic>> _amazonPurchaseData = [];
+  List<AmazonPurchase> _amazonPurchaseData = [];
 
   int _total = 0;
 
@@ -44,12 +46,12 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
 
     await apiData.getAmazonPurchaseOfDate(date: widget.date);
     if (apiData.AmazonPurchaseOfDate != null) {
-      for (var i = 0; i < apiData.AmazonPurchaseOfDate['data'].length; i++) {
-        _amazonPurchaseData.add(apiData.AmazonPurchaseOfDate['data'][i]);
-        _total += int.parse(apiData.AmazonPurchaseOfDate['data'][i]['price']);
+      for (var i = 0; i < apiData.AmazonPurchaseOfDate.length; i++) {
+        _amazonPurchaseData.add(apiData.AmazonPurchaseOfDate[i]);
+        _total += int.parse(apiData.AmazonPurchaseOfDate[i].price);
       }
     }
-    apiData.AmazonPurchaseOfDate = {};
+    apiData.AmazonPurchaseOfDate = [];
 
     setState(() {});
   }
@@ -155,7 +157,7 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
 
   /// リストアイテム表示
   Widget _listItem({required int position}) {
-    var exDate = (_amazonPurchaseData[position]['date']).split('-');
+    var exDate = (_amazonPurchaseData[position].date.toString()).split('-');
 
     return Card(
       color: Colors.black.withOpacity(0.3),
@@ -186,17 +188,17 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('${_amazonPurchaseData[position]['date']}'),
-              Text('${_amazonPurchaseData[position]['item']}'),
+              Text('${_amazonPurchaseData[position].date}'),
+              Text('${_amazonPurchaseData[position].item}'),
               Container(
                 alignment: Alignment.topRight,
-                child: Text(_utility.makeCurrencyDisplay(
-                    _amazonPurchaseData[position]['price'])),
+                child: Text(_utility
+                    .makeCurrencyDisplay(_amazonPurchaseData[position].price)),
               ),
               Container(
                 alignment: Alignment.topRight,
                 child: Text(
-                  '${_amazonPurchaseData[position]['order_number']}',
+                  '${_amazonPurchaseData[position].orderNumber}',
                   style: TextStyle(
                     color: Colors.grey.withOpacity(0.8),
                   ),
@@ -228,6 +230,8 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
         return Colors.black;
     }
   }
+
+  //////////////////////////////////////////////////////
 
   /// 画面遷移（前年）
   void _goPrevYear({required BuildContext context}) {

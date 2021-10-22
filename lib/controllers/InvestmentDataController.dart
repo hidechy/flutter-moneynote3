@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import '../models/GoldRecord.dart';
+
 class InvestmentDataController extends GetxController {
   List data = [].obs;
 
@@ -58,9 +60,21 @@ class InvestmentDataController extends GetxController {
     var response =
         await http.post(Uri.parse(url), headers: headers, body: body);
 
-    var decoded = json.decode(response.body);
+    switch (kind) {
+      case "AllGoldData":
+        final goldRecord = goldRecordFromJson(response.body);
+        data = goldRecord.data;
+        break;
 
-    data = decoded['data'];
+      case "AllStockData":
+      case "AllStockDetailData":
+      case "AllShintakuData":
+      case "AllShintakuDetailData":
+      case "AllFundData":
+        var decoded = json.decode(response.body);
+        data = decoded['data'];
+        break;
+    }
 
     loading(false);
   }

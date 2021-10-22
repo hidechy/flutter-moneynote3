@@ -4,6 +4,10 @@ import 'package:http/http.dart';
 
 import 'dart:convert';
 
+import '../models/StockDetail.dart';
+import '../models/ShintakuDetail.dart';
+import '../models/AmazonPurchaseRecord.dart';
+
 class ApiData {
   Map<String, String> headers = {'content-type': 'application/json'};
 
@@ -127,15 +131,16 @@ class ApiData {
   }
 
   ///
-  Map AmazonPurchaseOfDate = {};
+  List AmazonPurchaseOfDate = [];
 
   Future<void> getAmazonPurchaseOfDate({String? date}) async {
     String url = "http://toyohide.work/BrainLog/api/amazonPurchaseList";
     String body = json.encode({"date": date});
     Response response =
         await post(Uri.parse(url), headers: headers, body: body);
-    AmazonPurchaseOfDate =
-        (response != null) ? jsonDecode(response.body) : null;
+
+    final amazonPurchaseRecord = amazonPurchaseRecordFromJson(response.body);
+    AmazonPurchaseOfDate = amazonPurchaseRecord.data;
   }
 
   ///
@@ -401,27 +406,29 @@ class ApiData {
   }
 
   ///
-  Map ListOfStockDetailData = {};
+  List ListOfStockDetailData = [];
 
   Future<void> getListOfStockDetailData() async {
     String url = "http://toyohide.work/BrainLog/api/getStockDetail";
     String body = json.encode({});
     Response response =
         await post(Uri.parse(url), headers: headers, body: body);
-    ListOfStockDetailData =
-        (response != null) ? jsonDecode(response.body) : null;
+
+    final stockDetail = stockDetailFromJson(response.body);
+    ListOfStockDetailData = stockDetail.data;
   }
 
   ///
-  Map ListOfShintakuDetailData = {};
+  List ListOfShintakuDetailData = [];
 
   Future<void> getListOfShintakuDetailData() async {
     String url = "http://toyohide.work/BrainLog/api/getShintakuDetail";
     String body = json.encode({});
     Response response =
         await post(Uri.parse(url), headers: headers, body: body);
-    ListOfShintakuDetailData =
-        (response != null) ? jsonDecode(response.body) : null;
+
+    final shintakuDetail = shintakuDetailFromJson(response.body);
+    ListOfShintakuDetailData = shintakuDetail.data;
   }
 
   ///

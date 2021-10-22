@@ -10,6 +10,8 @@ import '../utilities/CustomShapeClipper.dart';
 import '../controllers/InvestmentDataController.dart';
 import '../controllers/HolidayDataController.dart';
 
+import '../models/GoldRecord.dart';
+
 class GoldDisplayScreen extends StatelessWidget {
   InvestmentDataController investmentDataController = Get.put(
     InvestmentDataController(),
@@ -121,10 +123,10 @@ class GoldDisplayScreen extends StatelessWidget {
     var _holidayList = _makeHolidayList(data: data20);
 
     var date =
-        '${data[position]['year']}-${data[position]['month']}-${data[position]['day']}';
+        '${data[position].year}-${data[position].month}-${data[position].day}';
     _utility.makeYMDYData(date, 0);
 
-    return (data[position]['gold_value'] == "-")
+    return (data[position].goldValue == "-")
         ? Row(
             children: <Widget>[
               Container(
@@ -173,8 +175,8 @@ class GoldDisplayScreen extends StatelessWidget {
                                           CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
-                                            '1g　${_utility.makeCurrencyDisplay(data[position]['gold_tanka'])}'),
-                                        Text('${data[position]['diff']}'),
+                                            '1g　${_utility.makeCurrencyDisplay(data[position].goldTanka)}'),
+                                        Text('${data[position].diff}'),
                                       ],
                                     ),
                                   ),
@@ -182,7 +184,7 @@ class GoldDisplayScreen extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
                                     child: _getUpDownMark(
-                                        updown: data[position]['up_down']),
+                                        updown: data[position].upDown),
                                   ),
                                 ],
                               ),
@@ -204,21 +206,21 @@ class GoldDisplayScreen extends StatelessWidget {
                             children: [
                               Text(
                                 _utility.makeCurrencyDisplay(
-                                  data[position]['gold_value'].toString(),
+                                  data[position].goldValue.toString(),
                                 ),
                               ),
                               Text(
                                 _utility.makeCurrencyDisplay(
-                                  data[position]['pay_price'].toString(),
+                                  data[position].payPrice.toString(),
                                 ),
                               ),
                               Text(
-                                _utility.makeCurrencyDisplay((data[position]
-                                            ['gold_value'] -
-                                        data[position]['pay_price'])
-                                    .toString()),
-                                style: (data[position]['gold_value'] -
-                                            data[position]['pay_price'] >
+                                _utility.makeCurrencyDisplay(
+                                    (data[position].goldValue -
+                                            data[position].payPrice)
+                                        .toString()),
+                                style: (data[position].goldValue -
+                                            data[position].payPrice >
                                         0)
                                     ? const TextStyle(
                                         color: Colors.yellowAccent)
@@ -242,15 +244,15 @@ class GoldDisplayScreen extends StatelessWidget {
                             const Text(''),
                             Text(
                               _utility.makeCurrencyDisplay(
-                                  data[position]['gold_price']),
+                                  data[position].goldPrice),
                             ),
                             Container(
                               alignment: Alignment.topRight,
-                              child: Text('${data[position]['gram_num']}g'),
+                              child: Text('${data[position].gramNum}g'),
                             ),
                             Container(
                               alignment: Alignment.topRight,
-                              child: Text('${data[position]['total_gram']}g'),
+                              child: Text('${data[position].totalGram}g'),
                             ),
                           ],
                         ),
@@ -266,7 +268,7 @@ class GoldDisplayScreen extends StatelessWidget {
 
   ///
   List _makeData({data}) {
-    List<Map<dynamic, dynamic>> _goldData = [];
+    List<Gold> _goldData = [];
 
     for (var i = 0; i < data.length; i++) {
       _goldData.add(data[i]);

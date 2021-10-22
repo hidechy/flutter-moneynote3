@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison, non_constant_identifier_names, unused_element
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -103,7 +104,10 @@ class _SeiyuuPurchaseListScreenState extends State<SeiyuuPurchaseListScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.format_list_bulleted),
-          onPressed: () => _goSeiyuuItemListScreen(),
+//          onPressed: () => _goSeiyuuItemListScreen(),
+          onPressed: () {
+            Get.to(() => SeiyuuItemListScreen(date: widget.date));
+          },
           color: Colors.greenAccent,
         ),
         actions: <Widget>[
@@ -313,14 +317,14 @@ class _SeiyuuPurchaseListScreenState extends State<SeiyuuPurchaseListScreen> {
   }
 
   ///
-  _goSeiyuuItemListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SeiyuuItemListScreen(
-          date: widget.date,
-        ),
-      ),
-    );
-  }
+// _goSeiyuuItemListScreen() {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => SeiyuuItemListScreen(
+//         date: widget.date,
+//       ),
+//     ),
+//   );
+// }
 }

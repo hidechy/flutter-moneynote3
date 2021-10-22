@@ -30,9 +30,10 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
   /// 初期データ作成
   void _makeDefaultDisplayData() async {
     await apiData.getListOfStockDetailData();
+
     if (apiData.ListOfStockDetailData != null) {
-      for (var i = 0; i < apiData.ListOfStockDetailData['data'].length; i++) {
-        var exData = (apiData.ListOfStockDetailData['data'][i]).split(';');
+      for (var i = 0; i < apiData.ListOfStockDetailData.length; i++) {
+        var exData = (apiData.ListOfStockDetailData[i]).split(';');
 
         Map _map = {};
         _map['name'] = exData[0];
@@ -45,7 +46,7 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
         _stockDetailData.add(_map);
       }
     }
-    apiData.ListOfStockDetailData = {};
+    apiData.ListOfStockDetailData = [];
 
     setState(() {});
   }

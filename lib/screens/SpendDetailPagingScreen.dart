@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -377,7 +378,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Home Fixed Cost",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goYachinDataDisplayScreen(),
+                onTap: () {
+                  Get.to(() => YachinDataDisplayScreen());
+                },
               ),
 
               ListTile(
@@ -387,7 +390,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Duty Fixed Cost",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goDutyDataDisplayScreen(),
+                onTap: () {
+                  Get.to(() => const DutyDataDisplayScreen());
+                },
               ),
 
               const Divider(
@@ -400,7 +405,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "History Data",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goMonthlyTrendDisplayScreen(),
+                onTap: () {
+                  Get.to(() => MonthlyTrendDisplayScreen());
+                },
               ),
 
               const Divider(
@@ -412,7 +419,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Train History",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goTrainDataDisplayScreen(),
+                onTap: () {
+                  Get.to(() => TrainDataDisplayScreen());
+                },
               ),
 
               //
@@ -423,7 +432,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Gold History",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goGoldDisplayScreen(),
+                onTap: () {
+                  Get.to(() => GoldDisplayScreen());
+                },
               ),
 
               //
@@ -434,7 +445,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Fund History",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goFundDisplayScreen(),
+                onTap: () {
+                  Get.to(() => FundDataDisplayScreen());
+                },
               ),
 
               //
@@ -446,7 +459,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Mercari History",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goMercariDataDisplayScreen(),
+                onTap: () {
+                  Get.to(() => MercariDataDisplayScreen());
+                },
               ),
 
               //
@@ -458,7 +473,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "Wells Reserve",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goWellsDataDisplayScreen(),
+                onTap: () {
+                  Get.to(() => WellsDataDisplayScreen());
+                },
               ),
 
               //
@@ -470,7 +487,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   "BalanceSheet",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                onTap: () => _goBalancesheetDataDisplayScreen(),
+                onTap: () {
+                  Get.to(() => BalancesheetDataDisplayScreen());
+                },
               ),
 
               //
@@ -551,7 +570,10 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: GestureDetector(
-                onTap: () => _goSpendSummaryDisplayScreen(index: index),
+                onTap: () {
+                  Get.to(() => SpendSummaryDisplayScreen(
+                      date: '$_year-$_month-${_monthlyData[index]['date']}'));
+                },
                 child: const Icon(
                   Icons.comment,
                   color: Colors.greenAccent,
@@ -561,7 +583,10 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: GestureDetector(
-                onTap: () => _goWeeklyDataAccordionScreen(index: index),
+                onTap: () {
+                  Get.to(() => WeeklyDataAccordionScreen(
+                      date: '$_year-$_month-${_monthlyData[index]['date']}'));
+                },
                 child: const Icon(
                   FontAwesomeIcons.calendarWeek,
                   color: Colors.greenAccent,
@@ -995,38 +1020,6 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
   /////////////////////////////////////////////////////
 
-  ///
-  void _goSpendSummaryDisplayScreen({required int index}) {
-    var date = '$_year-$_month-${_monthlyData[index]['date']}';
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SpendSummaryDisplayScreen(date: date),
-      ),
-    );
-  }
-
-  ///
-  void _goDutyDataDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const DutyDataDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  void _goYachinDataDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => YachinDataDisplayScreen(),
-      ),
-    );
-  }
-
   /// 画面遷移（前日）
   void _goPrevDate({required BuildContext context}) {
     _utility.makeYMDYData(widget.date, 0);
@@ -1055,88 +1048,6 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
       MaterialPageRoute(
         builder: (context) => SpendDetailPagingScreen(
             date: '${_utility.year}-${_utility.month}-${_utility.day}'),
-      ),
-    );
-  }
-
-  ///
-  void _goWeeklyDataAccordionScreen({required int index}) {
-    var date = '$_year-$_month-${_monthlyData[index]['date']}';
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WeeklyDataAccordionScreen(date: date),
-      ),
-    );
-  }
-
-  ///
-  void _goMonthlyTrendDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MonthlyTrendDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  void _goGoldDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GoldDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  void _goTrainDataDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TrainDataDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  void _goMercariDataDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MercariDataDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  void _goFundDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FundDataDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  _goWellsDataDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WellsDataDisplayScreen(),
-      ),
-    );
-  }
-
-  ///
-  _goBalancesheetDataDisplayScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BalancesheetDataDisplayScreen(),
       ),
     );
   }

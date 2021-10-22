@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -270,27 +271,37 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
                 IconButton(
                   icon: const Icon(Icons.all_inbox_rounded),
                   color: Colors.yellowAccent,
-                  onPressed: () => _goAllCreditListScreen(),
+                  onPressed: () {
+                    Get.to(() => AllCreditListScreen(date: widget.date));
+                  },
                 ),
                 IconButton(
                   icon: const Icon(Icons.integration_instructions_sharp),
                   color: Colors.yellowAccent,
-                  onPressed: () => _goAllCreditItemListScreen(),
+                  onPressed: () {
+                    Get.to(() => AllCreditItemListScreen(date: widget.date));
+                  },
                 ),
                 IconButton(
                   icon: const Icon(Icons.calendar_view_month_rounded),
                   color: Colors.yellowAccent,
-                  onPressed: () => _goMonthlyCreditListScreen(),
+                  onPressed: () {
+                    Get.to(() => CreditMonthlyListScreen(date: widget.date));
+                  },
                 ),
                 IconButton(
                   icon: const Icon(FontAwesomeIcons.amazon),
                   color: Colors.greenAccent,
-                  onPressed: () => _goAmazonPurchaseListScreen(),
+                  onPressed: () {
+                    Get.to(() => AmazonPurchaseListScreen(date: widget.date));
+                  },
                 ),
                 IconButton(
                   icon: const Icon(FontAwesomeIcons.bullseye),
                   color: Colors.greenAccent,
-                  onPressed: () => _goSeiyuuPurchaseListScreen(),
+                  onPressed: () {
+                    Get.to(() => SeiyuuPurchaseListScreen(date: widget.date));
+                  },
                 ),
               ],
             ),
@@ -391,30 +402,6 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
 
   /////////////////////////////////////////////////////////
 
-  ///
-  void _goAllCreditListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AllCreditListScreen(
-          date: widget.date,
-        ),
-      ),
-    );
-  }
-
-  ///
-  void _goMonthlyCreditListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CreditMonthlyListScreen(
-          date: widget.date,
-        ),
-      ),
-    );
-  }
-
   /// 画面遷移（前月）
   void _goPrevMonth({required BuildContext context}) {
     _utility.makeYMDYData(_prevDate.toString(), 0);
@@ -437,36 +424,6 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
       MaterialPageRoute(
         builder: (context) => CreditSpendDisplayScreen(
             date: '${_utility.year}-${_utility.month}-${_utility.day}'),
-      ),
-    );
-  }
-
-  ///
-  void _goAllCreditItemListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AllCreditItemListScreen(date: widget.date),
-      ),
-    );
-  }
-
-  ///
-  void _goAmazonPurchaseListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AmazonPurchaseListScreen(date: widget.date),
-      ),
-    );
-  }
-
-  ///
-  void _goSeiyuuPurchaseListScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SeiyuuPurchaseListScreen(date: widget.date),
       ),
     );
   }

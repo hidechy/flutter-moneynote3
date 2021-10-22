@@ -31,11 +31,10 @@ class _InvestmentShintakuListScreenState
   /// 初期データ作成
   void _makeDefaultDisplayData() async {
     await apiData.getListOfShintakuDetailData();
+
     if (apiData.ListOfShintakuDetailData != null) {
-      for (var i = 0;
-          i < apiData.ListOfShintakuDetailData['data'].length;
-          i++) {
-        var exData = (apiData.ListOfShintakuDetailData['data'][i]).split(';');
+      for (var i = 0; i < apiData.ListOfShintakuDetailData.length; i++) {
+        var exData = (apiData.ListOfShintakuDetailData[i]).split(';');
 
         Map _map = {};
         _map['name'] = exData[0];
@@ -48,7 +47,8 @@ class _InvestmentShintakuListScreenState
         _shintakuDetailData.add(_map);
       }
     }
-    apiData.ListOfShintakuDetailData = {};
+
+    apiData.ListOfShintakuDetailData = [];
 
     setState(() {});
   }
