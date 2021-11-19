@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, use_key_in_widget_constructors, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -131,6 +132,8 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
                 ),
               ),
               const Divider(color: Colors.indigo),
+              _makeGraph(data: _stockDetailData[position]['data']),
+              const Divider(color: Colors.indigo),
               _dispDetail(data: _stockDetailData[position]['data']),
             ],
           ),
@@ -178,4 +181,73 @@ class _InvestmentStockListScreenState extends State<InvestmentStockListScreen> {
       ),
     );
   }
+
+  ///
+  Widget _makeGraph({data}) {
+    List<ChartData> _list = [];
+
+    var exData = (data).split('/');
+    for (var i = 0; i < exData.length; i++) {
+      var exValue = (exData[i]).split('|');
+
+      if (exValue[5] == "-") {
+        continue;
+      }
+
+      _utility.makeYMDYData(exValue[0], 0);
+
+      _list.add(
+        ChartData(
+          x: DateTime(
+            int.parse(_utility.year),
+            int.parse(_utility.month),
+            int.parse(_utility.day),
+          ),
+          val: _makeGraphValue(result: exValue[5]),
+        ),
+      );
+    }
+
+    return SfCartesianChart(
+      series: <ChartSeries>[
+        LineSeries<ChartData, DateTime>(
+          color: Colors.yellowAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.val,
+        ),
+      ],
+      primaryXAxis: DateTimeAxis(
+        majorGridLines: MajorGridLines(width: 0),
+      ),
+      primaryYAxis: NumericAxis(
+        majorGridLines: MajorGridLines(
+          width: 2,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  ///
+  num _makeGraphValue({result}) {
+    var x = result.substring(0, 1);
+    switch (x) {
+      case "+":
+        return (100000 +
+            int.parse(result.replaceAll('+', '').replaceAll(',', '')));
+      case "-":
+        return (100000 -
+            int.parse(result.replaceAll('-', '').replaceAll(',', '')));
+      default:
+        return 0;
+    }
+  }
+}
+
+class ChartData {
+  final DateTime x;
+  final num val;
+
+  ChartData({required this.x, required this.val});
 }

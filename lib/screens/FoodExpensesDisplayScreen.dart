@@ -140,7 +140,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
     if (apiData.SeiyuuPurchaseOfDate != null) {
       for (int i = 0; i < apiData.SeiyuuPurchaseOfDate['data'].length; i++) {
         var exDate =
-            (apiData.SeiyuuPurchaseOfDate['data'][i]['date']).split('-');
+        (apiData.SeiyuuPurchaseOfDate['data'][i]['date']).split('-');
         if (exDate[0] == widget.year && exDate[1] == widget.month) {
           _seiyuPurchase +=
               int.parse(apiData.SeiyuuPurchaseOfDate['data'][i]['price']);
@@ -244,7 +244,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
                       Container(
                         alignment: Alignment.topRight,
                         child:
-                            Text(_utility.makeCurrencyDisplay(sum.toString())),
+                        Text(_utility.makeCurrencyDisplay(sum.toString())),
                       ),
                     ]),
                   ],
@@ -267,7 +267,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
                       Container(
                         alignment: Alignment.topRight,
                         child:
-                            Text(_utility.makeCurrencyDisplay(ave.toString())),
+                        Text(_utility.makeCurrencyDisplay(ave.toString())),
                       ),
                     ]),
                     TableRow(children: [

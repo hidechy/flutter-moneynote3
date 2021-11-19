@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import '../models/HomeFix.dart';
+import '../models/DutyRecord.dart';
+
 class SummaryDataController extends GetxController {
   List data = [].obs;
 
@@ -53,9 +56,20 @@ class SummaryDataController extends GetxController {
     var response =
         await http.post(Uri.parse(url), headers: headers, body: body);
 
-    var decoded = json.decode(response.body);
+    switch (kind) {
+      case "AllHomeFixData":
+        final homeFix = homeFixFromJson(response.body);
+        data = homeFix.data;
+        break;
 
-    data = decoded['data'];
+      case "AllDutyData":
+      case "DateMonthSummaryData":
+      case "DateYearSummaryData":
+      case "DateMonthlyWeekNumData":
+        var decoded = json.decode(response.body);
+        data = decoded['data'];
+        break;
+    }
 
     loading(false);
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:vibration/vibration.dart';
 
 import 'dart:convert';
 
@@ -558,6 +559,8 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
     );
+
+    Vibration.vibrate(pattern: [500, 1000, 500, 2000]);
 
     _makeDefaultDisplayData();
   }

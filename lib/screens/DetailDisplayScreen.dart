@@ -231,6 +231,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
         }
       }
     }
+
     apiData.ListOfGoldData = {};
     //----------------------------//
 

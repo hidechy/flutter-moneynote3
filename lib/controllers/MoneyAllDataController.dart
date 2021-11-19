@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
-class MoneyDataController extends GetxController {
+class MoneyAllDataController extends GetxController {
   List data = [].obs;
 
   RxBool loading = false.obs;
@@ -15,18 +15,13 @@ class MoneyDataController extends GetxController {
 
     var url = "";
     switch (kind) {
-      case "DateMoneyData":
-        //getMoneyOfDate    //MoneyDataController->loadData('DateMoneyData', YMD);
-        url = "http://toyohide.work/BrainLog/api/moneydownload";
-        break;
-
       case "AllMoneyData":
-        //getMoneyOfAll    //MoneyDataController->loadData('AllMoneyData', null);
+        //getMoneyOfAll    //MoneyAllDataController->loadData('AllMoneyData', null);
         url = "http://toyohide.work/BrainLog/api/getAllMoney";
         break;
 
       case "AllMonthStartMoneyData":
-        //getMoneyOfMonthStart    //MoneyDataController->loadData('AllMonthStartMoneyData', null);
+        //getMoneyOfMonthStart    //MoneyAllDataController->loadData('AllMonthStartMoneyData', null);
         url = "http://toyohide.work/BrainLog/api/getmonthstartmoney";
         break;
     }

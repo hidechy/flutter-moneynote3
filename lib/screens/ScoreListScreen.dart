@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -204,7 +205,17 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   alignment: Alignment.center,
                   child: const CircularProgressIndicator(),
                 )
-              : _scoreList(),
+              : Column(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                    ),
+                    _makeGraph(),
+                    Expanded(
+                      child: _scoreList(),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
@@ -212,9 +223,13 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
   ///
   Widget _scoreList() {
-    return ListView.builder(
-      itemCount: _scoreData.length,
-      itemBuilder: (context, int position) => _listItem(position: position),
+    return MediaQuery.removePadding(
+      removeTop: true,
+      context: context,
+      child: ListView.builder(
+        itemCount: _scoreData.length,
+        itemBuilder: (context, int position) => _listItem(position: position),
+      ),
     );
   }
 
@@ -323,4 +338,55 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
 
     return bene;
   }
+
+  ///
+  Widget _makeGraph() {
+    List<ChartData> _list = [];
+
+    for (var i = 0; i < _scoreData.length; i++) {
+      if (_scoreData[i]['gain'] == "") {
+        continue;
+      }
+
+      _utility.makeYMDYData('${_scoreData[i]['month']}-01', 0);
+
+      _list.add(
+        ChartData(
+          x: DateTime(
+            int.parse(_utility.year),
+            int.parse(_utility.month),
+            int.parse(_utility.day),
+          ),
+          val: int.parse(_scoreData[i]['gain'].toString()),
+        ),
+      );
+    }
+
+    return SfCartesianChart(
+      series: <ChartSeries>[
+        LineSeries<ChartData, DateTime>(
+          color: Colors.yellowAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.val,
+        ),
+      ],
+      primaryXAxis: DateTimeAxis(
+        majorGridLines: MajorGridLines(width: 0),
+      ),
+      primaryYAxis: NumericAxis(
+        majorGridLines: MajorGridLines(
+          width: 2,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  final DateTime x;
+  final num val;
+
+  ChartData({required this.x, required this.val});
 }

@@ -52,8 +52,8 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
       }
 
       for (var i = 0;
-          i < apiData.ListOfDutyData['data']['国民年金基金'].length;
-          i++) {
+      i < apiData.ListOfDutyData['data']['国民年金基金'].length;
+      i++) {
         var exData = apiData.ListOfDutyData['data']['国民年金基金'][i].split('|');
         Map _map = {};
         _map['date'] = exData[0];
@@ -62,8 +62,8 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
       }
 
       for (var i = 0;
-          i < apiData.ListOfDutyData['data']['国民健康保険'].length;
-          i++) {
+      i < apiData.ListOfDutyData['data']['国民健康保険'].length;
+      i++) {
         var exData = apiData.ListOfDutyData['data']['国民健康保険'][i].split('|');
         Map _map = {};
         _map['date'] = exData[0];

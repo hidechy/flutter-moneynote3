@@ -15,9 +15,9 @@ class MonthlySpendItemScreen extends StatefulWidget {
 
   MonthlySpendItemScreen(
       {Key? key,
-      required this.date,
-      required this.monthlyData,
-      required this.yearmonth})
+        required this.date,
+        required this.monthlyData,
+        required this.yearmonth})
       : super(key: key);
 
   @override
@@ -166,17 +166,17 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
           ),
           (_loading == false)
               ? Container(
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(),
-                )
+            alignment: Alignment.center,
+            child: const CircularProgressIndicator(),
+          )
               : Column(
-                  children: <Widget>[
-                    _monthlySummaryList(),
-                    Expanded(
-                      child: _monthlyItemSpendList(),
-                    ),
-                  ],
-                ),
+            children: <Widget>[
+              _monthlySummaryList(),
+              Expanded(
+                child: _monthlyItemSpendList(),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -236,7 +236,7 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
           decoration: BoxDecoration(
               border: Border(
                 bottom:
-                    BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
+                BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
               ),
               color: _getRowLineBgColor(kind: exData[1])),
           child: Row(
@@ -254,17 +254,17 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
                   ),
                   (exData[0] == "credit")
                       ? GestureDetector(
-                          onTap: () =>
-                              _showAlertWindow(day: day, price: exData[2]),
-                          child: const Icon(
-                            Icons.call_made,
-                            color: Colors.greenAccent,
-                          ),
-                        )
+                    onTap: () =>
+                        _showAlertWindow(day: day, price: exData[2]),
+                    child: const Icon(
+                      Icons.call_made,
+                      color: Colors.greenAccent,
+                    ),
+                  )
                       : const Icon(
-                          Icons.check_box_outline_blank,
-                          color: Color(0xFF2e2e2e),
-                        ),
+                    Icons.check_box_outline_blank,
+                    color: Color(0xFF2e2e2e),
+                  ),
                 ],
               ),
             ],
@@ -335,7 +335,7 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
                     ),
                   ),
                   margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -348,34 +348,34 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
               ),
               (_number + 1 >= _monthlySummaryData.length)
                   ? Expanded(
-                      child: Row(
-                        children: <Widget>[
-                          Container(),
-                          Container(),
-                        ],
-                      ),
-                    )
+                child: Row(
+                  children: <Widget>[
+                    Container(),
+                    Container(),
+                  ],
+                ),
+              )
                   : Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                                color: Colors.white.withOpacity(0.3), width: 1),
-                          ),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('${_monthlySummaryData[_number + 1]['item']}'),
-                            Text(_utility.makeCurrencyDisplay(
-                                _monthlySummaryData[_number + 1]['sum']
-                                    .toString())),
-                          ],
-                        ),
-                      ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                          color: Colors.white.withOpacity(0.3), width: 1),
                     ),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('${_monthlySummaryData[_number + 1]['item']}'),
+                      Text(_utility.makeCurrencyDisplay(
+                          _monthlySummaryData[_number + 1]['sum']
+                              .toString())),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
