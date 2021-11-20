@@ -322,9 +322,13 @@ class _CalenderState extends State<Calender> {
   Future<Widget> _makeSpendSummaryData({String? date}) async {
     await apiData.getMonthSummaryOfDate(date: date);
     if (apiData.MonthSummaryOfDate != null) {
-      return ListView(
-        children:
-            _makeSpendSummaryDataRow(data: apiData.MonthSummaryOfDate['data']),
+      return MediaQuery.removePadding(
+        removeTop: true,
+        context: context,
+        child: ListView(
+          children: _makeSpendSummaryDataRow(
+              data: apiData.MonthSummaryOfDate['data']),
+        ),
       );
     } else {
       return Container();

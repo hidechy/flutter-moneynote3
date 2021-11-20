@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../utilities/utility.dart';
@@ -373,6 +374,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
       ],
       primaryXAxis: DateTimeAxis(
         majorGridLines: MajorGridLines(width: 0),
+        dateFormat: DateFormat.yMMM(),
       ),
       primaryYAxis: NumericAxis(
         majorGridLines: MajorGridLines(

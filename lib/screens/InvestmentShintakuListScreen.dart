@@ -192,7 +192,7 @@ class _InvestmentShintakuListScreenState
     List<ChartData> _list = [];
 
     var exData = (data).split('/');
-    for (var i = 0; i < exData.length; i++) {
+    for (var i = (exData.length - 30); i < exData.length; i++) {
       var exValue = (exData[i]).split('|');
 
       if (exValue[5] == "-") {
@@ -208,7 +208,8 @@ class _InvestmentShintakuListScreenState
             int.parse(_utility.month),
             int.parse(_utility.day),
           ),
-          val: _makeGraphValue(result: exValue[5]),
+          val: int.parse(exValue[4].replaceAll(',', '')),
+          pay: int.parse(exValue[3].replaceAll(',', '')),
         ),
       );
     }
@@ -220,6 +221,12 @@ class _InvestmentShintakuListScreenState
           dataSource: _list,
           xValueMapper: (ChartData data, _) => data.x,
           yValueMapper: (ChartData data, _) => data.val,
+        ),
+        LineSeries<ChartData, DateTime>(
+          color: Colors.orangeAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.pay,
         ),
       ],
       primaryXAxis: DateTimeAxis(
@@ -233,26 +240,12 @@ class _InvestmentShintakuListScreenState
       ),
     );
   }
-
-  ///
-  num _makeGraphValue({result}) {
-    var x = result.substring(0, 1);
-    switch (x) {
-      case "+":
-        return (100000 +
-            int.parse(result.replaceAll('+', '').replaceAll(',', '')));
-      case "-":
-        return (100000 -
-            int.parse(result.replaceAll('-', '').replaceAll(',', '')));
-      default:
-        return 100000;
-    }
-  }
 }
 
 class ChartData {
   final DateTime x;
   final num val;
+  final num pay;
 
-  ChartData({required this.x, required this.val});
+  ChartData({required this.x, required this.val, required this.pay});
 }

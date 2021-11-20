@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -106,13 +107,20 @@ class GoldDisplayScreen extends StatelessWidget {
 
   ///
   Widget _goldList({data10, data20}) {
-    return ScrollablePositionedList.builder(
-      itemBuilder: (context, index) {
-        return _listItem(position: index, data10: data10, data20: data20);
-      },
-      itemCount: data10.length,
-      itemScrollController: _itemScrollController,
-      itemPositionsListener: _itemPositionsListener,
+    return Column(
+      children: [
+        _makeGraph(data: data10),
+        Expanded(
+          child: ScrollablePositionedList.builder(
+            itemBuilder: (context, index) {
+              return _listItem(position: index, data10: data10, data20: data20);
+            },
+            itemCount: data10.length,
+            itemScrollController: _itemScrollController,
+            itemPositionsListener: _itemPositionsListener,
+          ),
+        ),
+      ],
     );
   }
 
@@ -311,4 +319,63 @@ class GoldDisplayScreen extends StatelessWidget {
     }
     return Container();
   }
+
+  ///
+  Widget _makeGraph({data}) {
+    List<ChartData> _list = [];
+    for (var i = (data.length - 30); i < data.length; i++) {
+      if (data[i].goldValue == "-") {
+        continue;
+      }
+
+      var date = '${data[i].year}-${data[i].month}-${data[i].day}';
+      _utility.makeYMDYData(date, 0);
+
+      _list.add(
+        ChartData(
+          x: DateTime(
+            int.parse(_utility.year),
+            int.parse(_utility.month),
+            int.parse(_utility.day),
+          ),
+          goldValue: data[i].goldValue,
+          payPrice: data[i].payPrice,
+        ),
+      );
+    }
+
+    return SfCartesianChart(
+      series: <ChartSeries>[
+        LineSeries<ChartData, DateTime>(
+          color: Colors.yellowAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.goldValue,
+        ),
+        LineSeries<ChartData, DateTime>(
+          color: Colors.orangeAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.payPrice,
+        ),
+      ],
+      primaryXAxis: DateTimeAxis(
+        majorGridLines: MajorGridLines(width: 0),
+      ),
+      primaryYAxis: NumericAxis(
+        majorGridLines: MajorGridLines(
+          width: 2,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  final DateTime x;
+  final num goldValue;
+  final num payPrice;
+
+  ChartData({required this.x, required this.goldValue, required this.payPrice});
 }
