@@ -178,8 +178,8 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('${exDate[0]}'),
-              Text('${exDate[1]}'),
+              Text(exDate[0]),
+              Text(exDate[1]),
             ],
           ),
         ),
@@ -189,7 +189,7 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text('${_amazonPurchaseData[position].date}'),
-              Text('${_amazonPurchaseData[position].item}'),
+              Text(_amazonPurchaseData[position].item),
               Container(
                 alignment: Alignment.topRight,
                 child: Text(_utility
@@ -198,7 +198,7 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
               Container(
                 alignment: Alignment.topRight,
                 child: Text(
-                  '${_amazonPurchaseData[position].orderNumber}',
+                  _amazonPurchaseData[position].orderNumber,
                   style: TextStyle(
                     color: Colors.grey.withOpacity(0.8),
                   ),

@@ -360,10 +360,10 @@ class GoldDisplayScreen extends StatelessWidget {
         ),
       ],
       primaryXAxis: DateTimeAxis(
-        majorGridLines: MajorGridLines(width: 0),
+        majorGridLines: const MajorGridLines(width: 0),
       ),
       primaryYAxis: NumericAxis(
-        majorGridLines: MajorGridLines(
+        majorGridLines: const MajorGridLines(
           width: 2,
           color: Colors.white,
         ),

@@ -208,7 +208,7 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                 )
               : Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 100,
                     ),
                     _makeGraph(),
@@ -373,11 +373,11 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
         ),
       ],
       primaryXAxis: DateTimeAxis(
-        majorGridLines: MajorGridLines(width: 0),
+        majorGridLines: const MajorGridLines(width: 0),
         dateFormat: DateFormat.yMMM(),
       ),
       primaryYAxis: NumericAxis(
-        majorGridLines: MajorGridLines(
+        majorGridLines: const MajorGridLines(
           width: 2,
           color: Colors.white,
         ),

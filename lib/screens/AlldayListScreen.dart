@@ -234,16 +234,16 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
     _utility.makeYMDYData(_alldayData[position]['date'], 0);
 
     return Container(
-      margin: EdgeInsets.only(bottom: 5),
+      margin: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
         color: _utility.getBgColor(_alldayData[position]['date'], _holidayList),
       ),
-      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: DefaultTextStyle(
-        style: TextStyle(fontSize: 12),
+        style: const TextStyle(fontSize: 12),
         child: Row(
           children: [
-            Container(
+            SizedBox(
               width: 120,
               child: Text(
                   '${_alldayData[position]['date']}（${_utility.youbiStr}）'),
@@ -346,7 +346,7 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
 
     var devide1000000 = (minimumTotal / 1000000).floor();
 
-    return Container(
+    return SizedBox(
       height: 250,
       child: SfCartesianChart(
         title: ChartTitle(text: thisYear),
@@ -360,11 +360,11 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
           ),
         ],
         primaryXAxis: DateTimeAxis(
-          majorGridLines: MajorGridLines(width: 0),
+          majorGridLines: const MajorGridLines(width: 0),
           dateFormat: DateFormat.MMM(),
         ),
         primaryYAxis: NumericAxis(
-          majorGridLines: MajorGridLines(
+          majorGridLines: const MajorGridLines(
             width: 2,
             color: Colors.white,
           ),
