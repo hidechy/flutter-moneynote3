@@ -2,8 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:vibration/vibration.dart';
+
+import 'dart:convert';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -214,6 +221,7 @@ class _BankInputScreenState extends State<BankInputScreen> {
           ),
           Column(
             children: [
+              _makeGraph(),
               _dispInputParts(context),
               _dispLastValueBox(),
               Expanded(
@@ -520,20 +528,30 @@ class _BankInputScreenState extends State<BankInputScreen> {
     }
   }
 
-  void _updateRecord({required BuildContext context}) {
-    /*
-    print(_dialogSelectedDate);
-    print(_chipValue);
-    print(_text);
+  void _updateRecord({required BuildContext context}) async {
+    Map<String, dynamic> _uploadData = {};
 
-    I/flutter (10656): 2021-10-15
-    I/flutter (10656): bank_e
-    I/flutter (10656): 100000
+    _uploadData['date'] = _dialogSelectedDate;
+    _uploadData['bank'] = _chipValue;
+    _uploadData['price'] = _text;
 
-      _text = '';
-  _teContPrice.text = '';
+    String url = "http://toyohide.work/BrainLog/api/updateBankMoney";
+    Map<String, String> headers = {'content-type': 'application/json'};
+    String body = json.encode(_uploadData);
+    await post(Uri.parse(url), headers: headers, body: body);
 
-    */
+    Fluttertoast.showToast(
+      msg: "登録が完了しました",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+
+    _text = '';
+    _teContPrice.text = '';
+
+    Vibration.vibrate(pattern: [500, 1000, 500, 2000]);
+
+    _makeDefaultDisplayData();
   }
 
   ///
@@ -542,8 +560,6 @@ class _BankInputScreenState extends State<BankInputScreen> {
 
     return Container(
       decoration: BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.all(10),
       child: Table(
         children: [
           TableRow(children: [
@@ -562,4 +578,55 @@ class _BankInputScreenState extends State<BankInputScreen> {
       ),
     );
   }
+
+  ///
+  Widget _makeGraph() {
+    List<ChartData> _list = [];
+
+    for (var i = 0; i < _bankData.length; i++) {
+      _utility.makeYMDYData(_bankData[i]['date'], 0);
+
+      _list.add(
+        ChartData(
+          x: DateTime(
+            int.parse(_utility.year),
+            int.parse(_utility.month),
+            int.parse(_utility.day),
+          ),
+          val: int.parse(_bankData[i]['value']),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 250,
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          LineSeries<ChartData, DateTime>(
+            color: Colors.yellowAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.val,
+          ),
+        ],
+        primaryXAxis: DateTimeAxis(
+          majorGridLines: const MajorGridLines(width: 0),
+          dateFormat: DateFormat.yMMM(),
+        ),
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 2,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  final DateTime x;
+  final num val;
+
+  ChartData({required this.x, required this.val});
 }

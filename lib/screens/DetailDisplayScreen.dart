@@ -796,176 +796,182 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
       return Container();
     }
 
-    return Column(
-      children: <Widget>[
-        DefaultTextStyle(
-          style: const TextStyle(fontSize: 12),
-          child: Column(
-            children: <Widget>[
-              Table(
-                children: [
-                  TableRow(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        alignment: Alignment.center,
-                        color: Colors.green[900]!.withOpacity(0.5),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 2,
-                          ),
-                          child: Text('investment'),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.topCenter,
-                      child: const Text(
-                        '(IN)',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.topCenter,
-                      child: const Text(
-                        '(OUT)',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(() => InvestmentTabScreen());
-                      },
-                      child: const Icon(
-                        Icons.comment,
-                        color: Colors.greenAccent,
-                      ),
-                    ),
-                  ]),
-                ],
-              ),
-              //
-              //
-              //
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 5),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.yellowAccent.withOpacity(0.2),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Column(
+        children: <Widget>[
+          DefaultTextStyle(
+            style: const TextStyle(fontSize: 12),
+            child: Column(
+              children: <Widget>[
+                Table(
+                  children: [
+                    TableRow(children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Container(
+                          alignment: Alignment.center,
+                          color: Colors.green[900]!.withOpacity(0.5),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 2,
+                            ),
+                            child: Text('investment'),
                           ),
                         ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          const SizedBox(
-                            width: 70,
-                            child: Text('GOLD'),
-                          ),
-                          Container(
-                            width: 60,
-                            alignment: Alignment.topRight,
-                            child: Text(_utility
-                                .makeCurrencyDisplay(_payPrice.toString())),
-                          ),
-                          Container(
-                            width: 60,
-                            alignment: Alignment.topRight,
-                            child: Text(_utility
-                                .makeCurrencyDisplay(_goldValue.toString())),
-                          ),
-                          Container(
-                            width: 80,
-                            alignment: Alignment.topRight,
-                            child: Text(_goldDate),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 5),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
-                          ),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        child: const Text(
+                          '(IN)',
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          const SizedBox(
-                            width: 70,
-                            child: Text('STOCK'),
-                          ),
-                          Container(
-                            width: 60,
-                            alignment: Alignment.topRight,
-                            child: Text(_utility.makeCurrencyDisplay(
-                                _stockData['cost'].toString())),
-                          ),
-                          Container(
-                            width: 60,
-                            alignment: Alignment.topRight,
-                            child: Text(_utility.makeCurrencyDisplay(
-                                _stockData['price'].toString())),
-                          ),
-                          Container(
-                            width: 80,
-                            alignment: Alignment.topRight,
-                            child: Text('${_stockData['date']}'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 5),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
-                          ),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        child: const Text(
+                          '(OUT)',
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          const SizedBox(
-                            width: 70,
-                            child: Text('ETF'),
-                          ),
-                          Container(
-                            width: 60,
-                            alignment: Alignment.topRight,
-                            child: Text(_utility.makeCurrencyDisplay(
-                                _shintakuData['cost'].toString())),
-                          ),
-                          Container(
-                            width: 60,
-                            alignment: Alignment.topRight,
-                            child: Text(_utility.makeCurrencyDisplay(
-                                _shintakuData['price'].toString())),
-                          ),
-                          Container(
-                            width: 80,
-                            alignment: Alignment.topRight,
-                            child: Text('${_shintakuData['date']}'),
-                          ),
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(() => InvestmentTabScreen());
+                        },
+                        child: const Icon(
+                          Icons.comment,
+                          color: Colors.greenAccent,
+                        ),
                       ),
-                    ),
+                    ]),
                   ],
                 ),
-              ),
-            ],
+                //
+                //
+                //
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            const SizedBox(
+                              width: 70,
+                              child: Text('GOLD'),
+                            ),
+                            Container(
+                              width: 60,
+                              alignment: Alignment.topRight,
+                              child: Text(_utility
+                                  .makeCurrencyDisplay(_payPrice.toString())),
+                            ),
+                            Container(
+                              width: 60,
+                              alignment: Alignment.topRight,
+                              child: Text(_utility
+                                  .makeCurrencyDisplay(_goldValue.toString())),
+                            ),
+                            Container(
+                              width: 80,
+                              alignment: Alignment.topRight,
+                              child: Text(_goldDate),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            const SizedBox(
+                              width: 70,
+                              child: Text('STOCK'),
+                            ),
+                            Container(
+                              width: 60,
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _stockData['cost'].toString())),
+                            ),
+                            Container(
+                              width: 60,
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _stockData['price'].toString())),
+                            ),
+                            Container(
+                              width: 80,
+                              alignment: Alignment.topRight,
+                              child: Text('${_stockData['date']}'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            const SizedBox(
+                              width: 70,
+                              child: Text('ETF'),
+                            ),
+                            Container(
+                              width: 60,
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _shintakuData['cost'].toString())),
+                            ),
+                            Container(
+                              width: 60,
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _shintakuData['price'].toString())),
+                            ),
+                            Container(
+                              width: 80,
+                              alignment: Alignment.topRight,
+                              child: Text('${_shintakuData['date']}'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
