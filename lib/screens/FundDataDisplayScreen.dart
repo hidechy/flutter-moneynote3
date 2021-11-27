@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -105,7 +106,16 @@ class FundDataDisplayScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('${exFunddata[0]}'),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent.withOpacity(0.3),
+                ),
+                child: Text('${exFunddata[0]}'),
+              ),
+              const Divider(color: Colors.indigo),
+              _makeGraph(data: exFunddata[1]),
               const Divider(color: Colors.indigo),
               _dispFundData(data: exFunddata[1]),
             ],
@@ -159,4 +169,54 @@ class FundDataDisplayScreen extends StatelessWidget {
       ),
     );
   }
+
+  ///
+  Widget _makeGraph({required data}) {
+    List<ChartData> _list = [];
+
+    var exData = (data).split('/');
+    for (var i = 0; i < exData.length; i++) {
+      var exLine = (exData[i]).split('|');
+
+      if (exLine[1] == '-') {
+        continue;
+      }
+
+      _utility.makeYMDYData(exLine[0], 0);
+      _list.add(ChartData(
+          x: DateTime(
+            int.parse(_utility.year),
+            int.parse(_utility.month),
+            int.parse(_utility.day),
+          ),
+          val: int.parse(exLine[1])));
+    }
+
+    return SfCartesianChart(
+      series: <ChartSeries>[
+        LineSeries<ChartData, DateTime>(
+          color: Colors.yellowAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.val,
+        ),
+      ],
+      primaryXAxis: DateTimeAxis(
+        majorGridLines: const MajorGridLines(width: 0),
+      ),
+      primaryYAxis: NumericAxis(
+        majorGridLines: const MajorGridLines(
+          width: 2,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  final DateTime x;
+  final num val;
+
+  ChartData({required this.x, required this.val});
 }
