@@ -11,6 +11,7 @@ import '../data/ApiData.dart';
 
 import 'CreditSpendDisplayScreen.dart';
 import 'FoodExpensesDisplayScreen.dart';
+import 'YearSummaryScreen.dart';
 
 class SpendSummaryDisplayScreen extends StatefulWidget {
   String date;
@@ -150,9 +151,7 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                             color: Colors.greenAccent,
                           ),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                        const SizedBox(width: 20),
                         (_selectedMonth != "")
                             ? GestureDetector(
                                 onTap: () => _showBankRecord(),
@@ -161,7 +160,13 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                                   color: Colors.greenAccent,
                                 ),
                               )
-                            : Container(),
+                            : GestureDetector(
+                                onTap: () => _goYearSummaryScreen(),
+                                child: const Icon(
+                                  Icons.select_all,
+                                  color: Colors.greenAccent,
+                                ),
+                              ),
                       ],
                     ),
                     Text(
@@ -218,9 +223,13 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
 
   ///
   Widget _summaryList() {
-    return ListView.builder(
-      itemCount: _summaryData.length,
-      itemBuilder: (context, int position) => _listItem(position: position),
+    return MediaQuery.removePadding(
+      removeTop: true,
+      context: context,
+      child: ListView.builder(
+        itemCount: _summaryData.length,
+        itemBuilder: (context, int position) => _listItem(position: position),
+      ),
     );
   }
 
@@ -616,6 +625,16 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => SpendSummaryDisplayScreen(date: '$value-01-01'),
+      ),
+    );
+  }
+
+  ///
+  void _goYearSummaryScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YearSummaryScreen(year: _selectedYear),
       ),
     );
   }
