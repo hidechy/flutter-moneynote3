@@ -108,7 +108,8 @@ class FundDataDisplayScreen extends StatelessWidget {
             children: <Widget>[
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.yellowAccent.withOpacity(0.3),
                 ),
