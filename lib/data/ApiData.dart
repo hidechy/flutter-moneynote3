@@ -466,4 +466,16 @@ class ApiData {
     ListOfYearSummaryData =
         (response != null) ? jsonDecode(response.body) : null;
   }
+
+  ///
+  Map ListOfYearCreditData = {};
+
+  Future<void> getListOfYearCreditData({String? year}) async {
+    String url = "http://toyohide.work/BrainLog/api/getYearCreditSummay";
+    String body = json.encode({"year": year});
+    Response response =
+        await post(Uri.parse(url), headers: headers, body: body);
+    ListOfYearCreditData =
+        (response != null) ? jsonDecode(response.body) : null;
+  }
 }

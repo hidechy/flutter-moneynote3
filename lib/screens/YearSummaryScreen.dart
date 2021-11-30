@@ -3,8 +3,11 @@
 import 'package:flutter/material.dart';
 
 import '../utilities/utility.dart';
+import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
+
+import 'YearCreditScreen.dart';
 
 class YearSummaryScreen extends StatefulWidget {
   final String year;
@@ -47,6 +50,8 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
   ///
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.1),
@@ -80,6 +85,19 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
         fit: StackFit.expand,
         children: [
           _utility.getBackGround(context: context),
+          ClipPath(
+            clipper: CustomShapeClipper(),
+            child: Container(
+              height: size.height * 0.7,
+              width: size.width * 0.7,
+              margin: const EdgeInsets.only(top: 5, left: 6),
+              color: Colors.yellowAccent.withOpacity(0.2),
+              child: Text(
+                '■',
+                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+              ),
+            ),
+          ),
           (_loading == false)
               ? Container(
                   alignment: Alignment.center,
@@ -104,7 +122,28 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
             children: [
               SizedBox(
                 width: 100,
-                child: Text(_midashiList[i]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(_midashiList[i]),
+                    (_midashiList[i] == "credit")
+                        ? Container(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: GestureDetector(
+                              onTap: () => _goYearCreditScreen(
+                                midashi: _midashiList[i],
+                                year: widget.year,
+                                summary: _summaryMap[_midashiList[i]],
+                              ),
+                              child: const Icon(
+                                Icons.credit_card,
+                                color: Colors.greenAccent,
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
               ),
               Expanded(
                 child: Container(
@@ -171,10 +210,13 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
         ),
         Container(
           alignment: Alignment.topRight,
-          padding: EdgeInsets.only(right: 30),
+          padding: const EdgeInsets.only(right: 30),
           child: Text(
             _utility.makeCurrencyDisplay(_total.toString()),
-            style: TextStyle(color: Colors.yellowAccent),
+            style: TextStyle(
+              color:
+                  (_total > 300000) ? Colors.pinkAccent : Colors.yellowAccent,
+            ),
           ),
         ),
       ],
@@ -203,6 +245,21 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
       MaterialPageRoute(
         builder: (context) => YearSummaryScreen(
           year: year.toString(),
+        ),
+      ),
+    );
+  }
+
+  ///
+  void _goYearCreditScreen(
+      {required String midashi, required String year, required summary}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YearCreditScreen(
+          midashi: midashi,
+          year: year,
+          summary: summary,
         ),
       ),
     );
