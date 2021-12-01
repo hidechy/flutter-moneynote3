@@ -11,8 +11,9 @@ import 'YearCreditScreen.dart';
 
 class YearSummaryScreen extends StatefulWidget {
   final String year;
+  final String month;
 
-  const YearSummaryScreen({required this.year});
+  const YearSummaryScreen({required this.year, required this.month});
 
   @override
   _YearSummaryScreenState createState() => _YearSummaryScreenState();
@@ -26,6 +27,8 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
   Map<String, dynamic> _summaryMap = {};
 
   bool _loading = false;
+
+  int _allSpend = 0;
 
   /// 初期動作
   @override
@@ -52,10 +55,13 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    var dispTitle =
+        (widget.month != '') ? '${widget.year}-${widget.month}' : widget.year;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.1),
-        title: Text(widget.year),
+        title: Text(dispTitle),
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
@@ -103,15 +109,17 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
                   alignment: Alignment.center,
                   child: const CircularProgressIndicator(),
                 )
-              : _summaryList(),
+              : _summaryList(context: context),
         ],
       ),
     );
   }
 
   ///
-  Widget _summaryList() {
+  Widget _summaryList({context}) {
     List<Widget> _list = [];
+
+    _allSpend = 0;
 
     for (var i = 0; i < _midashiList.length; i++) {
       _list.add(
@@ -163,10 +171,66 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        children: _list,
-      ),
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 100,
+                alignment: Alignment.topRight,
+                child: Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () => _goYearSummaryScreen(
+                      context: context,
+                      year: int.parse(widget.year),
+                    ),
+                    child: const Icon(
+                      Icons.refresh,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: _getMonthButtons(context: context),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(children: _list),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          alignment: Alignment.topRight,
+          padding: const EdgeInsets.only(
+            top: 5,
+            bottom: 5,
+            right: 40,
+          ),
+          decoration: BoxDecoration(
+            color: (widget.month != '')
+                ? Colors.yellowAccent.withOpacity(0.3)
+                : Colors.black.withOpacity(0.3),
+          ),
+          child: Text(
+            _utility.makeCurrencyDisplay(_allSpend.toString()),
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
+      ],
     );
   }
 
@@ -186,6 +250,11 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
             ),
+            color: (widget.month != '')
+                ? (widget.month == key)
+                    ? Colors.yellowAccent.withOpacity(0.3)
+                    : Colors.transparent
+                : Colors.transparent,
           ),
           child: Text(
             _utility.makeCurrencyDisplay(value.toString()),
@@ -197,8 +266,24 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
       if (_first == "-") {
         var atai = value.toString().substring(1);
         _total -= int.parse(atai.toString());
+
+        if (widget.month == '') {
+          _allSpend -= int.parse(atai.toString());
+        } else {
+          if (widget.month == key) {
+            _allSpend -= int.parse(atai.toString());
+          }
+        }
       } else {
         _total += int.parse(value.toString());
+
+        if (widget.month == '') {
+          _allSpend += int.parse(value.toString());
+        } else {
+          if (widget.month == key) {
+            _allSpend += int.parse(value.toString());
+          }
+        }
       }
     });
 
@@ -223,6 +308,48 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
     );
   }
 
+  ///
+  Widget _getMonthButtons({context}) {
+    List<Widget> _list3 = [];
+
+    for (var i = 1; i <= 12; i++) {
+      _list3.add(
+        GestureDetector(
+          onTap: () => _goYearSummaryScreen(
+            context: context,
+            year: int.parse(widget.year),
+            month: i.toString().padLeft(2, '0'),
+          ),
+          child: Container(
+            width: 70,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 3,
+              vertical: 5,
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                color: (widget.month != '')
+                    ? (widget.month == i.toString().padLeft(2, '0'))
+                        ? Colors.yellowAccent.withOpacity(0.3)
+                        : Colors.transparent
+                    : Colors.transparent),
+            child: Text(
+              i.toString().padLeft(2, '0'),
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      children: _list3,
+    );
+  }
+
 /////////////////////////////////////////
 
   ///
@@ -239,12 +366,13 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
 
   ///
   void _goYearSummaryScreen(
-      {required BuildContext context, required int year}) {
+      {required BuildContext context, required int year, month = ''}) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => YearSummaryScreen(
           year: year.toString(),
+          month: month,
         ),
       ),
     );

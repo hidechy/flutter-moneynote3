@@ -634,7 +634,10 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => YearSummaryScreen(year: _selectedYear),
+        builder: (context) => YearSummaryScreen(
+          year: _selectedYear,
+          month: '',
+        ),
       ),
     );
   }
