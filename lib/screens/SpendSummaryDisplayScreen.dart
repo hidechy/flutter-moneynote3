@@ -11,6 +11,7 @@ import '../data/ApiData.dart';
 
 import 'CreditSpendDisplayScreen.dart';
 import 'FoodExpensesDisplayScreen.dart';
+import 'YearSummaryCompareScreen.dart';
 import 'YearSummaryScreen.dart';
 
 class SpendSummaryDisplayScreen extends StatefulWidget {
@@ -167,6 +168,14 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                                   color: Colors.greenAccent,
                                 ),
                               ),
+                        const SizedBox(width: 20),
+                        GestureDetector(
+                          onTap: () => _goYearSummaryCompareScreen(),
+                          child: const Icon(
+                            Icons.list,
+                            color: Colors.greenAccent,
+                          ),
+                        ),
                       ],
                     ),
                     Text(
@@ -643,25 +652,12 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
   }
 
   ///
-// void _goCreditSpendDisplayScreen() {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) =>
-//           CreditSpendDisplayScreen(date: '$_selectedYear-$_selectedMonth-01'),
-//     ),
-//   );
-// }
-
-  ///
-// void _goFoodExpensesDisplayScreen() {
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(
-//         builder: (context) => FoodExpensesDisplayScreen(
-//               year: _selectedYear,
-//               month: _selectedMonth,
-//             )),
-//   );
-// }
+  void _goYearSummaryCompareScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const YearSummaryCompareScreen(),
+      ),
+    );
+  }
 }
