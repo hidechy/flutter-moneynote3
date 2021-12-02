@@ -138,11 +138,8 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
                         ? Container(
                             padding: const EdgeInsets.only(right: 10),
                             child: GestureDetector(
-                              onTap: () => _goYearCreditScreen(
-                                midashi: _midashiList[i],
-                                year: widget.year,
-                                summary: _summaryMap[_midashiList[i]],
-                              ),
+                              onTap: () =>
+                                  _goYearCreditScreen(year: widget.year),
                               child: const Icon(
                                 Icons.credit_card,
                                 color: Colors.greenAccent,
@@ -379,15 +376,13 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
   }
 
   ///
-  void _goYearCreditScreen(
-      {required String midashi, required String year, required summary}) {
+  void _goYearCreditScreen({required String year}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => YearCreditScreen(
-          midashi: midashi,
           year: year,
-          summary: summary,
+          month: '',
         ),
       ),
     );

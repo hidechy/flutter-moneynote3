@@ -8,15 +8,10 @@ import '../utilities/CustomShapeClipper.dart';
 import '../data/ApiData.dart';
 
 class YearCreditScreen extends StatefulWidget {
-  final String midashi;
   final String year;
-  Map<String, dynamic> summary = {};
+  final String month;
 
-  YearCreditScreen(
-      {Key? key,
-      required this.midashi,
-      required this.year,
-      required this.summary})
+  const YearCreditScreen({Key? key, required this.year, required this.month})
       : super(key: key);
 
   @override
@@ -31,6 +26,10 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
   Map<String, dynamic> _summaryMap = {};
 
   bool _loading = false;
+
+  Map<String, dynamic> _summaryMap2 = {};
+
+  int _allSpend = 0;
 
   /// 初期動作
   @override
@@ -47,6 +46,12 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
     _summaryMap = apiData.ListOfYearCreditData['data']['summary'];
     apiData.ListOfYearCreditData = {};
 
+    //---------------------------//
+    await apiData.getListOfYearSummaryData(year: widget.year);
+    _summaryMap2 = apiData.ListOfYearSummaryData['data']['summary'];
+    apiData.ListOfYearSummaryData = {};
+    //---------------------------//
+
     setState(() {
       _loading = true;
     });
@@ -57,10 +62,14 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    var dispTitle = (widget.month != '')
+        ? 'credit [${widget.year}-${widget.month}]'
+        : 'credit [${widget.year}]';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.1),
-        title: Text('${widget.midashi} [${widget.year}]'),
+        title: Text(dispTitle),
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
@@ -71,7 +80,20 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
         ),
         //-------------------------//これを消すと「←」が出てくる（消さない）
 
-        actions: const <Widget>[],
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.skip_previous),
+            tooltip: '前年',
+            onPressed: (widget.year == '2020')
+                ? null
+                : () => _goPrevYear(context: context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.skip_next),
+            tooltip: '翌年',
+            onPressed: () => _goNextYear(context: context),
+          ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -95,48 +117,109 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
                   alignment: Alignment.center,
                   child: const CircularProgressIndicator(),
                 )
-              : Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                      ),
-                      child: DefaultTextStyle(
-                        style: const TextStyle(fontSize: 12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: Text(widget.midashi),
-                            ),
-                            Expanded(
-                              child: Container(
-                                child: _getSummaryMonthItem(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Divider(color: Colors.white),
-                    Expanded(
-                      child: _getSummaryCreditItem(),
-                    ),
-                  ],
-                ),
+              : _summaryList(),
         ],
       ),
     );
   }
 
   ///
-  Widget _getSummaryMonthItem({midashi}) {
+  Widget _summaryList() {
+    _allSpend = 0;
+
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 100,
+                alignment: Alignment.topRight,
+                child: Container(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () => _goYearCreditScreen(
+                      context: context,
+                      year: widget.year,
+                    ),
+                    child: const Icon(
+                      Icons.refresh,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: _getMonthButtons(context: context),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(color: Colors.white),
+        Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+          ),
+          child: DefaultTextStyle(
+            style: const TextStyle(fontSize: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 100,
+                  child: Text('credit'),
+                ),
+                Expanded(
+                  child: Container(
+                    child: _getCreditMonthItem(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Divider(color: Colors.white),
+        Expanded(
+          child: _getSummaryCreditItem(),
+        ),
+        Container(
+          width: double.infinity,
+          alignment: Alignment.topRight,
+          padding: const EdgeInsets.only(
+            top: 5,
+            bottom: 5,
+            right: 40,
+          ),
+          decoration: BoxDecoration(
+            color: (widget.month != '')
+                ? Colors.yellowAccent.withOpacity(0.3)
+                : Colors.black.withOpacity(0.3),
+          ),
+          child: Text(
+            _utility.makeCurrencyDisplay(_allSpend.toString()),
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  ///
+  Widget _getCreditMonthItem({midashi}) {
     List<Widget> _list2 = [];
 
     int _total = 0;
 
-    var roopVal = (midashi == null) ? widget.summary : _summaryMap[midashi];
+    var roopVal =
+        (midashi == null) ? _summaryMap2['credit'] : _summaryMap[midashi];
 
     roopVal.forEach((key, value) {
       _list2.add(
@@ -148,6 +231,11 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
             ),
+            color: (widget.month != '')
+                ? (widget.month == key)
+                    ? Colors.yellowAccent.withOpacity(0.3)
+                    : Colors.transparent
+                : Colors.transparent,
           ),
           child: Text(
             _utility.makeCurrencyDisplay(value.toString()),
@@ -159,8 +247,28 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
       if (_first == "-") {
         var atai = value.toString().substring(1);
         _total -= int.parse(atai.toString());
+
+        if (midashi != null) {
+          if (widget.month == '') {
+            _allSpend -= int.parse(atai.toString());
+          } else {
+            if (widget.month == key) {
+              _allSpend -= int.parse(atai.toString());
+            }
+          }
+        }
       } else {
         _total += int.parse(value.toString());
+
+        if (midashi != null) {
+          if (widget.month == '') {
+            _allSpend += int.parse(value.toString());
+          } else {
+            if (widget.month == key) {
+              _allSpend += int.parse(value.toString());
+            }
+          }
+        }
       }
     });
 
@@ -176,7 +284,11 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
           child: Text(
             _utility.makeCurrencyDisplay(_total.toString()),
             style: TextStyle(
-              color: (_total > 30000) ? Colors.pinkAccent : Colors.yellowAccent,
+              color: (midashi == null)
+                  ? Colors.white
+                  : (_total > 30000)
+                      ? Colors.pinkAccent
+                      : Colors.yellowAccent,
             ),
           ),
         ),
@@ -200,7 +312,7 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
               ),
               Expanded(
                 child: Container(
-                  child: _getSummaryMonthItem(midashi: _midashiList[i]),
+                  child: _getCreditMonthItem(midashi: _midashiList[i]),
                 ),
               ),
             ],
@@ -219,6 +331,76 @@ class _YearCreditScreenState extends State<YearCreditScreen> {
     return SingleChildScrollView(
       child: Column(
         children: _list,
+      ),
+    );
+  }
+
+  ///
+  Widget _getMonthButtons({context}) {
+    List<Widget> _list3 = [];
+
+    for (var i = 1; i <= 12; i++) {
+      _list3.add(
+        GestureDetector(
+          onTap: () => _goYearCreditScreen(
+            context: context,
+            year: widget.year,
+            month: i.toString().padLeft(2, '0'),
+          ),
+          child: Container(
+            width: 70,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 3,
+              vertical: 5,
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                color: (widget.month != '')
+                    ? (widget.month == i.toString().padLeft(2, '0'))
+                        ? Colors.yellowAccent.withOpacity(0.3)
+                        : Colors.transparent
+                    : Colors.transparent),
+            child: Text(
+              i.toString().padLeft(2, '0'),
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      children: _list3,
+    );
+  }
+
+  ////////////////////////////////////////////////////////////
+
+  ///
+  void _goPrevYear({required BuildContext context}) {
+    var _year = int.parse(widget.year) - 1;
+    _goYearCreditScreen(context: context, year: _year.toString());
+  }
+
+  ///
+  void _goNextYear({required BuildContext context}) {
+    var _year = int.parse(widget.year) + 1;
+    _goYearCreditScreen(context: context, year: _year.toString());
+  }
+
+  ///
+  void _goYearCreditScreen(
+      {required BuildContext context, required String year, month = ''}) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YearCreditScreen(
+          year: year,
+          month: month,
+        ),
       ),
     );
   }
