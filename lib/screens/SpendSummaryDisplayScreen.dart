@@ -656,7 +656,9 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const YearSummaryCompareScreen(),
+        builder: (context) => YearSummaryCompareScreen(
+          year: '',
+        ),
       ),
     );
   }

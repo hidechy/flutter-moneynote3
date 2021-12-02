@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, non_constant_identifier_names
+// ignore_for_file: file_names, non_constant_identifier_names, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 
@@ -8,7 +8,9 @@ import '../utilities/CustomShapeClipper.dart';
 import '../data/ApiData.dart';
 
 class YearSummaryCompareScreen extends StatefulWidget {
-  const YearSummaryCompareScreen({Key? key}) : super(key: key);
+  final String year;
+
+  YearSummaryCompareScreen({Key? key, required this.year}) : super(key: key);
 
   @override
   _YearSummaryCompareScreenState createState() =>
@@ -26,6 +28,8 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
   final Map<String, dynamic> _yearSummaryMap = {};
 
   int _endYear = 0;
+
+  int _allSpend = 0;
 
   /// 初期動作
   @override
@@ -75,7 +79,16 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
         ),
         //-------------------------//これを消すと「←」が出てくる（消さない）
 
-        actions: const <Widget>[],
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => _goYearSummaryCompareScreen(
+              context: context,
+              year: '',
+            ),
+            color: Colors.greenAccent,
+          ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -109,6 +122,8 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
   Widget _summaryList({required BuildContext context}) {
     List<Widget> _list = [];
 
+    _allSpend = 0;
+
     for (var i = 0; i < _midashiList.length; i++) {
       _list.add(
         DefaultTextStyle(
@@ -141,13 +156,48 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
     return Column(
       children: [
         Container(
-          height: 30,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 100,
+              ),
+              Expanded(
+                child: Container(
+                  child: _getYearButtons(context: context),
+                ),
+              ),
+            ],
+          ),
         ),
+        Container(height: 10),
         Expanded(
           child: SingleChildScrollView(
             child: Column(
               children: _list,
             ),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          alignment: Alignment.topRight,
+          padding: const EdgeInsets.only(
+            top: 5,
+            bottom: 5,
+            right: 40,
+          ),
+          decoration: BoxDecoration(
+            color: (widget.year != '')
+                ? Colors.yellowAccent.withOpacity(0.3)
+                : Colors.black.withOpacity(0.3),
+          ),
+          child: Text(
+            _utility.makeCurrencyDisplay(_allSpend.toString()),
+            style: const TextStyle(fontSize: 12),
           ),
         ),
       ],
@@ -167,16 +217,35 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
           alignment: Alignment.topRight,
           margin: const EdgeInsets.all(3),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: _makeBorderColor(up_down: upDown),
-            ),
-          ),
+              border: Border.all(
+                color: _makeBorderColor(up_down: upDown),
+              ),
+              color: (i.toString() == widget.year)
+                  ? Colors.yellowAccent.withOpacity(0.3)
+                  : Colors.transparent),
           child: Text(
             _utility.makeCurrencyDisplay(
                 _yearSummaryMap[i.toString()][midashi].toString()),
           ),
         ),
       );
+
+      if (widget.year != '') {
+        var _first =
+            _yearSummaryMap[i.toString()][midashi].toString().substring(0, 1);
+        if (_first == "-") {
+          if (widget.year == i.toString()) {
+            var atai =
+                _yearSummaryMap[i.toString()][midashi].toString().substring(1);
+            _allSpend -= int.parse(atai.toString());
+          }
+        } else {
+          if (widget.year == i.toString()) {
+            _allSpend +=
+                int.parse(_yearSummaryMap[i.toString()][midashi].toString());
+          }
+        }
+      }
     }
 
     return Wrap(
@@ -230,5 +299,60 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
     });
 
     _yearSummaryMap[year] = _map;
+  }
+
+  ///
+  Widget _getYearButtons({required BuildContext context}) {
+    List<Widget> _list3 = [];
+
+    for (var i = 2020; i <= _endYear; i++) {
+      _list3.add(
+        GestureDetector(
+          onTap: () => _goYearSummaryCompareScreen(
+            context: context,
+            year: i.toString().padLeft(2, '0'),
+          ),
+          child: Container(
+            width: 70,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 3,
+              vertical: 5,
+            ),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                color: (widget.year != '')
+                    ? (widget.year == i.toString())
+                        ? Colors.yellowAccent.withOpacity(0.3)
+                        : Colors.transparent
+                    : Colors.transparent),
+            child: Text(
+              i.toString().padLeft(2, '0'),
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      children: _list3,
+    );
+  }
+
+  ///////////////////////////////////////////////////////
+
+  void _goYearSummaryCompareScreen(
+      {required BuildContext context, required String year}) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YearSummaryCompareScreen(
+          year: year,
+        ),
+      ),
+    );
   }
 }
