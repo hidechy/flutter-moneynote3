@@ -239,23 +239,35 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
 
     _summaryMap[midashi].forEach((key, value) {
       _list2.add(
-        Container(
-          width: 70,
-          alignment: Alignment.topRight,
-          margin: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+        Stack(
+          children: [
+            Container(
+              width: 70,
+              margin: const EdgeInsets.all(3),
+              child: Text(
+                key,
+                style: const TextStyle(color: Colors.white38),
+              ),
             ),
-            color: (widget.month != '')
-                ? (widget.month == key)
-                    ? Colors.yellowAccent.withOpacity(0.3)
-                    : Colors.transparent
-                : Colors.transparent,
-          ),
-          child: Text(
-            _utility.makeCurrencyDisplay(value.toString()),
-          ),
+            Container(
+              width: 70,
+              alignment: Alignment.topRight,
+              margin: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                color: (widget.month != '')
+                    ? (widget.month == key)
+                        ? Colors.yellowAccent.withOpacity(0.3)
+                        : Colors.transparent
+                    : Colors.transparent,
+              ),
+              child: Text(
+                _utility.makeCurrencyDisplay(value.toString()),
+              ),
+            ),
+          ],
         ),
       );
 

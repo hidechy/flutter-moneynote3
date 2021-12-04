@@ -1,5 +1,6 @@
-// ignore_for_file: file_names, non_constant_identifier_names, prefer_const_constructors_in_immutables
+// ignore_for_file: file_names, non_constant_identifier_names
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../utilities/utility.dart';
@@ -7,29 +8,26 @@ import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
 
-class YearSummaryCompareScreen extends StatefulWidget {
-  final String year;
-
-  YearSummaryCompareScreen({Key? key, required this.year}) : super(key: key);
+class YearCreditCompareScreen extends StatefulWidget {
+  const YearCreditCompareScreen({Key? key}) : super(key: key);
 
   @override
-  _YearSummaryCompareScreenState createState() =>
-      _YearSummaryCompareScreenState();
+  _YearCreditCompareScreenState createState() =>
+      _YearCreditCompareScreenState();
 }
 
-class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
+class _YearCreditCompareScreenState extends State<YearCreditCompareScreen> {
   final Utility _utility = Utility();
   ApiData apiData = ApiData();
 
-  List<dynamic> _midashiList = [];
+  int _endYear = 0;
 
-  bool _loading = false;
+  List<dynamic> _midashiList = [];
+  final Map<String, dynamic> _notCommonMidashi = {};
 
   final Map<String, dynamic> _yearSummaryMap = {};
 
-  int _endYear = 0;
-
-  int _allSpend = 0;
+  bool _loading = false;
 
   /// 初期動作
   @override
@@ -45,14 +43,27 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
 
     _endYear = int.parse(_utility.year);
 
+    await apiData.getListOfYearCreditCommonItemData();
+    _midashiList = apiData.ListOfYearCreditCommonItemData['data'];
+
+    apiData.ListOfYearCreditCommonItemData = {};
+
     for (var i = 2020; i <= _endYear; i++) {
-      await apiData.getListOfYearSummaryData(year: i.toString());
-      _midashiList = apiData.ListOfYearSummaryData['data']['midashi'];
+      await apiData.getListOfYearCreditData(year: i.toString());
+      _makeCommonMidashi(
+        year: i,
+        commonItem: _midashiList,
+        midashi: apiData.ListOfYearCreditData['data']['midashi'],
+      );
+
+//      _summaryMap = apiData.ListOfYearCreditData['data']['summary'];
+
       _makeYearSummaryMap(
         year: i.toString(),
-        data: apiData.ListOfYearSummaryData['data']['summary'],
+        data: apiData.ListOfYearCreditData['data']['summary'],
       );
-      apiData.ListOfYearSummaryData = {};
+
+      apiData.ListOfYearCreditData = {};
     }
 
     setState(() {
@@ -68,7 +79,7 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.1),
-        title: const Text('Year Compare'),
+        title: const Text('Credit Compare'),
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
@@ -82,9 +93,8 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => _goYearSummaryCompareScreen(
+            onPressed: () => _goYearCreditCompareScreen(
               context: context,
-              year: '',
             ),
             color: Colors.greenAccent,
           ),
@@ -119,26 +129,42 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
   }
 
   ///
+  void _makeCommonMidashi(
+      {required int year, required List commonItem, required midashi}) {
+    List _list = [];
+
+    for (var i = 0; i < midashi.length; i++) {
+      if (commonItem.contains(midashi[i])) {
+      } else {
+        _list.add(midashi[i]);
+      }
+    }
+
+    _notCommonMidashi[year.toString()] = _list;
+  }
+
+  ///
   Widget _summaryList({required BuildContext context}) {
     List<Widget> _list = [];
-
-    _allSpend = 0;
 
     for (var i = 0; i < _midashiList.length; i++) {
       _list.add(
         DefaultTextStyle(
           style: const TextStyle(fontSize: 12),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 100,
-                child: Text(_midashiList[i]),
-              ),
-              Expanded(
-                child: Container(
-                  child: _getSummaryMonthItem(midashi: _midashiList[i]),
-                ),
+              Text(_midashiList[i]),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 100),
+                  Expanded(
+                    child: Container(
+                      child: _getSummaryMonthItem(midashi: _midashiList[i]),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -178,29 +204,100 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
         Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: _list,
+              children: [
+                Column(
+                  children: _list,
+                ),
+                _dispOtherItem(),
+              ],
             ),
           ),
         ),
+        Container(height: 10),
+      ],
+    );
+  }
+
+  ///
+  Widget _dispOtherItem() {
+    List<Widget> _list4 = [];
+
+    _notCommonMidashi.forEach((key, value) {
+      _list4.add(
         Container(
           width: double.infinity,
-          alignment: Alignment.topRight,
-          padding: const EdgeInsets.only(
-            top: 5,
-            bottom: 5,
-            right: 40,
-          ),
-          decoration: BoxDecoration(
-            color: (widget.year != '')
-                ? Colors.yellowAccent.withOpacity(0.3)
-                : Colors.black.withOpacity(0.3),
-          ),
-          child: Text(
-            _utility.makeCurrencyDisplay(_allSpend.toString()),
-            style: const TextStyle(fontSize: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                decoration:
+                    BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
+                child: Text(key),
+              ),
+              _dispOtherItemRow(year: key),
+            ],
           ),
         ),
-      ],
+      );
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _list4,
+    );
+  }
+
+  ///
+  Widget _dispOtherItemRow({required String year}) {
+    List<Widget> _list5 = [];
+
+    var otherTotal = 0;
+    for (var i = 0; i < _notCommonMidashi[year].length; i++) {
+      _list5.add(
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom:
+                  BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(_notCommonMidashi[year][i]),
+              Text(_utility.makeCurrencyDisplay(_yearSummaryMap[year]
+                      [_notCommonMidashi[year][i]]
+                  .toString())),
+            ],
+          ),
+        ),
+      );
+
+      otherTotal += int.parse(
+          _yearSummaryMap[year][_notCommonMidashi[year][i]].toString());
+    }
+
+    _list5.add(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(''),
+          Text(
+            _utility.makeCurrencyDisplay(otherTotal.toString()),
+            style: const TextStyle(color: Colors.yellowAccent),
+          ),
+        ],
+      ),
+    );
+
+    return DefaultTextStyle(
+      style: const TextStyle(fontSize: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _list5,
+      ),
     );
   }
 
@@ -211,64 +308,22 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
     for (var i = 2020; i <= _endYear; i++) {
       var upDown = (i != 2020) ? _makeUpDown(year: i, midashi: midashi) : '';
 
-      var _diff = 0;
-      if (i == _endYear) {
-        var _endYearPrice = _yearSummaryMap[i.toString()][midashi];
-        var _prevYearPrice = _yearSummaryMap[(i - 1).toString()][midashi];
-
-        if (_prevYearPrice < _endYearPrice) {
-          _diff = (_endYearPrice - _prevYearPrice);
-        } else {
-          _diff = (_prevYearPrice - _endYearPrice) * -1;
-        }
-      }
-
       _list2.add(
         Container(
           width: 70,
           alignment: Alignment.topRight,
           margin: const EdgeInsets.all(3),
           decoration: BoxDecoration(
-              border: Border.all(
-                color: _makeBorderColor(up_down: upDown),
-              ),
-              color: (i.toString() == widget.year)
-                  ? Colors.yellowAccent.withOpacity(0.3)
-                  : Colors.transparent),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                _utility.makeCurrencyDisplay(
-                    _yearSummaryMap[i.toString()][midashi].toString()),
-              ),
-              (i == _endYear)
-                  ? Text(
-                      _diff.toString(),
-                      style: const TextStyle(color: Colors.grey),
-                    )
-                  : Container(),
-            ],
+            border: Border.all(
+              color: _makeBorderColor(up_down: upDown),
+            ),
+          ),
+          child: Text(
+            _utility.makeCurrencyDisplay(
+                _yearSummaryMap[i.toString()][midashi].toString()),
           ),
         ),
       );
-
-      if (widget.year != '') {
-        var _first =
-            _yearSummaryMap[i.toString()][midashi].toString().substring(0, 1);
-        if (_first == "-") {
-          if (widget.year == i.toString()) {
-            var atai =
-                _yearSummaryMap[i.toString()][midashi].toString().substring(1);
-            _allSpend -= int.parse(atai.toString());
-          }
-        } else {
-          if (widget.year == i.toString()) {
-            _allSpend +=
-                int.parse(_yearSummaryMap[i.toString()][midashi].toString());
-          }
-        }
-      }
     }
 
     return Wrap(
@@ -330,31 +385,21 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
 
     for (var i = 2020; i <= _endYear; i++) {
       _list3.add(
-        GestureDetector(
-          onTap: () => _goYearSummaryCompareScreen(
-            context: context,
-            year: i.toString().padLeft(2, '0'),
+        Container(
+          width: 70,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 3,
+            vertical: 5,
           ),
-          child: Container(
-            width: 70,
-            alignment: Alignment.center,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 3,
-              vertical: 5,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
             ),
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                ),
-                color: (widget.year != '')
-                    ? (widget.year == i.toString())
-                        ? Colors.yellowAccent.withOpacity(0.3)
-                        : Colors.transparent
-                    : Colors.transparent),
-            child: Text(
-              i.toString().padLeft(2, '0'),
-              style: const TextStyle(fontSize: 12),
-            ),
+          ),
+          child: Text(
+            i.toString().padLeft(2, '0'),
+            style: const TextStyle(fontSize: 12),
           ),
         ),
       );
@@ -365,16 +410,14 @@ class _YearSummaryCompareScreenState extends State<YearSummaryCompareScreen> {
     );
   }
 
-  ///////////////////////////////////////////////////////
+  /////////////////////////////////////////////////
 
-  void _goYearSummaryCompareScreen(
-      {required BuildContext context, required String year}) {
+  ///
+  void _goYearCreditCompareScreen({required BuildContext context}) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => YearSummaryCompareScreen(
-          year: year,
-        ),
+        builder: (context) => const YearCreditCompareScreen(),
       ),
     );
   }

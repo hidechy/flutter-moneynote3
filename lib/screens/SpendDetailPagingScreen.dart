@@ -385,7 +385,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
               ListTile(
                 leading:
-                const Icon(FontAwesomeIcons.biohazard, color: Colors.white),
+                    const Icon(FontAwesomeIcons.biohazard, color: Colors.white),
                 title: const Text(
                   "Duty Fixed Cost",
                   style: TextStyle(fontSize: 12, color: Colors.white),
@@ -400,7 +400,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
               ListTile(
                 leading:
-                const Icon(Icons.center_focus_strong, color: Colors.white),
+                    const Icon(Icons.center_focus_strong, color: Colors.white),
                 title: const Text(
                   "History Data",
                   style: TextStyle(fontSize: 12, color: Colors.white),
@@ -454,7 +454,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
               ListTile(
                 leading:
-                const Icon(FontAwesomeIcons.handshake, color: Colors.white),
+                    const Icon(FontAwesomeIcons.handshake, color: Colors.white),
                 title: const Text(
                   "Mercari History",
                   style: TextStyle(fontSize: 12, color: Colors.white),
@@ -468,7 +468,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
               ListTile(
                 leading:
-                const Icon(FontAwesomeIcons.pagelines, color: Colors.white),
+                    const Icon(FontAwesomeIcons.pagelines, color: Colors.white),
                 title: const Text(
                   "Wells Reserve",
                   style: TextStyle(fontSize: 12, color: Colors.white),
@@ -655,43 +655,43 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   (int.parse(_monthlyData[index]['strBankA']) == 0)
                       ? Container()
                       : Table(
-                    children: [
-                      TableRow(children: [
-                        _getDisplayContainer(
-                            name: 'bankA',
-                            value: _monthlyData[index]['strBankA']),
-                        _getDisplayContainer(
-                            name: 'bankB',
-                            value: _monthlyData[index]['strBankB']),
-                        _getDisplayContainer(
-                            name: 'bankC',
-                            value: _monthlyData[index]['strBankC']),
-                        _getDisplayContainer(
-                            name: 'bankD',
-                            value: _monthlyData[index]['strBankD'])
-                      ])
-                    ],
-                  ),
+                          children: [
+                            TableRow(children: [
+                              _getDisplayContainer(
+                                  name: 'bankA',
+                                  value: _monthlyData[index]['strBankA']),
+                              _getDisplayContainer(
+                                  name: 'bankB',
+                                  value: _monthlyData[index]['strBankB']),
+                              _getDisplayContainer(
+                                  name: 'bankC',
+                                  value: _monthlyData[index]['strBankC']),
+                              _getDisplayContainer(
+                                  name: 'bankD',
+                                  value: _monthlyData[index]['strBankD'])
+                            ])
+                          ],
+                        ),
                   (int.parse(_monthlyData[index]['strBankE']) == 0)
                       ? Container()
                       : Table(
-                    children: [
-                      TableRow(children: [
-                        _getDisplayContainer(
-                            name: 'bankE',
-                            value: _monthlyData[index]['strBankE']),
-                        _getDisplayContainer(
-                            name: 'bankF',
-                            value: _monthlyData[index]['strBankF']),
-                        _getDisplayContainer(
-                            name: 'bankG',
-                            value: _monthlyData[index]['strBankG']),
-                        _getDisplayContainer(
-                            name: 'bankH',
-                            value: _monthlyData[index]['strBankH'])
-                      ])
-                    ],
-                  ),
+                          children: [
+                            TableRow(children: [
+                              _getDisplayContainer(
+                                  name: 'bankE',
+                                  value: _monthlyData[index]['strBankE']),
+                              _getDisplayContainer(
+                                  name: 'bankF',
+                                  value: _monthlyData[index]['strBankF']),
+                              _getDisplayContainer(
+                                  name: 'bankG',
+                                  value: _monthlyData[index]['strBankG']),
+                              _getDisplayContainer(
+                                  name: 'bankH',
+                                  value: _monthlyData[index]['strBankH'])
+                            ])
+                          ],
+                        ),
                   const Divider(
                     color: Colors.indigo,
                     height: 20.0,
@@ -701,43 +701,43 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   (int.parse(_monthlyData[index]['strPayA']) == 0)
                       ? Container()
                       : Table(
-                    children: [
-                      TableRow(children: [
-                        _getDisplayContainer(
-                            name: 'payA',
-                            value: _monthlyData[index]['strPayA']),
-                        _getDisplayContainer(
-                            name: 'payB',
-                            value: _monthlyData[index]['strPayB']),
-                        _getDisplayContainer(
-                            name: 'payC',
-                            value: _monthlyData[index]['strPayC']),
-                        _getDisplayContainer(
-                            name: 'payD',
-                            value: _monthlyData[index]['strPayD'])
-                      ])
-                    ],
-                  ),
+                          children: [
+                            TableRow(children: [
+                              _getDisplayContainer(
+                                  name: 'payA',
+                                  value: _monthlyData[index]['strPayA']),
+                              _getDisplayContainer(
+                                  name: 'payB',
+                                  value: _monthlyData[index]['strPayB']),
+                              _getDisplayContainer(
+                                  name: 'payC',
+                                  value: _monthlyData[index]['strPayC']),
+                              _getDisplayContainer(
+                                  name: 'payD',
+                                  value: _monthlyData[index]['strPayD'])
+                            ])
+                          ],
+                        ),
                   (int.parse(_monthlyData[index]['strPayE']) == 0)
                       ? Container()
                       : Table(
-                    children: [
-                      TableRow(children: [
-                        _getDisplayContainer(
-                            name: 'payE',
-                            value: _monthlyData[index]['strPayE']),
-                        _getDisplayContainer(
-                            name: 'payF',
-                            value: _monthlyData[index]['strPayF']),
-                        _getDisplayContainer(
-                            name: 'payG',
-                            value: _monthlyData[index]['strPayG']),
-                        _getDisplayContainer(
-                            name: 'payH',
-                            value: _monthlyData[index]['strPayH'])
-                      ])
-                    ],
-                  ),
+                          children: [
+                            TableRow(children: [
+                              _getDisplayContainer(
+                                  name: 'payE',
+                                  value: _monthlyData[index]['strPayE']),
+                              _getDisplayContainer(
+                                  name: 'payF',
+                                  value: _monthlyData[index]['strPayF']),
+                              _getDisplayContainer(
+                                  name: 'payG',
+                                  value: _monthlyData[index]['strPayG']),
+                              _getDisplayContainer(
+                                  name: 'payH',
+                                  value: _monthlyData[index]['strPayH'])
+                            ])
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -853,20 +853,20 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
     return (value == null)
         ? Container()
         : Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      alignment: Alignment.topLeft,
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: oneHeight,
-            child: Text(
-              '${value[0]}',
-              style: const TextStyle(fontSize: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            alignment: Alignment.topLeft,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: oneHeight,
+                  child: Text(
+                    '${value[0]}',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   ///
@@ -877,16 +877,16 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
     return (currentPage == 0)
         ? Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 5,
-        vertical: 20,
-      ),
-      child: IconButton(
-        icon: const Icon(Icons.keyboard_arrow_left),
-        color: Colors.greenAccent,
-        onPressed: () => _goPrevDate(context: context),
-      ),
-    )
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 20,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.keyboard_arrow_left),
+              color: Colors.greenAccent,
+              onPressed: () => _goPrevDate(context: context),
+            ),
+          )
         : Container();
   }
 
@@ -898,16 +898,16 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
 
     return (currentPage == (_monthend - 1))
         ? Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 5,
-        vertical: 20,
-      ),
-      child: IconButton(
-        icon: const Icon(Icons.keyboard_arrow_right),
-        color: Colors.greenAccent,
-        onPressed: () => _goNextDate(context: context),
-      ),
-    )
+            padding: const EdgeInsets.symmetric(
+              horizontal: 5,
+              vertical: 20,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.keyboard_arrow_right),
+              color: Colors.greenAccent,
+              onPressed: () => _goNextDate(context: context),
+            ),
+          )
         : Container();
   }
 
@@ -1024,7 +1024,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
   void _goPrevDate({required BuildContext context}) {
     _utility.makeYMDYData(widget.date, 0);
     var _prevDate =
-    DateTime(int.parse(_utility.year), int.parse(_utility.month), 0);
+        DateTime(int.parse(_utility.year), int.parse(_utility.month), 0);
     _utility.makeYMDYData(_prevDate.toString(), 0);
 
     Navigator.pushReplacement(

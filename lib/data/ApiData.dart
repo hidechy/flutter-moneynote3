@@ -478,4 +478,14 @@ class ApiData {
     ListOfYearCreditData =
         (response != null) ? jsonDecode(response.body) : null;
   }
+
+  ///
+  Map ListOfYearCreditCommonItemData = {};
+
+  Future<void> getListOfYearCreditCommonItemData() async {
+    String url = "http://toyohide.work/BrainLog/api/getYearCreditCommonItem";
+    Response response = await post(Uri.parse(url), headers: headers);
+    ListOfYearCreditCommonItemData =
+        (response != null) ? jsonDecode(response.body) : null;
+  }
 }

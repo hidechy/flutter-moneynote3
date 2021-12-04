@@ -11,6 +11,7 @@ import '../data/ApiData.dart';
 
 import 'CreditSpendDisplayScreen.dart';
 import 'FoodExpensesDisplayScreen.dart';
+import 'YearCreditCompareScreen.dart';
 import 'YearSummaryCompareScreen.dart';
 import 'YearSummaryScreen.dart';
 
@@ -173,6 +174,14 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                           onTap: () => _goYearSummaryCompareScreen(),
                           child: const Icon(
                             Icons.list,
+                            color: Colors.greenAccent,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        GestureDetector(
+                          onTap: () => _goYearCreditCompareScreen(),
+                          child: const Icon(
+                            Icons.credit_card,
                             color: Colors.greenAccent,
                           ),
                         ),
@@ -659,6 +668,16 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
         builder: (context) => YearSummaryCompareScreen(
           year: '',
         ),
+      ),
+    );
+  }
+
+  ///
+  void _goYearCreditCompareScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const YearCreditCompareScreen(),
       ),
     );
   }
