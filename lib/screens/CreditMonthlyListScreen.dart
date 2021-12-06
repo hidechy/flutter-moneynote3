@@ -1,16 +1,17 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unused_local_variable, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
 
-class CreditMonthlyListScreen extends StatefulWidget {
-  String date;
+import 'CreditListPagingScreen.dart';
 
-  CreditMonthlyListScreen({Key? key, required this.date}) : super(key: key);
+class CreditMonthlyListScreen extends StatefulWidget {
+  CreditMonthlyListScreen({Key? key}) : super(key: key);
 
   @override
   _CreditMonthlyListScreenState createState() =>
@@ -24,6 +25,8 @@ class _CreditMonthlyListScreenState extends State<CreditMonthlyListScreen> {
   List<Map<dynamic, dynamic>> _monthlyCreditData = [];
 
   bool _loading = false;
+
+  final Map<String, dynamic> _creditPagingData = {};
 
   /// 初期動作
   @override
@@ -47,6 +50,10 @@ class _CreditMonthlyListScreenState extends State<CreditMonthlyListScreen> {
       var _date = '${_ym[i]}-01';
       await apiData.getUcCardSpendOfDate(date: _date);
       if (apiData.UcCardSpendOfDate != null) {
+        List listUc = [];
+        List listRakuten = [];
+        List listSumitomo = [];
+
         for (var i = 0; i < apiData.UcCardSpendOfDate['data'].length; i++) {
           _monthTotal +=
               int.parse(apiData.UcCardSpendOfDate['data'][i]['price']);
@@ -54,18 +61,31 @@ class _CreditMonthlyListScreenState extends State<CreditMonthlyListScreen> {
           if (apiData.UcCardSpendOfDate['data'][i]['kind'] == "uc") {
             _creditUc +=
                 int.parse(apiData.UcCardSpendOfDate['data'][i]['price']);
+
+            listUc.add(apiData.UcCardSpendOfDate['data'][i]);
           }
 
           if (apiData.UcCardSpendOfDate['data'][i]['kind'] == "rakuten") {
             _creditRakuten +=
                 int.parse(apiData.UcCardSpendOfDate['data'][i]['price']);
+
+            listRakuten.add(apiData.UcCardSpendOfDate['data'][i]);
           }
 
           if (apiData.UcCardSpendOfDate['data'][i]['kind'] == "sumitomo") {
             _creditSumitomo +=
                 int.parse(apiData.UcCardSpendOfDate['data'][i]['price']);
+
+            listSumitomo.add(apiData.UcCardSpendOfDate['data'][i]);
           }
         }
+
+        Map _map2 = {};
+        _map2['uc'] = listUc;
+        _map2['rakuten'] = listRakuten;
+        _map2['sumitomo'] = listSumitomo;
+
+        _creditPagingData[_date] = _map2;
       }
       apiData.UcCardSpendOfDate = {};
       ///////////////////////
@@ -191,8 +211,6 @@ class _CreditMonthlyListScreenState extends State<CreditMonthlyListScreen> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: ListTile(
-//        trailing: _getCreditTrailing(kind: _ucCardSpendData[position]['kind']),
-//        onTap: () => _addSelectedAry(position: position),
         title: DefaultTextStyle(
           style: const TextStyle(fontSize: 10.0),
           child: Column(
@@ -224,6 +242,58 @@ class _CreditMonthlyListScreenState extends State<CreditMonthlyListScreen> {
                       ),
                       child: Table(
                         children: [
+                          /*
+                          TableRow(children: [
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _goCreditListPagingScreen(
+                                    kind: 'uc',
+                                    ym: _monthlyCreditData[position]['date'],
+                                  ),
+                                  child: const Icon(
+                                      FontAwesomeIcons.ccMastercard,
+                                      color: Colors.greenAccent,
+                                      size: 20),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                    'UC　${_utility.makeCurrencyDisplay(_monthlyCreditData[position]['creditUc'].toString())}'),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _goCreditListPagingScreen(
+                                    kind: 'rakuten',
+                                    ym: _monthlyCreditData[position]['date'],
+                                  ),
+                                  child: const Icon(FontAwesomeIcons.ccJcb,
+                                      color: Colors.greenAccent, size: 20),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                    '楽天　${_utility.makeCurrencyDisplay(_monthlyCreditData[position]['creditRakuten'].toString())}'),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _goCreditListPagingScreen(
+                                    kind: 'sumitomo',
+                                    ym: _monthlyCreditData[position]['date'],
+                                  ),
+                                  child: const Icon(FontAwesomeIcons.ccVisa,
+                                      color: Colors.greenAccent, size: 20),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                    '住友　${_utility.makeCurrencyDisplay(_monthlyCreditData[position]['creditSumitomo'].toString())}'),
+                              ],
+                            ),
+                          ]),
+                          */
+
                           TableRow(children: [
                             Text(
                                 'UC　${_utility.makeCurrencyDisplay(_monthlyCreditData[position]['creditUc'].toString())}'),
@@ -240,6 +310,37 @@ class _CreditMonthlyListScreenState extends State<CreditMonthlyListScreen> {
               ),
             ],
           ),
+        ),
+        trailing: GestureDetector(
+          onTap: () => _goCreditListPagingScreen(
+            kind: 'uc',
+            ym: _monthlyCreditData[position]['date'],
+            sums: {
+              'uc': _monthlyCreditData[position]['creditUc'],
+              'rakuten': _monthlyCreditData[position]['creditRakuten'],
+              'sumitomo': _monthlyCreditData[position]['creditSumitomo']
+            },
+          ),
+          child: const Icon(FontAwesomeIcons.solidCreditCard,
+              color: Colors.greenAccent, size: 20),
+        ),
+      ),
+    );
+  }
+
+  /////////////////////////////////
+
+  ///
+  void _goCreditListPagingScreen(
+      {required String kind, required ym, required Map sums}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreditListPagingScreen(
+          ym: ym,
+          kind: kind,
+          creditPagingData: _creditPagingData['$ym-01'],
+          sums: sums,
         ),
       ),
     );
