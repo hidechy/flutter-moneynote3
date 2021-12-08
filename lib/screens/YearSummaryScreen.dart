@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -355,7 +356,9 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
         return Container(
           padding: const EdgeInsets.only(right: 10),
           child: GestureDetector(
-            onTap: () => _goYearCreditScreen(year: widget.year),
+            onTap: () {
+              Get.to(() => YearCreditScreen(year: widget.year, month: ''));
+            },
             child: const Icon(
               Icons.credit_card,
               color: Colors.greenAccent,
@@ -367,7 +370,9 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
         return Container(
           padding: const EdgeInsets.only(right: 10),
           child: GestureDetector(
-            onTap: () => _goYearHomeFixScreen(),
+            onTap: () {
+              Get.to(() => YearHomeFixScreen());
+            },
             child: const Icon(
               Icons.home,
               color: Colors.greenAccent,
@@ -404,29 +409,6 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
           year: year.toString(),
           month: month,
         ),
-      ),
-    );
-  }
-
-  ///
-  void _goYearCreditScreen({required String year}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => YearCreditScreen(
-          year: year,
-          month: '',
-        ),
-      ),
-    );
-  }
-
-  ///
-  void _goYearHomeFixScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => YearHomeFixScreen(),
       ),
     );
   }

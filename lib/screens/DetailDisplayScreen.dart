@@ -11,6 +11,7 @@ import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
 
+import 'GoldDisplayScreen.dart';
 import 'SpendDetailPagingScreen.dart';
 import 'AlldayListScreen.dart';
 import 'MonthlyListScreen.dart';
@@ -837,21 +838,32 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                           style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Get.to(() => InvestmentTabScreen());
-                        },
-                        child: const Icon(
-                          Icons.comment,
-                          color: Colors.greenAccent,
-                        ),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => GoldDisplayScreen());
+                            },
+                            child: const Icon(
+                              Icons.label,
+                              color: Colors.greenAccent,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => InvestmentTabScreen());
+                            },
+                            child: const Icon(
+                              Icons.comment,
+                              color: Colors.greenAccent,
+                            ),
+                          ),
+                        ],
                       ),
                     ]),
                   ],
                 ),
-                //
-                //
-                //
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
@@ -1001,40 +1013,20 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     'Oneday Input',
                     style: TextStyle(fontSize: 14),
                   ),
-                  onTap: () => _goOnedayInputScreen(
-                      context: context, date: _displayDate),
+                  onTap: () {
+                    Get.to(() => OnedayInputScreen(date: _displayDate));
+                  },
                 ),
-
-                //
-                //
-                //
-                //
-                //
-                //
                 ListTile(
                   leading: const Icon(Icons.business),
                   title: const Text(
                     'Bank Input',
                     style: TextStyle(fontSize: 14),
                   ),
-                  onTap: () =>
-                      _goBankInputScreen(context: context, date: _displayDate),
+                  onTap: () {
+                    Get.to(() => BankInputScreen(date: _displayDate));
+                  },
                 ),
-                // ListTile(
-                //   leading: const Icon(Icons.beenhere),
-                //   title: const Text(
-                //     'Benefit Input',
-                //     style: TextStyle(fontSize: 14),
-                //   ),
-                //   onTap: () => _goBenefitInputScreen(
-                //       context: context, date: _displayDate),
-                // ),
-                //
-                //
-                //
-                //
-                //
-
                 const Divider(
                   color: Colors.indigo,
                   height: 20.0,
@@ -1042,43 +1034,24 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                   endIndent: 20.0,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.list),
-                  title: const Text(
-                    'Monthly List',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  onTap: () => _goMonthlyListScreen(
-                      context: context, date: _displayDate),
-                ),
+                    leading: const Icon(Icons.list),
+                    title: const Text(
+                      'Monthly List',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    onTap: () {
+                      Get.to(() => MonthlyListScreen(date: _displayDate));
+                    }),
                 ListTile(
                   leading: const Icon(Icons.trending_up),
                   title: const Text(
                     'Score List',
                     style: TextStyle(fontSize: 14),
                   ),
-                  // onTap: () =>
-                  //     _goScoreListScreen(context: context, date: _displayDate),
                   onTap: () {
                     Get.to(() => ScoreListScreen(date: _displayDate));
                   },
                 ),
-
-                //
-                //
-                //
-                //
-                //
-                //
-                //
-                // ListTile(
-                //   leading: const Icon(Icons.all_inclusive),
-                //   title: const Text(
-                //     'SameDay List',
-                //     style: TextStyle(fontSize: 14),
-                //   ),
-                //   onTap: () => _goSamedayListScreen(
-                //       context: context, date: _displayDate),
-                // ),
                 ListTile(
                   leading: const Icon(Icons.all_out),
                   title: const Text(
@@ -1091,12 +1064,6 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     Get.to(() => AlldayListScreen(date: _displayDate));
                   },
                 ),
-                //
-                //
-                //
-                //
-                //
-                //
               ],
             ),
           ),
@@ -1411,73 +1378,6 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
           date: date,
           index: index,
           detailDisplayArgs: detailDisplayArgs,
-        ),
-      ),
-    );
-  }
-
-  /// 画面遷移（BankInputScreen）
-  void _goBankInputScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BankInputScreen(
-          date: date,
-        ),
-      ),
-    );
-  }
-
-  /**
-   * 画面遷移（BenefitInputScreen）
-   */
-// void _goBenefitInputScreen({BuildContext context, String date}) {
-//   Navigator.pushReplacement(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => BenefitInputScreen(
-//         date: date,
-//       ),
-//     ),
-//   );
-// }
-
-  /**
-   * 画面遷移（SamedayDisplayScreen）
-   */
-// void _goSamedayListScreen({BuildContext context, String date}) {
-//   Navigator.pushReplacement(
-//     context,
-//     MaterialPageRoute(
-//       builder: (context) => SamedayListScreen(
-//         date: date,
-//       ),
-//     ),
-//   );
-// }
-
-  /// 画面遷移（OnedayInputScreen）
-  void _goOnedayInputScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OnedayInputScreen(
-          date: date,
-        ),
-      ),
-    );
-  }
-
-  /// 画面遷移（MonthlyListScreen）
-  void _goMonthlyListScreen(
-      {required BuildContext context, required String date}) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MonthlyListScreen(
-          date: date,
         ),
       ),
     );

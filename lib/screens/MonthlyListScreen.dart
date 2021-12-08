@@ -236,8 +236,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                     Row(
                       children: [
                         GestureDetector(
-                          // onTap: () =>
-                          //     _goMonthlySpendItemScreen(date: widget.date),
                           onTap: () {
                             Get.to(() => MonthlySpendItemScreen(
                                 date: widget.date,
@@ -254,11 +252,14 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () => _goMonthlyListScreen(
-                              context: context, date: _prevMonth.toString()),
+                          onTap: () => (_prevMonth.toString() == '2019-12')
+                              ? null
+                              : _goMonthlyListScreen(
+                                  context: context,
+                                  date: _prevMonth.toString()),
                           child: const Icon(Icons.skip_previous),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 30),
                         GestureDetector(
                           onTap: () => _goMonthlyListScreen(
                               context: context, date: _nextMonth.toString()),
