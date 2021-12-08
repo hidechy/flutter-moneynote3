@@ -8,6 +8,7 @@ import '../utilities/CustomShapeClipper.dart';
 import '../data/ApiData.dart';
 
 import 'YearCreditScreen.dart';
+import 'YearHomeFixScreen.dart';
 
 class YearSummaryScreen extends StatefulWidget {
   final String year;
@@ -134,19 +135,7 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(_midashiList[i]),
-                    (_midashiList[i] == "credit")
-                        ? Container(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  _goYearCreditScreen(year: widget.year),
-                              child: const Icon(
-                                Icons.credit_card,
-                                color: Colors.greenAccent,
-                              ),
-                            ),
-                          )
-                        : Container(),
+                    _dispAdditionalIcon(midashi: _midashiList[i]),
                   ],
                 ),
               ),
@@ -359,6 +348,38 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
     );
   }
 
+  ///
+  Widget _dispAdditionalIcon({required midashi}) {
+    switch (midashi) {
+      case 'credit':
+        return Container(
+          padding: const EdgeInsets.only(right: 10),
+          child: GestureDetector(
+            onTap: () => _goYearCreditScreen(year: widget.year),
+            child: const Icon(
+              Icons.credit_card,
+              color: Colors.greenAccent,
+            ),
+          ),
+        );
+
+      case '水道光熱費':
+        return Container(
+          padding: const EdgeInsets.only(right: 10),
+          child: GestureDetector(
+            onTap: () => _goYearHomeFixScreen(),
+            child: const Icon(
+              Icons.home,
+              color: Colors.greenAccent,
+            ),
+          ),
+        );
+
+      default:
+        return Container();
+    }
+  }
+
 /////////////////////////////////////////
 
   ///
@@ -396,6 +417,16 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
           year: year,
           month: '',
         ),
+      ),
+    );
+  }
+
+  ///
+  void _goYearHomeFixScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YearHomeFixScreen(),
       ),
     );
   }

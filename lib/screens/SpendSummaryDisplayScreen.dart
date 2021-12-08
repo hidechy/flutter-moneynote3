@@ -189,7 +189,7 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                         const SizedBox(width: 20),
                         GestureDetector(
                           onTap: () => _goCreditMonthlyListScreen(),
-                          child: Icon(
+                          child: const Icon(
                             Icons.calendar_view_month_rounded,
                             color: Colors.greenAccent,
                           ),
@@ -696,7 +696,7 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CreditMonthlyListScreen(),
+        builder: (context) => const CreditMonthlyListScreen(),
       ),
     );
   }

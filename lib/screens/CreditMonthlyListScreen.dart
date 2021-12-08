@@ -11,7 +11,7 @@ import '../data/ApiData.dart';
 import 'CreditListPagingScreen.dart';
 
 class CreditMonthlyListScreen extends StatefulWidget {
-  CreditMonthlyListScreen({Key? key}) : super(key: key);
+  const CreditMonthlyListScreen({Key? key}) : super(key: key);
 
   @override
   _CreditMonthlyListScreenState createState() =>

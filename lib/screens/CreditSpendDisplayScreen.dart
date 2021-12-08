@@ -286,7 +286,7 @@ class _CreditSpendDisplayScreenState extends State<CreditSpendDisplayScreen> {
                   icon: const Icon(Icons.calendar_view_month_rounded),
                   color: Colors.yellowAccent,
                   onPressed: () {
-                    Get.to(() => CreditMonthlyListScreen());
+                    Get.to(() => const CreditMonthlyListScreen());
                   },
                 ),
                 IconButton(

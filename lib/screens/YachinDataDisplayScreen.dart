@@ -9,6 +9,8 @@ import '../utilities/CustomShapeClipper.dart';
 
 import '../controllers/SummaryDataController.dart';
 
+import 'YearHomeFixScreen.dart';
+
 class YachinDataDisplayScreen extends StatelessWidget {
   SummaryDataController summaryDataController = Get.put(
     SummaryDataController(),
@@ -32,9 +34,10 @@ class YachinDataDisplayScreen extends StatelessWidget {
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: const Icon(
-          Icons.check_box_outline_blank,
-          color: Color(0xFF2e2e2e),
+        leading: IconButton(
+          icon: const Icon(Icons.list),
+          onPressed: () => _goYearHomeFixScreen(context: context),
+          color: Colors.greenAccent,
         ),
         //-------------------------//これを消すと「←」が出てくる（消さない）
 
@@ -218,5 +221,16 @@ class YachinDataDisplayScreen extends StatelessWidget {
     }
 
     return _yachinData;
+  }
+
+  /////////////////////////////////////////////
+
+  void _goYearHomeFixScreen({context}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YearHomeFixScreen(),
+      ),
+    );
   }
 }
