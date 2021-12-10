@@ -849,7 +849,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                               color: Colors.greenAccent,
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
                               Get.to(() => InvestmentTabScreen());

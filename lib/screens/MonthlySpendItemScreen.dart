@@ -88,8 +88,6 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
         _creditDateDataMap[_creditDays[i]] = _creditDateData;
       }
 
-      print(_creditDateDataMap);
-
       apiData.ListOfCreditDateData = {};
     }
     ///////////////////////////////////////////////////////

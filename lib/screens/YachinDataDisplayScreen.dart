@@ -9,8 +9,6 @@ import '../utilities/CustomShapeClipper.dart';
 
 import '../controllers/SummaryDataController.dart';
 
-import 'YearHomeFixScreen.dart';
-
 class YachinDataDisplayScreen extends StatelessWidget {
   SummaryDataController summaryDataController = Get.put(
     SummaryDataController(),
@@ -34,10 +32,9 @@ class YachinDataDisplayScreen extends StatelessWidget {
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: IconButton(
-          icon: const Icon(Icons.list),
-          onPressed: () => _goYearHomeFixScreen(context: context),
-          color: Colors.greenAccent,
+        leading: const Icon(
+          Icons.check_box_outline_blank,
+          color: Color(0xFF2e2e2e),
         ),
         //-------------------------//これを消すと「←」が出てくる（消さない）
 
@@ -101,6 +98,11 @@ class YachinDataDisplayScreen extends StatelessWidget {
   /// リストアイテム表示
   Widget _listItem({required int position, required List data2}) {
     var data = _makeData(data: data2);
+
+    int _total = _getYmTotal(
+      position: position,
+      data: data,
+    );
 
     return Card(
       color: Colors.black.withOpacity(0.3),
@@ -193,6 +195,13 @@ class YachinDataDisplayScreen extends StatelessWidget {
                   Text('${data[position]['suidou']}')
                 ],
               ),
+              Container(
+                alignment: Alignment.topRight,
+                child: Text(
+                  _utility.makeCurrencyDisplay(_total.toString()),
+                  style: const TextStyle(color: Colors.yellowAccent),
+                ),
+              ),
             ],
           ),
         ),
@@ -223,14 +232,59 @@ class YachinDataDisplayScreen extends StatelessWidget {
     return _yachinData;
   }
 
-  /////////////////////////////////////////////
+  ///
+  int _getYmTotal({required int position, required data}) {
+    RegExp reg = RegExp("(.+) ((.+))");
+    int _total = 0;
 
-  void _goYearHomeFixScreen({context}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => YearHomeFixScreen(),
-      ),
-    );
+    var exVal1 = (data[position]['yachin']).split(' / ');
+    for (var j = 0; j < exVal1.length; j++) {
+      var match = reg.firstMatch(exVal1[j]);
+      if (match != null) {
+        _total += int.parse(match.group(1).toString().replaceAll(',', ''));
+      }
+    }
+
+    var exVal2 = (data[position]['wifi']).split(' / ');
+    for (var j = 0; j < exVal2.length; j++) {
+      var match = reg.firstMatch(exVal2[j]);
+      if (match != null) {
+        _total += int.parse(match.group(1).toString().replaceAll(',', ''));
+      }
+    }
+
+    var exVal3 = (data[position]['mobile']).split(' / ');
+    for (var j = 0; j < exVal3.length; j++) {
+      var match = reg.firstMatch(exVal3[j]);
+      if (match != null) {
+        _total += int.parse(match.group(1).toString().replaceAll(',', ''));
+      }
+    }
+
+    var exVal4 = (data[position]['denki']).split(' / ');
+    for (var j = 0; j < exVal4.length; j++) {
+      var match = reg.firstMatch(exVal4[j]);
+      if (match != null) {
+        _total += int.parse(match.group(1).toString().replaceAll(',', ''));
+      }
+    }
+
+    var exVal5 = (data[position]['gas']).split(' / ');
+    for (var j = 0; j < exVal5.length; j++) {
+      var match = reg.firstMatch(exVal5[j]);
+      if (match != null) {
+        _total += int.parse(match.group(1).toString().replaceAll(',', ''));
+      }
+    }
+
+    var exVal6 = (data[position]['suidou']).split(' / ');
+    for (var j = 0; j < exVal6.length; j++) {
+      var match = reg.firstMatch(exVal6[j]);
+      if (match != null) {
+        _total += int.parse(match.group(1).toString().replaceAll(',', ''));
+      }
+    }
+
+    return _total;
   }
 }

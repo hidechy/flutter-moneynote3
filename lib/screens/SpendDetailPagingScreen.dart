@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:moneynote5/screens/YearHomeFixScreen.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -19,7 +20,6 @@ import 'SpendSummaryDisplayScreen.dart';
 import 'TrainDataDisplayScreen.dart';
 import 'WeeklyDataAccordionScreen.dart';
 import 'WellsDataDisplayScreen.dart';
-import 'YachinDataDisplayScreen.dart';
 
 class SpendDetailPagingScreen extends StatefulWidget {
   String date;
@@ -375,11 +375,11 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
               ListTile(
                 leading: const Icon(FontAwesomeIcons.home, color: Colors.white),
                 title: const Text(
-                  "Home Fixed Cost",
+                  "Year Home Fix",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
                 onTap: () {
-                  Get.to(() => YachinDataDisplayScreen());
+                  Get.to(() => const YearHomeFixScreen());
                 },
               ),
 
@@ -387,7 +387,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                 leading:
                     const Icon(FontAwesomeIcons.biohazard, color: Colors.white),
                 title: const Text(
-                  "Duty Fixed Cost",
+                  "Year Duty Fix",
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
                 onTap: () {

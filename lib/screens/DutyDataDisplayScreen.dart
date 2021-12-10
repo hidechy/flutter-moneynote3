@@ -1,5 +1,6 @@
 // ignore_for_file: file_names
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../utilities/utility.dart';
@@ -19,9 +20,11 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
   ApiData apiData = ApiData();
 
   final List<String> _midashiList = [];
-  Map<dynamic, dynamic> _dutyDataMap = {};
+  final Map<dynamic, dynamic> _dutyDataMap = {};
 
   bool _loading = false;
+
+  int _endYear = 0;
 
   /// 初期動作
   @override
@@ -33,6 +36,10 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
 
   /// 初期データ作成
   void _makeDefaultDisplayData() async {
+    _utility.makeYMDYData(DateTime.now().toString(), 0);
+
+    _endYear = int.parse(_utility.year);
+
     _midashiList.add('所得税');
     _midashiList.add('住民税');
     _midashiList.add('年金');
@@ -40,8 +47,38 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
     _midashiList.add('国民健康保険');
 
     await apiData.getListOfDutyData();
-    _dutyDataMap = apiData.ListOfDutyData['data'];
+    var data = apiData.ListOfDutyData['data'];
     apiData.ListOfDutyData = {};
+
+    List _list = [];
+    for (var i = 0; i < _midashiList.length; i++) {
+      Map _map2 = {};
+      for (var j = 2020; j <= _endYear; j++) {
+        _list = [];
+        data[_midashiList[i]].forEach((value) {
+          var exValue = (value).split('|');
+          var exDate = (exValue[0]).split('-');
+          if (exDate[0] == j.toString()) {
+            Map _map = {};
+            _map['date'] = exValue[0];
+            _map['price'] = exValue[1];
+            _list.add(_map);
+          }
+        });
+        _map2[j.toString()] = _list;
+      }
+      _dutyDataMap[_midashiList[i]] = _map2;
+    }
+
+//    print(_dutyDataMap);
+
+/*
+    I/flutter ( 7491): {所得税: {
+    2020: [{date: 2020-10-07, price: 137700}],
+    2021: [{date: 2021-05-31, price: 196900}, {date: 2021-08-02, price: 65600},
+    {date: 2021-11-30, price: 65600}]},
+
+    */
 
     setState(() {
       _loading = true;
@@ -56,18 +93,23 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.1),
-        title: const Text('Duty Fixed Cost'),
+        title: const Text('Year Duty Fix'),
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.greenAccent,
+        leading: const Icon(
+          Icons.check_box_outline_blank,
+          color: Color(0xFF2e2e2e),
         ),
         //-------------------------//これを消すと「←」が出てくる（消さない）
 
-        actions: const <Widget>[],
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.pop(context),
+            color: Colors.greenAccent,
+          ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -91,70 +133,79 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
                   alignment: Alignment.center,
                   child: const CircularProgressIndicator(),
                 )
-              : _dutyList(context: context),
+              : _summaryList(context: context),
         ],
       ),
     );
   }
 
   ///
-  Widget _dutyList({context}) {
+  Widget _summaryList({required BuildContext context}) {
     List<Widget> _list = [];
 
-    for (var i = 0; i < _midashiList.length; i++) {
-      _list.add(
-        DefaultTextStyle(
-          style: const TextStyle(fontSize: 12),
-          child: Column(
+    for (var i = 2020; i <= _endYear; i++) {
+      List<Widget> _list2 = [];
+      for (var j = 0; j < _midashiList.length; j++) {
+        _list2.add(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(_midashiList[i]),
-              Container(
-                height: 100,
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+              Text(
+                _midashiList[j],
+                style: const TextStyle(fontSize: 12),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 50,
                   ),
-                ),
-                // child: ListView(
-                //   children: _makeDutyItemList(midashi: _midashiList[i]),
-                // ),
-                child: _makeDutyItemList(midashi: _midashiList[i]),
+                  Expanded(
+                    child: Container(
+                      child: _getSummaryMonthItem(
+                        year: i.toString(),
+                        midashi: _midashiList[j],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ),
-      );
-    }
+        );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(children: _list),
+        _list2.add(
+          const Divider(
+            color: Colors.white,
+            height: 10,
           ),
-        ),
-      ],
-    );
-  }
-
-  ///
-  Widget _makeDutyItemList({required String midashi}) {
-    List<Widget> _list = [];
-
-    for (var i = 0; i < _dutyDataMap[midashi].length; i++) {
-      var exValue = (_dutyDataMap[midashi][i]).split('|');
+        );
+      }
 
       _list.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(exValue[0]),
-            Text(exValue[1]),
-          ],
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                alignment: Alignment.topCenter,
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(2),
+                decoration:
+                    BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
+                child: Text(i.toString()),
+              ),
+              Column(
+                children: _list2,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -163,6 +214,72 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
       child: Column(
         children: _list,
       ),
+    );
+  }
+
+  ///
+  Widget _getSummaryMonthItem({required String year, required midashi}) {
+    List<Widget> _list2 = [];
+
+    int _sum = 0;
+
+    if (_dutyDataMap[midashi][year] != null) {
+      for (var i = 0; i < _dutyDataMap[midashi][year].length; i++) {
+        _list2.add(
+          Container(
+            width: 70,
+            margin: const EdgeInsets.all(1),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    _dutyDataMap[midashi][year][i]['price'],
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+                Text(
+                  _dutyDataMap[midashi][year][i]['date'],
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        var value =
+            (_dutyDataMap[midashi][year][i]['price']).replaceAll(',', '');
+        _sum += int.parse(value);
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          children: _list2,
+        ),
+        Container(
+          alignment: Alignment.topRight,
+          child: Text(
+            _utility.makeCurrencyDisplay(_sum.toString()),
+            style: const TextStyle(
+              color: Colors.yellowAccent,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

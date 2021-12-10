@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:moneynote5/screens/YachinDataDisplayScreen.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -9,6 +10,8 @@ import '../utilities/CustomShapeClipper.dart';
 import '../data/ApiData.dart';
 
 class YearHomeFixScreen extends StatefulWidget {
+  const YearHomeFixScreen({Key? key}) : super(key: key);
+
   ///
   @override
   _YearHomeFixScreenState createState() => _YearHomeFixScreenState();
@@ -228,9 +231,10 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
         centerTitle: true,
 
         //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: const Icon(
-          Icons.check_box_outline_blank,
-          color: Color(0xFF2e2e2e),
+        leading: IconButton(
+          icon: const Icon(Icons.list),
+          onPressed: () => _goYachinDataDisplayScreen(),
+          color: Colors.greenAccent,
         ),
         //-------------------------//これを消すと「←」が出てくる（消さない）
 
@@ -319,8 +323,8 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
               Container(
                 width: double.infinity,
                 alignment: Alignment.topCenter,
-                margin: EdgeInsets.only(bottom: 10),
-                padding: EdgeInsets.all(2),
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(2),
                 decoration:
                     BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
                 child: Text(i.toString()),
@@ -351,7 +355,7 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
       _list2.add(
         Container(
           width: 70,
-          margin: EdgeInsets.all(1),
+          margin: const EdgeInsets.all(1),
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
@@ -365,12 +369,12 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
                 alignment: Alignment.topRight,
                 child: Text(
                   _homeFixData[midashi][year][i]['price'],
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
               Text(
                 _homeFixData[midashi][year][i]['date'],
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: Colors.grey,
                 ),
@@ -393,13 +397,25 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
           alignment: Alignment.topRight,
           child: Text(
             _utility.makeCurrencyDisplay(_sum.toString()),
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.yellowAccent,
               fontSize: 12,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  ///////////////////////////////////////////////
+
+  ///
+  void _goYachinDataDisplayScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => YachinDataDisplayScreen(),
+      ),
     );
   }
 }

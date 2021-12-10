@@ -371,7 +371,7 @@ class _YearSummaryScreenState extends State<YearSummaryScreen> {
           padding: const EdgeInsets.only(right: 10),
           child: GestureDetector(
             onTap: () {
-              Get.to(() => YearHomeFixScreen());
+              Get.to(() => const YearHomeFixScreen());
             },
             child: const Icon(
               Icons.home,
