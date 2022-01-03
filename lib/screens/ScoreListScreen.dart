@@ -261,12 +261,14 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                       child: const Text('start')),
                   Container(
                       alignment: Alignment.topRight,
-                      child: Text('${_scoreData[position]['prev_total']}')),
+                      child: Text(_utility.makeCurrencyDisplay(
+                          _scoreData[position]['prev_total']))),
                   Container(
                       alignment: Alignment.topRight, child: const Text('end')),
                   Container(
                       alignment: Alignment.topRight,
-                      child: Text('${_scoreData[position]['this_total']}')),
+                      child: Text(_utility.makeCurrencyDisplay(
+                          _scoreData[position]['this_total']))),
                   Container(),
                   Container(),
                 ]),
@@ -276,13 +278,15 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                       child: const Text('benefit')),
                   Container(
                       alignment: Alignment.topRight,
-                      child: Text('${_scoreData[position]['benefit']}')),
+                      child: Text(_utility.makeCurrencyDisplay(
+                          _scoreData[position]['benefit']))),
                   Container(
                       alignment: Alignment.topRight,
                       child: const Text('minus')),
                   Container(
                       alignment: Alignment.topRight,
-                      child: Text('${_scoreData[position]['minus']}')),
+                      child: Text(_utility
+                          .makeCurrencyDisplay(_scoreData[position]['minus']))),
                   Container(
                     alignment: Alignment.topRight,
                     child: const Text(
@@ -313,7 +317,8 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
                   Container(
                     alignment: Alignment.topRight,
                     child: Text(
-                      '${_scoreData[position]['gain']}',
+                      _utility.makeCurrencyDisplay(
+                          _scoreData[position]['gain'].toString()),
                       style: const TextStyle(color: Colors.greenAccent),
                     ),
                   ),
@@ -329,11 +334,21 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
   ///
   int _getBenefit({required String ym}) {
     int bene = 0;
+    List _list = [];
 
+    var be = 0;
     for (var i = 0; i < _benefitData.length; i++) {
       if (ym == _benefitData[i]['ym']) {
-        bene = int.parse(_benefitData[i]['benefit']);
-        break;
+        be = int.parse(_benefitData[i]['benefit']);
+        _list.add(be);
+      }
+    }
+
+    if (_list.length == 1) {
+      bene = be;
+    } else {
+      for (var i = 0; i < _list.length - 1; i++) {
+        bene = _list[i] + _list[i + 1];
       }
     }
 
