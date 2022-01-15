@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison, deprecated_member_use, avoid_init_to_null
 
 import 'package:flutter/material.dart';
+import 'package:moneynote5/screens/SamedayListScreen.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bubble/bubble.dart';
@@ -1062,6 +1063,16 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                   //     _goAlldayListScreen(context: context, date: _displayDate),
                   onTap: () {
                     Get.to(() => AlldayListScreen(date: _displayDate));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.animation),
+                  title: const Text(
+                    'AllDay List',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  onTap: () {
+                    Get.to(() => SamedayListScreen(date: _displayDate));
                   },
                 ),
               ],

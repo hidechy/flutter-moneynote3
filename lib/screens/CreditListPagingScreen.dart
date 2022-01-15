@@ -1,6 +1,5 @@
 // ignore_for_file: file_names, must_be_immutable, unrelated_type_equality_checks
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../utilities/utility.dart';
