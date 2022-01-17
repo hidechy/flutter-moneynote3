@@ -159,6 +159,9 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
   Widget _listItem({required int position}) {
     var exDate = (_amazonPurchaseData[position].date.toString()).split('-');
 
+    _utility.makeYMDYData(_amazonPurchaseData[position].date.toString(), 0);
+    var hiduke = "${_utility.year}-${_utility.month}-${_utility.day}";
+
     return Card(
       color: Colors.black.withOpacity(0.3),
       elevation: 10.0,
@@ -188,7 +191,7 @@ class _AmazonPurchaseListScreenState extends State<AmazonPurchaseListScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text('${_amazonPurchaseData[position].date}'),
+              Text(hiduke),
               Text(_amazonPurchaseData[position].item),
               Container(
                 alignment: Alignment.topRight,

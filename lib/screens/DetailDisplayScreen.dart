@@ -1068,7 +1068,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                 ListTile(
                   leading: const Icon(Icons.animation),
                   title: const Text(
-                    'AllDay List',
+                    'SameDay List',
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
