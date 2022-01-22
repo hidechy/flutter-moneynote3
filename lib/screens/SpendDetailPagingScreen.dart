@@ -987,18 +987,14 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                 Text(
                   '${value[i]['koumoku']}',
                   strutStyle: const StrutStyle(fontSize: 12.0, height: 1.3),
-                  style: (value[i]['koumoku'] == '収入')
-                      ? const TextStyle(color: Colors.yellowAccent)
-                      : null,
+                  style: _getSpendItemStyle(val: value[i]),
                 ),
                 Container(
                   alignment: Alignment.topRight,
                   child: Text(
                     _utility.makeCurrencyDisplay(value[i]['price'].toString()),
                     strutStyle: const StrutStyle(fontSize: 12.0, height: 1.3),
-                    style: (value[i]['koumoku'] == '収入')
-                        ? const TextStyle(color: Colors.yellowAccent)
-                        : null,
+                    style: _getSpendItemStyle(val: value[i]),
                   ),
                 ),
               ],
@@ -1016,6 +1012,17 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
         ),
       ),
     );
+  }
+
+  ///
+  TextStyle _getSpendItemStyle({val}) {
+    if (val['koumoku'] == '収入') {
+      return TextStyle(color: Colors.yellowAccent);
+    } else if (val['bank'] == 1) {
+      return TextStyle(color: Colors.lightBlueAccent);
+    } else {
+      return TextStyle();
+    }
   }
 
   /////////////////////////////////////////////////////
