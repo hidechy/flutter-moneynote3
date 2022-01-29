@@ -64,6 +64,15 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
 
   /// 初期データ作成
   void _makeDefaultDisplayData() async {
+    Map zerousedate = {};
+    await apiData.getDateOfTimePlaceZeroUse();
+    if (apiData.DateOfTimePlaceZeroUse != null) {
+      zerousedate = apiData.DateOfTimePlaceZeroUse;
+    }
+    apiData.DateOfTimePlaceZeroUse = {};
+
+    //
+
     _utility.makeYMDYData(widget.date, 0);
     _year = _utility.year;
     _month = _utility.month;
@@ -148,6 +157,11 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
             _map['diff'] = (_yesterdayTotal - _utility.total);
             _monthTotal += (_yesterdayTotal - _utility.total);
           }
+
+          _map['zeroflag'] = _getZeroUseDate(
+            date: '$_year-$_month-${_utility.day}',
+            zerousedate: zerousedate,
+          );
 
           _monthlyData.add(_map);
 
@@ -375,12 +389,30 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
                           color: Colors.white,
                         ),
                       ),
-                      Text(
-                        _utility.makeCurrencyDisplay(
-                            _monthlyData[position]['diff'].toString()),
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            _utility.makeCurrencyDisplay(
+                                _monthlyData[position]['diff'].toString()),
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: (_monthlyData[position]['zeroflag'] == 1)
+                                ? Icon(
+                                    Icons.star,
+                                    color: Colors.greenAccent.withOpacity(0.5),
+                                    size: 10,
+                                  )
+                                : const Icon(
+                                    Icons.check_box_outline_blank,
+                                    color: Color(0xFF2e2e2e),
+                                    size: 10,
+                                  ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -561,10 +593,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
               _yearmonth + '-' + _monthlyData[position]['date'], _holidayList),
           foregroundColor: Colors.blueAccent,
           icon: Icons.input,
-          // onTap: () =>
-          //     _goOnedayInputScreen(
-          //         context: context,
-          //         date: _yearmonth + '-' + _monthlyData[position]['date']),
           onTap: () {
             Get.to(() => OnedayInputScreen(
                 date: '$_yearmonth-${_monthlyData[position]['date']}'));
@@ -572,6 +600,18 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
         ),
       ],
     );
+  }
+
+  ///
+  int _getZeroUseDate({date, required Map zerousedate}) {
+    var _num = 0;
+    for (var i = 0; i < zerousedate['data'].length; i++) {
+      if (zerousedate['data'][i] == date) {
+        _num = 1;
+        break;
+      }
+    }
+    return _num;
   }
 
   ///////////////////////////////////////////////////////////////////// 画面遷移

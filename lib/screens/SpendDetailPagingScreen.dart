@@ -1017,11 +1017,11 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
   ///
   TextStyle _getSpendItemStyle({val}) {
     if (val['koumoku'] == '収入') {
-      return TextStyle(color: Colors.yellowAccent);
+      return const TextStyle(color: Colors.yellowAccent);
     } else if (val['bank'] == 1) {
-      return TextStyle(color: Colors.lightBlueAccent);
+      return const TextStyle(color: Colors.lightBlueAccent);
     } else {
-      return TextStyle();
+      return const TextStyle();
     }
   }
 

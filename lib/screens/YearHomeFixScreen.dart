@@ -389,6 +389,7 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Wrap(
           children: _list2,
