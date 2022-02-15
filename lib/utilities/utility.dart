@@ -226,4 +226,24 @@ class Utility {
 
     return bankNames;
   }
+
+  ///
+  Color getLeadingBgColor({required String month}) {
+    switch (int.parse(month) % 6) {
+      case 0:
+        return Colors.orangeAccent.withOpacity(0.3);
+      case 1:
+        return Colors.blueAccent.withOpacity(0.3);
+      case 2:
+        return Colors.redAccent.withOpacity(0.3);
+      case 3:
+        return Colors.purpleAccent.withOpacity(0.3);
+      case 4:
+        return Colors.greenAccent.withOpacity(0.3);
+      case 5:
+        return Colors.yellowAccent.withOpacity(0.3);
+      default:
+        return Colors.black;
+    }
+  }
 }

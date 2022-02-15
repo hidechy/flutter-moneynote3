@@ -33,6 +33,7 @@ dependencies:
   get:
   dio:
   vibration: ^1.7.4-nullsafety.0
+  flutter_riverpod:
 
 dev_dependencies:
   flutter_test:

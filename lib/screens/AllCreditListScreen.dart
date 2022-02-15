@@ -218,6 +218,13 @@ class AllCreditListScreen extends StatelessWidget {
           Icons.grade,
           color: Colors.greenAccent.withOpacity(0.3),
         );
+
+      case 'amex':
+        return Icon(
+          Icons.grade,
+          color: Colors.yellowAccent.withOpacity(0.3),
+        );
+
       default:
         return Container();
     }

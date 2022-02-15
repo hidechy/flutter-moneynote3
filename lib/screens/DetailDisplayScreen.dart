@@ -882,25 +882,34 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                         child: Row(
                           children: <Widget>[
                             const SizedBox(
-                              width: 70,
+                              width: 50,
                               child: Text('GOLD'),
                             ),
                             Container(
-                              width: 60,
+                              width: 70,
                               alignment: Alignment.topRight,
                               child: Text(_utility
                                   .makeCurrencyDisplay(_payPrice.toString())),
                             ),
                             Container(
-                              width: 60,
+                              width: 70,
                               alignment: Alignment.topRight,
                               child: Text(_utility
                                   .makeCurrencyDisplay(_goldValue.toString())),
                             ),
                             Container(
-                              width: 80,
+                              width: 50,
                               alignment: Alignment.topRight,
-                              child: Text(_goldDate),
+                              child: Text((_goldValue - _payPrice).toString()),
+                            ),
+                            Container(
+                              width: 30,
+                              alignment: Alignment.topRight,
+                              child: Icon(Icons.star,
+                                  size: 16,
+                                  color: (_goldDate == _displayDate)
+                                      ? Colors.yellowAccent
+                                      : Colors.grey.withOpacity(0.3)),
                             ),
                           ],
                         ),
@@ -918,25 +927,36 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                         child: Row(
                           children: <Widget>[
                             const SizedBox(
-                              width: 70,
+                              width: 50,
                               child: Text('STOCK'),
                             ),
                             Container(
-                              width: 60,
+                              width: 70,
                               alignment: Alignment.topRight,
                               child: Text(_utility.makeCurrencyDisplay(
                                   _stockData['cost'].toString())),
                             ),
                             Container(
-                              width: 60,
+                              width: 70,
                               alignment: Alignment.topRight,
                               child: Text(_utility.makeCurrencyDisplay(
                                   _stockData['price'].toString())),
                             ),
                             Container(
-                              width: 80,
+                              width: 50,
                               alignment: Alignment.topRight,
-                              child: Text('${_stockData['date']}'),
+                              child: Text(
+                                  (_stockData['price'] - _stockData['cost'])
+                                      .toString()),
+                            ),
+                            Container(
+                              width: 30,
+                              alignment: Alignment.topRight,
+                              child: Icon(Icons.star,
+                                  size: 16,
+                                  color: (_stockData['date'] == _displayDate)
+                                      ? Colors.yellowAccent
+                                      : Colors.grey.withOpacity(0.3)),
                             ),
                           ],
                         ),
@@ -954,25 +974,36 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                         child: Row(
                           children: <Widget>[
                             const SizedBox(
-                              width: 70,
+                              width: 50,
                               child: Text('ETF'),
                             ),
                             Container(
-                              width: 60,
+                              width: 70,
                               alignment: Alignment.topRight,
                               child: Text(_utility.makeCurrencyDisplay(
                                   _shintakuData['cost'].toString())),
                             ),
                             Container(
-                              width: 60,
+                              width: 70,
                               alignment: Alignment.topRight,
                               child: Text(_utility.makeCurrencyDisplay(
                                   _shintakuData['price'].toString())),
                             ),
                             Container(
-                              width: 80,
+                              width: 50,
                               alignment: Alignment.topRight,
-                              child: Text('${_shintakuData['date']}'),
+                              child: Text((_shintakuData['price'] -
+                                      _shintakuData['cost'])
+                                  .toString()),
+                            ),
+                            Container(
+                              width: 30,
+                              alignment: Alignment.topRight,
+                              child: Icon(Icons.star,
+                                  size: 16,
+                                  color: (_shintakuData['date'] == _displayDate)
+                                      ? Colors.yellowAccent
+                                      : Colors.grey.withOpacity(0.3)),
                             ),
                           ],
                         ),

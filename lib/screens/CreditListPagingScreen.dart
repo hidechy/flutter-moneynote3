@@ -61,23 +61,11 @@ class _CreditListPagingScreenState extends State<CreditListPagingScreen> {
     _map3['list'] = widget.creditPagingData['sumitomo'];
     _creditPagingList.add(_map3);
 
-    // //
-    // var pageNumber = 0;
-    // switch (widget.kind) {
-    //   case 'uc':
-    //     pageNumber = 0;
-    //     break;
-    //   case 'rakuten':
-    //     pageNumber = 1;
-    //     break;
-    //   case 'sumitomo':
-    //     pageNumber = 2;
-    //     break;
-    // }
-    //
-    // if (pageController.hasClients) {
-    //   pageController.jumpToPage(pageNumber);
-    // }
+    Map _map4 = {};
+    _map4['ym'] = widget.ym;
+    _map4['kind'] = 'amex';
+    _map4['list'] = widget.creditPagingData['amex'];
+    _creditPagingList.add(_map4);
 
     /////////////////////////////////
     // ページコントローラのページ遷移を監視しページ数を丸める

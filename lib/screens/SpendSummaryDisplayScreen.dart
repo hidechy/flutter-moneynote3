@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison, unused_local_variable
 
 import 'package:flutter/material.dart';
-import 'package:moneynote5/screens/CreditMonthlyListScreen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +14,9 @@ import 'FoodExpensesDisplayScreen.dart';
 import 'YearCreditCompareScreen.dart';
 import 'YearSummaryCompareScreen.dart';
 import 'YearSummaryScreen.dart';
+import 'CreditMonthlyListScreen.dart';
+
+import '../riverpod/credit_search/credit_search_screen.dart';
 
 class SpendSummaryDisplayScreen extends StatefulWidget {
   String date;
@@ -192,6 +194,14 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
                           child: const Icon(
                             Icons.calendar_view_month_rounded,
                             color: Colors.greenAccent,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        GestureDetector(
+                          onTap: () => _goCreditSearchScreen(),
+                          child: const Icon(
+                            Icons.credit_card,
+                            color: Colors.pinkAccent,
                           ),
                         ),
                       ],
@@ -697,6 +707,16 @@ class _SpendSummaryDisplayScreenState extends State<SpendSummaryDisplayScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => const CreditMonthlyListScreen(),
+      ),
+    );
+  }
+
+  ///
+  void _goCreditSearchScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CreditSearchScreen(),
       ),
     );
   }
