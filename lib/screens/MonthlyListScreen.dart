@@ -247,12 +247,12 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
               flexibleSpace: FlexibleSpaceBar(
                 background: Column(
                   children: [
-                    SizedBox(height: 80),
+                    const SizedBox(height: 80),
                     _dispMonthlyGraph(),
                     Container(
                       padding:
                           const EdgeInsets.only(top: 10, left: 20, right: 20),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(width: 2, color: Colors.white),
                         ),
