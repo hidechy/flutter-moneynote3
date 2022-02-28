@@ -96,6 +96,7 @@ class MercariDataDisplayScreen extends StatelessWidget {
   /// リストアイテム表示
   Widget _listItem({required int position, required List data}) {
     _utility.makeYMDYData(data[position].date.toString(), 0);
+    var dispDate = "${_utility.year}-${_utility.month}-${_utility.day}";
 
     return Card(
       color: Colors.black.withOpacity(0.3),
@@ -112,7 +113,7 @@ class MercariDataDisplayScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text('${data[position].date}（${_utility.youbiStr}）'),
+                  Text('$dispDate（${_utility.youbiStr}）'),
                   Text(
                     _utility.makeCurrencyDisplay(
                       data[position].dayTotal.toString(),

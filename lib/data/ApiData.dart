@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 
 import 'dart:convert';
 
+import '../models/EverydaySpend.dart';
 import '../models/StockDetail.dart';
 import '../models/ShintakuDetail.dart';
 import '../models/AmazonPurchaseRecord.dart';
@@ -447,9 +448,10 @@ class ApiData {
   ///
   Map ListOfCreditDateData = {};
 
-  Future<void> getListOfCreditDateData({String? date}) async {
+  Future<void> getListOfCreditDateData({String? date, int? price}) async {
     String url = "http://toyohide.work/BrainLog/api/getCreditDateData";
-    String body = json.encode({"date": date});
+    String body = json.encode({"date": date, "price": price});
+
     Response response =
         await post(Uri.parse(url), headers: headers, body: body);
     ListOfCreditDateData =
@@ -488,5 +490,17 @@ class ApiData {
     Response response = await post(Uri.parse(url), headers: headers);
     ListOfYearCreditCommonItemData =
         (response != null) ? jsonDecode(response.body) : null;
+  }
+
+  ///
+  List ListOfEverydaySpendData = [];
+
+  Future<void> getListOfEverydaySpendData({String? date}) async {
+    String url = "http://toyohide.work/BrainLog/api/everydaySpendSearch";
+    String body = json.encode({"date": date});
+    Response response =
+        await post(Uri.parse(url), headers: headers, body: body);
+    final everydaySpend = everydaySpendFromJson(response.body);
+    ListOfEverydaySpendData = everydaySpend.data;
   }
 }

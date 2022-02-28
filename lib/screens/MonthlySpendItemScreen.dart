@@ -73,7 +73,10 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
     }
 
     for (var i = 0; i < _creditDays.length; i++) {
-      await apiData.getListOfCreditDateData(date: _creditDays[i]);
+      await apiData.getListOfCreditDateData(
+        date: _creditDays[i],
+        price: 0,
+      );
       if (apiData.ListOfCreditDateData != null) {
         _creditDateData = [];
         for (var i = 0; i < apiData.ListOfCreditDateData['data'].length; i++) {
@@ -90,7 +93,6 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
       apiData.ListOfCreditDateData = {};
     }
     ///////////////////////////////////////////////////////
-
     //----------------------------//
     await apiData.getHolidayOfAll();
     if (apiData.HolidayOfAll != null) {
@@ -114,7 +116,6 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
     }
     apiData.MonthSummaryOfDate = {};
     //////////////////////////////////////////////
-
     setState(() {
       _loading = true;
     });
@@ -398,7 +399,6 @@ class _MonthlySpendItemScreenState extends State<MonthlySpendItemScreen> {
   }
 
   ///
-
   void _showAlertWindow({day, price}) {
     var date = '${widget.yearmonth}-$day';
     var cardName = _creditDateDataMap[date]![0]['card'];

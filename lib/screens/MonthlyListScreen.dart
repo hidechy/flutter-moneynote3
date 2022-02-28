@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:moneynote5/screens/EverydaySpendDisplayScreen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -195,102 +196,107 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          _utility.getBackGround(context: context),
-          ClipPath(
-            clipper: CustomShapeClipper(),
-            child: Container(
-              height: size.height * 0.7,
-              width: size.width * 0.7,
-              margin: const EdgeInsets.only(top: 5, left: 6),
-              color: Colors.yellowAccent.withOpacity(0.2),
-              child: Text(
-                '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
-              ),
+    var exDate = (widget.date).split('-');
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        _utility.getBackGround(),
+        ClipPath(
+          clipper: CustomShapeClipper(),
+          child: Container(
+            height: size.height * 0.7,
+            width: size.width * 0.7,
+            margin: const EdgeInsets.only(top: 5, left: 6),
+            color: Colors.yellowAccent.withOpacity(0.2),
+            child: Text(
+              '■',
+              style: TextStyle(color: Colors.white.withOpacity(0.1)),
             ),
           ),
-          Column(
-            children: [
-              _dispMonthlyGraph(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+        CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.black,
+              title: Text(_yearmonth),
+              centerTitle: true,
+              pinned: true,
+              floating: true,
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.pop(context),
+                color: Colors.greenAccent,
+              ),
+              actions: <Widget>[
+                GestureDetector(
+                  onTap: () => (_prevMonth.toString() == '2019-12')
+                      ? null
+                      : _goMonthlyListScreen(
+                          context: context, date: _prevMonth.toString()),
+                  child: const Icon(Icons.skip_previous),
+                ),
+                const SizedBox(width: 30),
+                GestureDetector(
+                  onTap: () => _goMonthlyListScreen(
+                      context: context, date: _nextMonth.toString()),
+                  child: const Icon(Icons.skip_next),
+                ),
+              ],
+              expandedHeight: 360,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Column(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.close),
-                    ),
-                    Text(_yearmonth),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 5,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 5,
-                  horizontal: 10,
-                ),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.yellowAccent.withOpacity(0.3),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Get.to(() => MonthlySpendItemScreen(
-                                date: widget.date,
-                                monthlyData: _monthlyData,
-                                yearmonth: _yearmonth));
-                          },
-                          child: const Icon(Icons.list),
+                    SizedBox(height: 80),
+                    _dispMonthlyGraph(),
+                    Container(
+                      padding:
+                          const EdgeInsets.only(top: 10, left: 20, right: 20),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(width: 2, color: Colors.white),
                         ),
-                        const SizedBox(width: 10),
-                        Text(_utility
-                            .makeCurrencyDisplay(_monthTotal.toString())),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => (_prevMonth.toString() == '2019-12')
-                              ? null
-                              : _goMonthlyListScreen(
-                                  context: context,
-                                  date: _prevMonth.toString()),
-                          child: const Icon(Icons.skip_previous),
-                        ),
-                        const SizedBox(width: 30),
-                        GestureDetector(
-                          onTap: () => _goMonthlyListScreen(
-                              context: context, date: _nextMonth.toString()),
-                          child: const Icon(Icons.skip_next),
-                        ),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (exDate[0] == "2022")
+                              ? GestureDetector(
+                                  onTap: () {
+                                    Get.to(() => EverydaySpendDisplayScreen(
+                                          date: widget.date,
+                                        ));
+                                  },
+                                  child: const Icon(Icons.list),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    Get.to(() => MonthlySpendItemScreen(
+                                        date: widget.date,
+                                        monthlyData: _monthlyData,
+                                        yearmonth: _yearmonth));
+                                  },
+                                  child: const Icon(Icons.list),
+                                ),
+                          const SizedBox(width: 10),
+                          Text(_utility
+                              .makeCurrencyDisplay(_monthTotal.toString())),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              Expanded(
-                child: _monthlyList(),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => _listItem(position: index),
+                childCount: _monthlyData.length,
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -315,16 +321,6 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
               yValueMapper: (MoneyData data, _) => data.total)
         ],
       ),
-    );
-  }
-
-  /// リスト表示
-  Widget _monthlyList() {
-    return ListView.builder(
-      itemCount: _monthlyData.length,
-      itemBuilder: (context, int position) {
-        return _listItem(position: position);
-      },
     );
   }
 
