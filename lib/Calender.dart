@@ -18,7 +18,6 @@ import './screens/DetailDisplayScreen.dart';
 import './screens/MonthlyListScreen.dart';
 import './screens/OnedayInputScreen.dart';
 import './screens/ScoreListScreen.dart';
-import './screens/ItemDetailDisplayScreen.dart';
 
 class Calender extends StatefulWidget {
   const Calender({Key? key}) : super(key: key);
@@ -522,23 +521,6 @@ class _CalenderState extends State<Calender> {
       MaterialPageRoute(
         builder: (context) => MonthlyListScreen(
           date: _utility.year + "-" + _utility.month + "-" + _utility.day,
-        ),
-      ),
-    );
-  }
-
-  ///
-  _goItemDetailDisplayScreen({required item, required sum}) {
-    _utility.makeYMDYData(_currentMonth.toString(), 0);
-    var date = "${_utility.year}-${_utility.month}-${_utility.day}";
-
-    Navigator.push(
-      context!,
-      MaterialPageRoute(
-        builder: (context) => ItemDetailDisplayScreen(
-          item: item,
-          sum: sum,
-          date: date,
         ),
       ),
     );

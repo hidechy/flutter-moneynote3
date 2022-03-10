@@ -12,6 +12,7 @@ import '../utilities/CustomShapeClipper.dart';
 
 import '../data/ApiData.dart';
 
+import 'BenefitInputScreen.dart';
 import 'GoldDisplayScreen.dart';
 import 'SpendDetailPagingScreen.dart';
 import 'AlldayListScreen.dart';
@@ -1057,6 +1058,16 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                   ),
                   onTap: () {
                     Get.to(() => BankInputScreen(date: _displayDate));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.monetization_on),
+                  title: const Text(
+                    'Benefit Input',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  onTap: () {
+                    Get.to(() => BenefitInputScreen());
                   },
                 ),
                 const Divider(

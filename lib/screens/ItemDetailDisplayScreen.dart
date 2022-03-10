@@ -95,7 +95,7 @@ class ItemDetailDisplayScreen extends StatelessWidget {
 
     return ListTile(
       title: DefaultTextStyle(
-        style: TextStyle(fontSize: 12),
+        style: const TextStyle(fontSize: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

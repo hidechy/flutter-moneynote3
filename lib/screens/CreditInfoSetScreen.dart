@@ -1,6 +1,10 @@
 // ignore_for_file: file_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -26,6 +30,8 @@ class _CreditInfoSetScreenState extends State<CreditInfoSetScreen> {
   List<dynamic> _creditDateData = [];
   String _dispPrice = "";
   String _dispCard = "";
+
+  final List<String> _selectedList = [];
 
   /// 初期動作
   @override
@@ -94,13 +100,19 @@ class _CreditInfoSetScreenState extends State<CreditInfoSetScreen> {
                 height: 150,
                 child: Column(
                   children: [
-                    Container(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                        color: Colors.greenAccent,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.cloud_upload_outlined),
+                          onPressed: () => _pickupKeihiItem(),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                          color: Colors.greenAccent,
+                        ),
+                      ],
                     ),
                     Text(dispDate),
                     Text(
@@ -146,11 +158,16 @@ class _CreditInfoSetScreenState extends State<CreditInfoSetScreen> {
         title: Row(
           children: [
             GestureDetector(
-              onTap: () {},
-              child: const Icon(
-                Icons.check_box_outline_blank,
-                color: Color(0xFF2e2e2e),
-              ),
+              onTap: () {
+                _pickupLineIcon(
+                    selectDate: _creditDateData[index]['date'],
+                    value:
+                        '${_creditDateData[index]['item']}|${_creditDateData[index]['price']}');
+              },
+              child: _getLineIcon(
+                  selectDate: _creditDateData[index]['date'],
+                  value:
+                      '${_creditDateData[index]['item']}|${_creditDateData[index]['price']}'),
             ),
             Expanded(
               child: DefaultTextStyle(
@@ -173,5 +190,54 @@ class _CreditInfoSetScreenState extends State<CreditInfoSetScreen> {
         ),
       ),
     );
+  }
+
+  ///
+  Widget _getLineIcon({required selectDate, required value}) {
+    var checkKey = "$selectDate|-|$value|x|credit";
+    if (_selectedList.contains(checkKey)) {
+      return const Icon(
+        Icons.check,
+        color: Colors.greenAccent,
+      );
+    } else {
+      return const Icon(
+        Icons.check_box_outline_blank,
+        color: Color(0xFF2e2e2e),
+      );
+    }
+  }
+
+  ///
+  void _pickupLineIcon({required selectDate, required value}) {
+    var checkKey = "$selectDate|-|$value|x|credit";
+    if (_selectedList.contains(checkKey)) {
+      _selectedList.remove(checkKey);
+    } else {
+      _selectedList.add(checkKey);
+    }
+    setState(() {});
+  }
+
+  ///
+  void _pickupKeihiItem() async {
+    try {
+      Map<String, dynamic> _uploadData = {};
+      _uploadData['selected_list'] = _selectedList.join(',');
+
+      String url = "http://toyohide.work/BrainLog/api/setKeihiData";
+      Map<String, String> headers = {'content-type': 'application/json'};
+      String body = json.encode(_uploadData);
+
+      await post(Uri.parse(url), headers: headers, body: body);
+
+      Fluttertoast.showToast(
+        msg: "登録完了",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    } catch (e) {
+      throw e.toString();
+    }
   }
 }

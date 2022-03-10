@@ -1,8 +1,11 @@
 // ignore_for_file: file_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart';
 
 import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -95,6 +98,13 @@ class _EverydaySpendDisplayScreenState
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    var exDate = (widget.date).split('-');
+    DateTime _thisDate = DateTime(
+      int.parse(exDate[0]),
+      int.parse(exDate[1]),
+      int.parse(exDate[2]),
+    );
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -147,7 +157,10 @@ class _EverydaySpendDisplayScreenState
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () => _pickupKeihiItem(),
+                            onTap: () => _pickupKeihiItem(
+                              context: context,
+                              date: _thisDate,
+                            ),
                             child: const Icon(Icons.cloud_upload_outlined),
                           ),
                         ],
@@ -407,7 +420,7 @@ class _EverydaySpendDisplayScreenState
 
   ///
   Widget _getLineIcon({required selectDate, required value}) {
-    var checkKey = "$selectDate|$value";
+    var checkKey = "$selectDate|$value|daily";
     if (_selectedList.contains(checkKey)) {
       return const Icon(
         Icons.check,
@@ -423,7 +436,7 @@ class _EverydaySpendDisplayScreenState
 
   ///
   void _pickupLineIcon({required selectDate, required value}) {
-    var checkKey = "$selectDate|$value";
+    var checkKey = "$selectDate|$value|daily";
     if (_selectedList.contains(checkKey)) {
       _selectedList.remove(checkKey);
     } else {
@@ -433,8 +446,21 @@ class _EverydaySpendDisplayScreenState
   }
 
   ///
-  void _pickupKeihiItem() {
-    print(_selectedList);
+  void _pickupKeihiItem({required context, required date}) async {
+    try {
+      Map<String, dynamic> _uploadData = {};
+      _uploadData['selected_list'] = _selectedList.join(',');
+
+      String url = "http://toyohide.work/BrainLog/api/setKeihiData";
+      Map<String, String> headers = {'content-type': 'application/json'};
+      String body = json.encode(_uploadData);
+
+      await post(Uri.parse(url), headers: headers, body: body);
+
+      _goEverydaySpendDisplayScreen(context: context, date: date);
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
   //////////////////////////////////////////////////
