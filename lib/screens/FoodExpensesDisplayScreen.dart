@@ -25,6 +25,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
 
   int _foodExpenses = 0;
   int _seiyuPurchase = 0;
+  int _bentouExpenses = 0;
 
   int _monthEndDay = 0;
 
@@ -127,10 +128,14 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
       for (int i = 0; i < apiData.MonthSummaryOfDate['data'].length; i++) {
         if (apiData.MonthSummaryOfDate['data'][i]['item'] == "食費") {
           _foodExpenses = apiData.MonthSummaryOfDate['data'][i]['sum'];
-          break;
+        }
+
+        if (apiData.MonthSummaryOfDate['data'][i]['item'] == "弁当代") {
+          _bentouExpenses = apiData.MonthSummaryOfDate['data'][i]['sum'];
         }
       }
     }
+
     apiData.MonthSummaryOfDate = {};
     ////////////////////////////////////////
 
@@ -163,7 +168,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    var sum = (_foodExpenses + _seiyuPurchase);
+    var sum = (_foodExpenses + _seiyuPurchase + _bentouExpenses);
     var ave = (sum / _monthEndDay).floor();
 
     var engels = (_monthTotal > 0) ? ((sum / _monthTotal) * 100).floor() : 0;
@@ -223,35 +228,91 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
                   right: 20,
                   left: 20,
                 ),
-                child: Table(
+                child: Column(
                   children: [
-                    TableRow(children: [
-                      const Text('食費'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(_utility
-                            .makeCurrencyDisplay(_foodExpenses.toString())),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1,
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
                       ),
-                    ]),
-                    TableRow(children: [
-                      const Text('西友購入'),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text(_utility
-                            .makeCurrencyDisplay(_seiyuPurchase.toString())),
+                      child: Table(
+                        children: [
+                          TableRow(children: [
+                            const Text('食費'),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _foodExpenses.toString())),
+                            ),
+                          ]),
+                        ],
                       ),
-                    ]),
-                    TableRow(children: [
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: const Text('計'),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1,
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
                       ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child:
-                            Text(_utility.makeCurrencyDisplay(sum.toString())),
+                      child: Table(
+                        children: [
+                          TableRow(children: [
+                            const Text('西友購入'),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _seiyuPurchase.toString())),
+                            ),
+                          ]),
+                        ],
                       ),
-                    ]),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            width: 1,
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                      child: Table(
+                        children: [
+                          TableRow(children: [
+                            const Text('弁当代'),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text(_utility.makeCurrencyDisplay(
+                                  _bentouExpenses.toString())),
+                            ),
+                          ]),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Table(
+                        children: [
+                          TableRow(children: [
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: const Text('計'),
+                            ),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: Text(
+                                  _utility.makeCurrencyDisplay(sum.toString())),
+                            ),
+                          ]),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
