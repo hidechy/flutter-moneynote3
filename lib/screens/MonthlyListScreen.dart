@@ -28,8 +28,9 @@ class MonthlyListScreen extends StatefulWidget {
 class MoneyData {
   double day;
   double total;
+  double sagaku;
 
-  MoneyData(this.day, this.total);
+  MoneyData(this.day, this.total, this.sagaku);
 }
 
 class _MonthlyListScreenState extends State<MonthlyListScreen> {
@@ -107,6 +108,8 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
       int j = 0;
       var _yesterdayTotal = 0;
 
+      var _graphData = [];
+
       for (var i = 0; i < apiData.MoneyOfAll['data'].length; i++) {
         var exData = (apiData.MoneyOfAll['data'][i]).split('|');
 
@@ -148,8 +151,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
           _map['total'] = _utility.total;
           //-------------------------------------//
 
-          _chartData.add(MoneyData(double.parse(_map["date"]),
-              double.parse(_map['total'].toString())));
+          _graphData.add({"date": _map['date'], "total": _map['total']});
 
           if (j == 0) {
             _map['diff'] = (_prevMonthEndTotal - _utility.total);
@@ -171,6 +173,28 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
           j++;
         }
       }
+
+      //-----------------------------//
+      var _graphLength = _graphData.length;
+      var _startPrice = _graphData[0]['total'];
+      var _endPrice = _graphData[_graphLength - 1]['total'];
+      var _priceDiff = (_startPrice - _endPrice);
+      var _onedayDiff = (_priceDiff / (_graphLength - 1)).ceil();
+      var _katamukiDown = (_priceDiff > 0) ? 'right' : 'left';
+      for (var i = 0; i < _graphData.length; i++) {
+        _chartData.add(
+          MoneyData(
+            double.parse(_graphData[i]["date"]),
+            double.parse(_graphData[i]['total'].toString()),
+            (_katamukiDown == 'right')
+                ? double.parse((_startPrice - (_onedayDiff * i)).toString())
+                : double.parse(
+                    (_startPrice + (_onedayDiff * i) * -1).toString()),
+          ),
+        );
+      }
+      //-----------------------------//
+
     }
     apiData.MoneyOfAll = {};
     /////////////////////////////////////
@@ -315,10 +339,17 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
         ),
         series: <ChartSeries>[
           LineSeries<MoneyData, double>(
-              color: Colors.yellowAccent,
-              dataSource: _chartData,
-              xValueMapper: (MoneyData data, _) => data.day,
-              yValueMapper: (MoneyData data, _) => data.total)
+            color: Colors.yellowAccent,
+            dataSource: _chartData,
+            xValueMapper: (MoneyData data, _) => data.day,
+            yValueMapper: (MoneyData data, _) => data.total,
+          ),
+          LineSeries<MoneyData, double>(
+            color: Colors.orangeAccent,
+            dataSource: _chartData,
+            xValueMapper: (MoneyData data, _) => data.day,
+            yValueMapper: (MoneyData data, _) => data.sagaku,
+          ),
         ],
       ),
     );
