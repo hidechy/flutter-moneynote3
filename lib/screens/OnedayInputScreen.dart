@@ -613,7 +613,7 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
     await apiData.getMoneyOfDate(date: _zenjitsu);
     if (apiData.MoneyOfDate != null) {
       if (apiData.MoneyOfDate['data'] != "-") {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
         var _prevDayTotal = _utility.total;
         _onedaySpend = (_prevDayTotal - _onedayTotal);
       }

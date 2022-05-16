@@ -94,7 +94,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
     await apiData.getMoneyOfDate(date: _prevMonthEndDate);
     if (apiData.MoneyOfDate != null) {
       if (apiData.MoneyOfDate['data'] != "-") {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
         _prevMonthEndTotal = _utility.total;
       }
     }
@@ -147,7 +147,7 @@ class _MonthlyListScreenState extends State<MonthlyListScreen> {
           for (var l = 2; l <= 21; l++) {
             _list.add(exData[l]);
           }
-          _utility.makeTotal(_list.join('|'));
+          _utility.makeTotal(_list.join('|'), 'one');
           _map['total'] = _utility.total;
           //-------------------------------------//
 

@@ -2,6 +2,8 @@
 //
 //     final itemDetail = itemDetailFromJson(jsonString);
 
+// ignore_for_file: file_names
+
 import 'dart:convert';
 
 ItemDetail itemDetailFromJson(String str) =>

@@ -1,192 +1,38 @@
-// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moneynote5/riverpod/score/benefit_entity.dart';
 
-import '../utilities/utility.dart';
+import '../riverpod/score/benefit_view_model.dart';
 import '../utilities/CustomShapeClipper.dart';
+import '../utilities/utility.dart';
 
-import '../data/ApiData.dart';
+import '../riverpod/score/money_state.dart';
+import '../riverpod/score/money_view_model.dart';
+import '../riverpod/score/score_entity.dart';
 
-class ScoreListScreen extends StatefulWidget {
-  String date;
+class ScoreListScreen extends ConsumerWidget {
+  ScoreListScreen({Key? key}) : super(key: key);
 
-  ScoreListScreen({Key? key, required this.date}) : super(key: key);
+  late WidgetRef _ref;
+
+  final Utility _utility = Utility();
+
+  String minimumDate = '';
 
   @override
-  _ScoreListScreenState createState() => _ScoreListScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    _ref = ref;
 
-class _ScoreListScreenState extends State<ScoreListScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+    List<Score> scoreData = getScoreData();
 
-  bool _loading = false;
-
-  List<Map<dynamic, dynamic>> _scoreData = [];
-
-  int startMoney = 1333926;
-
-  int _allGain = 0;
-
-  List<Map<dynamic, dynamic>> _benefitData = [];
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  ///
-  void _makeDefaultDisplayData() async {
-    ///////////////////////////////////benefit
-    await apiData.getBenefitOfAll();
-    if (apiData.BenefitOfAll != null) {
-      for (var i = 0; i < apiData.BenefitOfAll['data'].length; i++) {
-        var exData = (apiData.BenefitOfAll['data'][i]).split('|');
-        Map _map = {};
-        _map['ym'] = exData[1];
-        _map['benefit'] = exData[2];
-        _benefitData.add(_map);
-      }
-    }
-    apiData.BenefitOfAll = {};
-    ///////////////////////////////////benefit
-    //-----------------------------------//
-    List<List<String>> _scoreDayInfo = [];
-
-    await apiData.getMoneyOfAll();
-    if (apiData.MoneyOfAll != null) {
-      for (var i = 0; i < apiData.MoneyOfAll['data'].length; i++) {
-        var exData2 = (apiData.MoneyOfAll['data'][i]).split('|');
-
-        _utility.makeYMDYData(exData2[0], 0);
-        if (_utility.day == '01') {
-          //先月末の日付
-          _utility.makeMonthEnd(
-              int.parse(_utility.year), int.parse(_utility.month), 0);
-          _utility.makeYMDYData(_utility.monthEndDateTime, 0);
-          var prevMonthEnd =
-              '${_utility.year}-${_utility.month}-${_utility.day}';
-
-          //今月末の日付
-          _utility.makeYMDYData(exData2[0], 0);
-          _utility.makeMonthEnd(
-              int.parse(_utility.year), int.parse(_utility.month) + 1, 0);
-          _utility.makeYMDYData(_utility.monthEndDateTime, 0);
-          var thisMonthEnd =
-              '${_utility.year}-${_utility.month}-${_utility.day}';
-
-          _scoreDayInfo.add([exData2[0], prevMonthEnd, thisMonthEnd]);
-        }
-      }
-    }
-    apiData.MoneyOfAll = {};
-    //-----------------------------------//
-
-    _scoreData = [];
-    for (int i = 0; i < _scoreDayInfo.length; i++) {
-      var dispMonth = "";
-      var prevTotal = 0;
-      var thisTotal = 0;
-      for (int j = 0; j < _scoreDayInfo[i].length; j++) {
-        if (j == 0) {
-          _utility.makeYMDYData(_scoreDayInfo[i][0], 0);
-          dispMonth = "${_utility.year}-${_utility.month}";
-          continue;
-        }
-
-        await apiData.getMoneyOfDate(date: _scoreDayInfo[i][j]);
-        if (apiData.MoneyOfDate != null) {
-          if (apiData.MoneyOfDate['data'] != "-") {
-            switch (j) {
-              case 1: //先月末の日付
-                prevTotal = startMoney;
-                _utility.makeTotal(apiData.MoneyOfDate['data']);
-                prevTotal = _utility.total;
-                break;
-              case 2: //今月末の日付
-                thisTotal = 0;
-                _utility.makeTotal(apiData.MoneyOfDate['data']);
-                thisTotal = _utility.total;
-                break;
-            }
-          }
-        }
-
-        apiData.MoneyOfDate = {};
-      } //for[j]
-
-      int _benefit = _getBenefit(ym: dispMonth);
-
-      int _score = ((prevTotal - thisTotal) * -1);
-      int _minus = (_benefit > 0) ? (_benefit - _score) : (_score * -1);
-
-      var _map = {};
-      _map['month'] = dispMonth;
-      _map['prev_total'] = prevTotal.toString();
-      _map['this_total'] = thisTotal.toString();
-      _map['score'] = _score.toString();
-      _map['benefit'] = _benefit.toString();
-      _map['minus'] = _minus.toString();
-
-      _scoreData.add(_map);
-    } //for[i]
-
-    //////////////////////////////////////////////////
-    var scoreCount = _scoreData.length;
-    for (var i = 0; i < scoreCount; i++) {
-      var value = _scoreData[i];
-
-      if (i == 0) {
-        value['gain'] = value['score'];
-        _allGain = int.parse(value['score']);
-      } else if (i == (scoreCount - 1)) {
-        value['gain'] = '';
-      } else {
-        _allGain += int.parse(value['score']);
-        value['gain'] = _allGain;
-      }
-    }
-    //////////////////////////////////////////////////
-    setState(() {
-      _loading = true;
-    });
-  }
-
-  ///
-  @override
-  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text('Score List'),
-        centerTitle: true,
-
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: const Icon(
-          Icons.check_box_outline_blank,
-          color: Color(0xFF2e2e2e),
-        ),
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-            color: Colors.greenAccent,
-          ),
-        ],
-      ),
       body: Stack(
         fit: StackFit.expand,
-        children: <Widget>[
+        children: [
           _utility.getBackGround(context: context),
           ClipPath(
             clipper: CustomShapeClipper(),
@@ -201,209 +47,268 @@ class _ScoreListScreenState extends State<ScoreListScreen> {
               ),
             ),
           ),
-          (_loading == false)
-              ? Container(
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(),
-                )
-              : Column(
-                  children: [
-                    const SizedBox(
-                      height: 100,
-                    ),
-                    _makeGraph(),
-                    Expanded(
-                      child: _scoreList(),
-                    ),
-                  ],
-                ),
+          Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 30, bottom: 10, right: 10),
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.close)),
+              ),
+              Expanded(
+                child: dispScoreList(data: scoreData),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   ///
-  Widget _scoreList() {
-    return MediaQuery.removePadding(
-      removeTop: true,
-      context: context,
-      child: ListView.builder(
-        itemCount: _scoreData.length,
-        itemBuilder: (context, int position) => _listItem(position: position),
-      ),
-    );
+  List<Score> getScoreData() {
+    List<Score> _list = [];
+
+    final allMoneyState = _ref.watch(allMoneyProvider);
+
+    Map<String, dynamic> allDayMoneyTotalMap =
+        getAllDayMoneyTotalMap(data: allMoneyState);
+
+    if (allDayMoneyTotalMap.isNotEmpty) {
+      final exMinimumDate = minimumDate.split('-');
+
+      final beforeAdmtm =
+          DateTime(int.parse(exMinimumDate[0]), int.parse(exMinimumDate[1]), 0);
+
+      final exBeforeAdmtm = beforeAdmtm.toString().split(' ');
+      final moneyState = _ref.watch(moneyProvider(exBeforeAdmtm[0]));
+      allDayMoneyTotalMap[moneyState.date] = moneyState.total;
+
+      List<Map<String, dynamic>> ymMap = getYmMap(data: allMoneyState);
+
+      if (ymMap.isNotEmpty) {
+        final benefitState = _ref.watch(benefitProvider);
+        final benefitData = getBenefitData(data: benefitState);
+
+        final startMoney = int.parse(
+            allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']].toString());
+
+        for (var i = 0; i < ymMap.length; i++) {
+          final totalLmed =
+              (allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']] != null)
+                  ? int.parse(allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']]
+                      .toString())
+                  : 0;
+          final totalTmed =
+              (allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']] != null)
+                  ? allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']]
+                  : 0;
+
+          int _lmed = int.parse(totalLmed.toString());
+          int _tmed = int.parse(totalTmed.toString());
+
+          int _benefit = (benefitData[ymMap[i]['ym']] != null)
+              ? benefitData[ymMap[i]['ym']]['sum']
+              : 0;
+
+          String _company = (benefitData[ymMap[i]['ym']] != null)
+              ? benefitData[ymMap[i]['ym']]['company'].substring(
+                  0, benefitData[ymMap[i]['ym']]['company'].length - 1)
+              : '';
+
+          int _score = ((_lmed - _tmed) * -1);
+          int _minus = (_benefit > 0) ? (_benefit - _score) : (_score * -1);
+
+          int average = ((totalTmed - startMoney) / (i + 1)).floor();
+
+          _list.add(
+            Score(
+              yearmonth: ymMap[i]['ym'],
+              prevTotal: totalLmed,
+              thisTotal: totalTmed,
+              score: _score,
+              benefit: _benefit,
+              benefitCompany: _company,
+              minus: _minus,
+              average: average,
+            ),
+          );
+        }
+      }
+    }
+
+    return _list;
   }
 
   ///
-  Widget _listItem({required int position}) {
-    if (position == _scoreData.length - 1) {
-      return Container();
+  Map<String, dynamic> getAllDayMoneyTotalMap(
+      {required List<MoneyState> data}) {
+    Map<String, dynamic> moneyMap = {};
+
+    for (var i = 0; i < data.length; i++) {
+      if (i == 0) {
+        minimumDate = data[i].date;
+      }
+
+      moneyMap[data[i].date.toString()] = data[i].total;
     }
 
-    return Card(
-      color: Colors.black.withOpacity(0.3),
-      elevation: 10.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: ListTile(
-          title: DefaultTextStyle(
-        style: const TextStyle(fontSize: 10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('${_scoreData[position]['month']}'),
-            Table(
-              children: [
-                TableRow(children: [
-                  Container(
-                      alignment: Alignment.topRight,
-                      child: const Text('start')),
-                  Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility.makeCurrencyDisplay(
-                          _scoreData[position]['prev_total']))),
-                  Container(
-                      alignment: Alignment.topRight, child: const Text('end')),
-                  Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility.makeCurrencyDisplay(
-                          _scoreData[position]['this_total']))),
-                  Container(),
-                  Container(),
-                ]),
-                TableRow(children: [
-                  Container(
-                      alignment: Alignment.topRight,
-                      child: const Text('benefit')),
-                  Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility.makeCurrencyDisplay(
-                          _scoreData[position]['benefit']))),
-                  Container(
-                      alignment: Alignment.topRight,
-                      child: const Text('minus')),
-                  Container(
+    return moneyMap;
+  }
+
+  ///
+  List<Map<String, dynamic>> getYmMap({required List<MoneyState> data}) {
+    List<Map<String, dynamic>> ymMap = [];
+    for (var i = 0; i < data.length; i++) {
+      final exDate = data[i].date.split('-');
+      if (exDate[exDate.length - 1] == '01') {
+        final lmed = DateTime(int.parse(exDate[0]), int.parse(exDate[1]), 0);
+        final exLmed = lmed.toString().split(' ');
+        final lastMonthEndDate = exLmed[0];
+
+        final tmed =
+            DateTime(int.parse(exDate[0]), int.parse(exDate[1]) + 1, 0);
+        final exTmed = tmed.toString().split(' ');
+        final thisMonthEndDate = exTmed[0];
+
+        Map<String, String> _map = {};
+        _map['ym'] = '${exDate[0]}-${exDate[1]}';
+        _map['lastMonthEndDate'] = lastMonthEndDate;
+        _map['thisMonthEndDate'] = thisMonthEndDate;
+
+        ymMap.add(_map);
+      }
+    }
+
+    return ymMap;
+  }
+
+  ///
+  Map<String, dynamic> getBenefitData({required List<BenefitEntity> data}) {
+    Map<String, dynamic> benefitData = {};
+
+    var yM = '';
+    var sum = 0;
+    var com = '';
+    for (var i = 0; i < data.length; i++) {
+      final ym = data[i].yearmonth;
+
+      if (ym != yM) {
+        sum = 0;
+        com = '';
+      }
+
+      sum += data[i].price;
+      com += data[i].company + '/';
+
+      Map<String, dynamic> _map = {};
+      _map['sum'] = sum;
+      _map['company'] = com;
+      benefitData[ym] = _map;
+
+      yM = data[i].yearmonth;
+    }
+
+    return benefitData;
+  }
+
+  ///
+  Widget dispScoreList({required List<Score> data}) {
+    List<Widget> _list = [];
+
+    for (var i = 0; i < data.length - 1; i++) {
+      _list.add(
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 3),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(data[i].yearmonth),
+                  ),
+                  Expanded(
+                    child: Container(),
+                  ),
+                  Expanded(
+                    child: Container(
                       alignment: Alignment.topRight,
                       child: Text(_utility
-                          .makeCurrencyDisplay(_scoreData[position]['minus']))),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: const Text(
-                      'score',
-                      style: TextStyle(color: Colors.yellowAccent),
+                          .makeCurrencyDisplay(data[i].prevTotal.toString())),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      '${_scoreData[position]['score']}',
-                      style: const TextStyle(color: Colors.yellowAccent),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        _utility
+                            .makeCurrencyDisplay(data[i].thisTotal.toString()),
+                        style: const TextStyle(color: Colors.yellowAccent),
+                      ),
                     ),
                   ),
-                ]),
-                TableRow(children: [
-                  Container(),
-                  Container(),
-                  Container(),
-                  Container(),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: const Text(
-                      'gain',
-                      style: TextStyle(color: Colors.greenAccent),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topRight,
+                      child: Text(_utility
+                          .makeCurrencyDisplay(data[i].benefit.toString())),
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      _utility.makeCurrencyDisplay(
-                          _scoreData[position]['gain'].toString()),
-                      style: const TextStyle(color: Colors.greenAccent),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topRight,
+                      child: Text(_utility
+                          .makeCurrencyDisplay(data[i].minus.toString())),
                     ),
                   ),
-                ]),
-              ],
-            ),
-          ],
-        ),
-      )),
-    );
-  }
-
-  ///
-  int _getBenefit({required String ym}) {
-    int bene = 0;
-    List _list = [];
-
-    var be = 0;
-    for (var i = 0; i < _benefitData.length; i++) {
-      if (ym == _benefitData[i]['ym']) {
-        be = int.parse(_benefitData[i]['benefit']);
-        _list.add(be);
-      }
-    }
-
-    if (_list.length == 1) {
-      bene = be;
-    } else {
-      for (var i = 0; i < _list.length - 1; i++) {
-        bene = _list[i] + _list[i + 1];
-      }
-    }
-
-    return bene;
-  }
-
-  ///
-  Widget _makeGraph() {
-    List<ChartData> _list = [];
-
-    for (var i = 0; i < _scoreData.length; i++) {
-      if (_scoreData[i]['gain'] == "") {
-        continue;
-      }
-
-      _utility.makeYMDYData('${_scoreData[i]['month']}-01', 0);
-
-      _list.add(
-        ChartData(
-          x: DateTime(
-            int.parse(_utility.year),
-            int.parse(_utility.month),
-            int.parse(_utility.day),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        _utility.makeCurrencyDisplay(data[i].score.toString()),
+                        style: TextStyle(
+                            color: (data[i].benefit > data[i].minus)
+                                ? Colors.greenAccent
+                                : Colors.pinkAccent),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(),
+                  ),
+                ],
+              ),
+              Container(
+                alignment: Alignment.topRight,
+                child: Text((data[i].benefitCompany != '')
+                    ? data[i].benefitCompany
+                    : '-'),
+              ),
+              Container(
+                alignment: Alignment.topRight,
+                child: Text(
+                    _utility.makeCurrencyDisplay(data[i].average.toString())),
+              ),
+            ],
           ),
-          val: int.parse(_scoreData[i]['gain'].toString()),
         ),
       );
     }
 
-    return SfCartesianChart(
-      series: <ChartSeries>[
-        LineSeries<ChartData, DateTime>(
-          color: Colors.yellowAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.val,
-        ),
-      ],
-      primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-        dateFormat: DateFormat.yMMM(),
-      ),
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
-        ),
+    return SingleChildScrollView(
+      child: Column(
+        children: _list,
       ),
     );
   }
-}
-
-class ChartData {
-  final DateTime x;
-  final num val;
-
-  ChartData({required this.x, required this.val});
 }

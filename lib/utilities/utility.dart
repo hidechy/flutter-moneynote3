@@ -128,37 +128,39 @@ class Utility {
   int temochi = 0;
   int undercoin = 0;
 
-  void makeTotal(String data) {
+  void makeTotal(String data, String flag) {
     var exData = (data).split('|');
 
+    var plusNum = (flag == 'all') ? 2 : 0;
+
     List<List<int>> _totalValue = [];
-    _totalValue.add([10000, int.parse(exData[0])]);
-    _totalValue.add([5000, int.parse(exData[1])]);
-    _totalValue.add([2000, int.parse(exData[2])]);
-    _totalValue.add([1000, int.parse(exData[3])]);
-    _totalValue.add([500, int.parse(exData[4])]);
-    _totalValue.add([100, int.parse(exData[5])]);
-    _totalValue.add([50, int.parse(exData[6])]);
-    _totalValue.add([10, int.parse(exData[7])]);
-    _totalValue.add([5, int.parse(exData[8])]);
-    _totalValue.add([1, int.parse(exData[9])]);
+    _totalValue.add([10000, int.parse(exData[0 + plusNum])]);
+    _totalValue.add([5000, int.parse(exData[1 + plusNum])]);
+    _totalValue.add([2000, int.parse(exData[2 + plusNum])]);
+    _totalValue.add([1000, int.parse(exData[3 + plusNum])]);
+    _totalValue.add([500, int.parse(exData[4 + plusNum])]);
+    _totalValue.add([100, int.parse(exData[5 + plusNum])]);
+    _totalValue.add([50, int.parse(exData[6 + plusNum])]);
+    _totalValue.add([10, int.parse(exData[7 + plusNum])]);
+    _totalValue.add([5, int.parse(exData[8 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[9 + plusNum])]);
 
     temochi = 0;
     for (int i = 0; i < _totalValue.length; i++) {
       temochi += (_totalValue[i][0] * _totalValue[i][1]);
     }
 
-    _totalValue.add([1, int.parse(exData[10])]);
-    _totalValue.add([1, int.parse(exData[11])]);
-    _totalValue.add([1, int.parse(exData[12])]);
-    _totalValue.add([1, int.parse(exData[13])]);
-    _totalValue.add([1, int.parse(exData[14])]);
+    _totalValue.add([1, int.parse(exData[10 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[11 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[12 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[13 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[14 + plusNum])]);
 
-    _totalValue.add([1, int.parse(exData[15])]);
-    _totalValue.add([1, int.parse(exData[16])]);
-    _totalValue.add([1, int.parse(exData[17])]);
-    _totalValue.add([1, int.parse(exData[18])]);
-    _totalValue.add([1, int.parse(exData[19])]);
+    _totalValue.add([1, int.parse(exData[15 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[16 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[17 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[18 + plusNum])]);
+    _totalValue.add([1, int.parse(exData[19 + plusNum])]);
 
     total = 0;
     for (int i = 0; i < _totalValue.length; i++) {
@@ -166,9 +168,9 @@ class Utility {
     }
     undercoin = 0;
     List<List<int>> _uc = [];
-    _uc.add([10, int.parse(exData[7])]);
-    _uc.add([5, int.parse(exData[8])]);
-    _uc.add([1, int.parse(exData[9])]);
+    _uc.add([10, int.parse(exData[7 + plusNum])]);
+    _uc.add([5, int.parse(exData[8 + plusNum])]);
+    _uc.add([1, int.parse(exData[9 + plusNum])]);
     for (int i = 0; i < _uc.length; i++) {
       undercoin += (_uc[i][0] * _uc[i][1]);
     }

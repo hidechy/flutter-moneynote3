@@ -51,7 +51,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
       var _date = '${_utility.year}-${_utility.month}-${_utility.day}';
       await apiData.getMoneyOfDate(date: _date);
       if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
       }
       apiData.MoneyOfDate = {};
 
@@ -64,7 +64,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
       var _date2 = '${_utility.year}-${_utility.month}-${_utility.day}';
       await apiData.getMoneyOfDate(date: _date2);
       if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
       }
       apiData.MoneyOfDate = {};
 
@@ -82,7 +82,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
       var _date3 = '${widget.year}-${widget.month}-$_monthEndDay';
       await apiData.getMoneyOfDate(date: _date3);
       if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
       }
       apiData.MoneyOfDate = {};
 
@@ -95,7 +95,7 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
       var _date4 = '${_utility.year}-${_utility.month}-${_utility.day}';
       await apiData.getMoneyOfDate(date: _date4);
       if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
       }
       apiData.MoneyOfDate = {};
 
@@ -296,22 +296,20 @@ class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
                         ],
                       ),
                     ),
-                    Container(
-                      child: Table(
-                        children: [
-                          TableRow(children: [
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: const Text('計'),
-                            ),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: Text(
-                                  _utility.makeCurrencyDisplay(sum.toString())),
-                            ),
-                          ]),
-                        ],
-                      ),
+                    Table(
+                      children: [
+                        TableRow(children: [
+                          Container(
+                            alignment: Alignment.topRight,
+                            child: const Text('計'),
+                          ),
+                          Container(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                                _utility.makeCurrencyDisplay(sum.toString())),
+                          ),
+                        ]),
+                      ],
                     ),
                   ],
                 ),

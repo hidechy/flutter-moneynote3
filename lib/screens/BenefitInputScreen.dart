@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -88,7 +90,7 @@ class BenefitInputScreen extends StatelessWidget {
                           ),
                         ),
                         child: DefaultTextStyle(
-                          style: TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

@@ -505,9 +505,7 @@ class _CalenderState extends State<Calender> {
     Navigator.push(
       context!,
       MaterialPageRoute(
-        builder: (context) => ScoreListScreen(
-          date: _utility.year + "-" + _utility.month + "-" + _utility.day,
-        ),
+        builder: (context) => ScoreListScreen(),
       ),
     );
   }

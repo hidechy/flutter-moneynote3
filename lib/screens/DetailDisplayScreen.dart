@@ -187,7 +187,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
       _payD = exTodayData[18];
       _payE = exTodayData[19];
 
-      _utility.makeTotal(widget.detailDisplayArgs['today']);
+      _utility.makeTotal(widget.detailDisplayArgs['today'], 'one');
       _total = _utility.total;
       _temochi = _utility.temochi;
     }
@@ -195,13 +195,13 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
 
     var _yesterdayTotal = 0;
     if (widget.detailDisplayArgs['yesterday'] != null) {
-      _utility.makeTotal(widget.detailDisplayArgs['yesterday']);
+      _utility.makeTotal(widget.detailDisplayArgs['yesterday'], 'one');
       _yesterdayTotal = _utility.total;
       _spend = (_yesterdayTotal - _total);
     }
 
     if (widget.detailDisplayArgs['lastMonthEnd'] != null) {
-      _utility.makeTotal(widget.detailDisplayArgs['lastMonthEnd']);
+      _utility.makeTotal(widget.detailDisplayArgs['lastMonthEnd'], 'one');
       _lastMonthTotal = _utility.total;
     }
 
@@ -1092,7 +1092,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => ScoreListScreen(date: _displayDate));
+                    Get.to(() => ScoreListScreen());
                   },
                 ),
                 ListTile(

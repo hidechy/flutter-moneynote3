@@ -99,7 +99,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
     await apiData.getMoneyOfDate(date: _prevMonthEndDate);
     if (apiData.MoneyOfDate != null) {
       if (apiData.MoneyOfDate['data'] != "-") {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
         _prevMonthEndTotal = _utility.total;
       }
     }
@@ -192,7 +192,7 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
           for (var l = 2; l <= 21; l++) {
             _list.add(exData[l]);
           }
-          _utility.makeTotal(_list.join('|'));
+          _utility.makeTotal(_list.join('|'), 'one');
           _map['total'] = _utility.total;
           //-------------------------------------//
 

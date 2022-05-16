@@ -115,7 +115,7 @@ class _WeeklyDataAccordionScreenState extends State<WeeklyDataAccordionScreen> {
     await apiData.getMoneyOfDate(date: _date);
     if (apiData.MoneyOfDate != null) {
       if (apiData.MoneyOfDate['data'] != "-") {
-        _utility.makeTotal(apiData.MoneyOfDate['data']);
+        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
         _prevWeekEndTotal = _utility.total;
       }
     }
@@ -185,7 +185,7 @@ class _WeeklyDataAccordionScreenState extends State<WeeklyDataAccordionScreen> {
           _map["strPayD"] = exData[18];
           _map["strPayE"] = exData[19];
 
-          _utility.makeTotal(apiData.MoneyOfDate['data']);
+          _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
           _map['total'] = _utility.total;
         }
       }

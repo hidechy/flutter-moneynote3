@@ -77,7 +77,7 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
         for (var l = 2; l <= 21; l++) {
           _list.add(exData[l]);
         }
-        _utility.makeTotal(_list.join('|'));
+        _utility.makeTotal(_list.join('|'), 'one');
         total = _utility.total;
         //-------------------------------------//
 
