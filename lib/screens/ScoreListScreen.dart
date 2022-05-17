@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:moneynote5/riverpod/score/benefit_entity.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../riverpod/score/benefit_view_model.dart';
 import '../utilities/CustomShapeClipper.dart';
@@ -11,6 +11,7 @@ import '../utilities/utility.dart';
 import '../riverpod/score/money_state.dart';
 import '../riverpod/score/money_view_model.dart';
 import '../riverpod/score/score_entity.dart';
+import '../riverpod/score/benefit_entity.dart';
 
 class ScoreListScreen extends ConsumerWidget {
   ScoreListScreen({Key? key}) : super(key: key);
@@ -56,6 +57,7 @@ class ScoreListScreen extends ConsumerWidget {
                     onTap: () => Navigator.pop(context),
                     child: const Icon(Icons.close)),
               ),
+              makeGraph(data: scoreData),
               Expanded(
                 child: dispScoreList(data: scoreData),
               ),
@@ -72,68 +74,84 @@ class ScoreListScreen extends ConsumerWidget {
 
     final allMoneyState = _ref.watch(allMoneyProvider);
 
-    Map<String, dynamic> allDayMoneyTotalMap =
-        getAllDayMoneyTotalMap(data: allMoneyState);
+    if (allMoneyState != null) {
+      Map<String, dynamic> allDayMoneyTotalMap =
+          getAllDayMoneyTotalMap(data: allMoneyState);
 
-    if (allDayMoneyTotalMap.isNotEmpty) {
-      final exMinimumDate = minimumDate.split('-');
+      if (allDayMoneyTotalMap.isNotEmpty) {
+        final exMinimumDate = minimumDate.split('-');
 
-      final beforeAdmtm =
-          DateTime(int.parse(exMinimumDate[0]), int.parse(exMinimumDate[1]), 0);
+        final beforeAdmtm = DateTime(
+            int.parse(exMinimumDate[0]), int.parse(exMinimumDate[1]), 0);
 
-      final exBeforeAdmtm = beforeAdmtm.toString().split(' ');
-      final moneyState = _ref.watch(moneyProvider(exBeforeAdmtm[0]));
-      allDayMoneyTotalMap[moneyState.date] = moneyState.total;
+        final exBeforeAdmtm = beforeAdmtm.toString().split(' ');
 
-      List<Map<String, dynamic>> ymMap = getYmMap(data: allMoneyState);
+        final moneyState = _ref.watch(moneyProvider(exBeforeAdmtm[0]));
 
-      if (ymMap.isNotEmpty) {
-        final benefitState = _ref.watch(benefitProvider);
-        final benefitData = getBenefitData(data: benefitState);
+        if (moneyState != null) {
+          allDayMoneyTotalMap[moneyState.date] = moneyState.total;
 
-        final startMoney = int.parse(
-            allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']].toString());
+          List<Map<String, dynamic>> ymMap = getYmMap(data: allMoneyState);
 
-        for (var i = 0; i < ymMap.length; i++) {
-          final totalLmed =
-              (allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']] != null)
-                  ? int.parse(allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']]
-                      .toString())
-                  : 0;
-          final totalTmed =
-              (allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']] != null)
-                  ? allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']]
-                  : 0;
+          if (ymMap.isNotEmpty) {
+            final benefitState = _ref.watch(benefitProvider);
 
-          int _lmed = int.parse(totalLmed.toString());
-          int _tmed = int.parse(totalTmed.toString());
+            if (benefitState != null) {
+              final benefitData = getBenefitData(data: benefitState);
 
-          int _benefit = (benefitData[ymMap[i]['ym']] != null)
-              ? benefitData[ymMap[i]['ym']]['sum']
-              : 0;
+              if (allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']] != null) {
+                final startMoney = int.parse(
+                    allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']]
+                        .toString());
 
-          String _company = (benefitData[ymMap[i]['ym']] != null)
-              ? benefitData[ymMap[i]['ym']]['company'].substring(
-                  0, benefitData[ymMap[i]['ym']]['company'].length - 1)
-              : '';
+                for (var i = 0; i < ymMap.length; i++) {
+                  final totalLmed =
+                      (allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']] !=
+                              null)
+                          ? int.parse(
+                              allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']]
+                                  .toString())
+                          : 0;
+                  final totalTmed =
+                      (allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']] !=
+                              null)
+                          ? allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']]
+                          : 0;
 
-          int _score = ((_lmed - _tmed) * -1);
-          int _minus = (_benefit > 0) ? (_benefit - _score) : (_score * -1);
+                  int _lmed = int.parse(totalLmed.toString());
+                  int _tmed = int.parse(totalTmed.toString());
 
-          int average = ((totalTmed - startMoney) / (i + 1)).floor();
+                  int _benefit = (benefitData[ymMap[i]['ym']] != null)
+                      ? benefitData[ymMap[i]['ym']]['sum']
+                      : 0;
 
-          _list.add(
-            Score(
-              yearmonth: ymMap[i]['ym'],
-              prevTotal: totalLmed,
-              thisTotal: totalTmed,
-              score: _score,
-              benefit: _benefit,
-              benefitCompany: _company,
-              minus: _minus,
-              average: average,
-            ),
-          );
+                  String _company = (benefitData[ymMap[i]['ym']] != null)
+                      ? benefitData[ymMap[i]['ym']]['company'].substring(
+                          0, benefitData[ymMap[i]['ym']]['company'].length - 1)
+                      : '';
+
+                  int _score = ((_lmed - _tmed) * -1);
+                  int _minus =
+                      (_benefit > 0) ? (_benefit - _score) : (_score * -1);
+
+                  int average = ((totalTmed - startMoney) / (i + 1)).floor();
+
+                  _list.add(
+                    Score(
+                      yearmonth: ymMap[i]['ym'],
+                      prevTotal: totalLmed,
+                      thisTotal: totalTmed,
+                      score: _score,
+                      benefit: _benefit,
+                      benefitCompany: _company,
+                      minus: _minus,
+                      average: average,
+                    ),
+                  );
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -311,4 +329,44 @@ class ScoreListScreen extends ConsumerWidget {
       ),
     );
   }
+
+  ///
+  Widget makeGraph({required List<Score> data}) {
+    List<ChartData> _list = [];
+    for (var i = 0; i < data.length - 1; i++) {
+      _list.add(
+        ChartData(
+          x: DateTime.parse('${data[i].yearmonth}-01'),
+          val: data[i].thisTotal,
+        ),
+      );
+    }
+
+    return SfCartesianChart(
+      series: <ChartSeries>[
+        LineSeries<ChartData, DateTime>(
+          color: Colors.yellowAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.val,
+        ),
+      ],
+      primaryXAxis: DateTimeAxis(
+        majorGridLines: const MajorGridLines(width: 0),
+      ),
+      primaryYAxis: NumericAxis(
+        majorGridLines: MajorGridLines(
+          width: 2,
+          color: Colors.white.withOpacity(0.2),
+        ),
+      ),
+    );
+  }
+}
+
+class ChartData {
+  final DateTime x;
+  final num val;
+
+  ChartData({required this.x, required this.val});
 }
