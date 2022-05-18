@@ -1,356 +1,128 @@
-// ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison
+// ignore_for_file: must_be_immutable, file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../riverpod/food_expenses/month_summary_model.dart';
+import '../riverpod/food_expenses/month_summary_view_model.dart';
+import '../riverpod/food_expenses/seiyu_purchase_model.dart';
+import '../riverpod/food_expenses/seiyu_purchase_view_model.dart';
 
 import '../utilities/utility.dart';
-import '../utilities/CustomShapeClipper.dart';
 
-import '../data/ApiData.dart';
-
-class FoodExpensesDisplayScreen extends StatefulWidget {
-  String year;
-  String month;
-
+class FoodExpensesDisplayScreen extends ConsumerWidget {
   FoodExpensesDisplayScreen({Key? key, required this.year, required this.month})
       : super(key: key);
 
-  @override
-  _FoodExpensesDisplayScreenState createState() =>
-      _FoodExpensesDisplayScreenState();
-}
+  final String year;
+  final String month;
 
-class _FoodExpensesDisplayScreenState extends State<FoodExpensesDisplayScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
+  final Utility _utility = Utility();
 
-  int _foodExpenses = 0;
-  int _seiyuPurchase = 0;
-  int _bentouExpenses = 0;
+  int _monthSpendSum = 0;
 
-  int _monthEndDay = 0;
+  Map<String, dynamic> _foodExpenses = {};
 
-  int _monthTotal = 0;
-
-  /// 初期動作
-  @override
-  void initState() {
-    super.initState();
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    DateTime _today = DateTime.now();
-    _utility.makeYMDYData(_today.toString(), 0);
-
-    if (_utility.year == widget.year && _utility.month == widget.month) {
-      _monthEndDay = int.parse(_utility.day);
-
-      //-------------------------------------------//(s)
-      var _date = '${_utility.year}-${_utility.month}-${_utility.day}';
-      await apiData.getMoneyOfDate(date: _date);
-      if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
-      }
-      apiData.MoneyOfDate = {};
-
-      var _num2 = _utility.total;
-
-      _utility.makeMonthEnd(int.parse(widget.year), int.parse(widget.month), 0);
-
-      _utility.makeYMDYData(_utility.monthEndDateTime, 0);
-
-      var _date2 = '${_utility.year}-${_utility.month}-${_utility.day}';
-      await apiData.getMoneyOfDate(date: _date2);
-      if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
-      }
-      apiData.MoneyOfDate = {};
-
-      var _num1 = _utility.total;
-
-      _monthTotal = (_num1 - _num2);
-      //-------------------------------------------//(e)
-    } else {
-      _utility.makeMonthEnd(
-          int.parse(widget.year), int.parse(widget.month) + 1, 0);
-      _utility.makeYMDYData(_utility.monthEndDateTime, 0);
-      _monthEndDay = int.parse(_utility.day);
-
-      //-------------------------------------------//(s)
-      var _date3 = '${widget.year}-${widget.month}-$_monthEndDay';
-      await apiData.getMoneyOfDate(date: _date3);
-      if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
-      }
-      apiData.MoneyOfDate = {};
-
-      var _num2 = _utility.total;
-
-      _utility.makeMonthEnd(int.parse(widget.year), int.parse(widget.month), 0);
-
-      _utility.makeYMDYData(_utility.monthEndDateTime, 0);
-
-      var _date4 = '${_utility.year}-${_utility.month}-${_utility.day}';
-      await apiData.getMoneyOfDate(date: _date4);
-      if (apiData.MoneyOfDate != null) {
-        _utility.makeTotal(apiData.MoneyOfDate['data'], 'one');
-      }
-      apiData.MoneyOfDate = {};
-
-      var _num1 = _utility.total;
-
-      //<<<<<<<<<<<<//
-      var _bene = '0';
-      await apiData.getBenefitOfAll();
-      if (apiData.BenefitOfAll != null) {
-        for (var i = 0; i < apiData.BenefitOfAll['data'].length; i++) {
-          var exDate = (apiData.BenefitOfAll['data'][i]).split('|');
-          if (exDate[1] == "${widget.year}-${widget.month}") {
-            _bene = exDate[2];
-            break;
-          }
-        }
-      }
-      //<<<<<<<<<<<<//
-
-      _monthTotal = (_num2 - _num1 - int.parse(_bene)) * -1;
-      //-------------------------------------------//(e)
-    }
-
-    // ///////////////////////////////////////
-
-    ////////////////////////////////////////
-    var _date5 = "${widget.year}-${widget.month}-01";
-    await apiData.getMonthSummaryOfDate(date: _date5);
-    if (apiData.MonthSummaryOfDate != null) {
-      for (int i = 0; i < apiData.MonthSummaryOfDate['data'].length; i++) {
-        if (apiData.MonthSummaryOfDate['data'][i]['item'] == "食費") {
-          _foodExpenses = apiData.MonthSummaryOfDate['data'][i]['sum'];
-        }
-
-        if (apiData.MonthSummaryOfDate['data'][i]['item'] == "弁当代") {
-          _bentouExpenses = apiData.MonthSummaryOfDate['data'][i]['sum'];
-        }
-      }
-    }
-
-    apiData.MonthSummaryOfDate = {};
-    ////////////////////////////////////////
-
-    //----------------------------
-    var _date6 = '${widget.year}-${widget.month}-01';
-    await apiData.getSeiyuuPurchaseOfDate(date: _date6);
-    if (apiData.SeiyuuPurchaseOfDate != null) {
-      for (int i = 0; i < apiData.SeiyuuPurchaseOfDate['data'].length; i++) {
-        var exDate =
-            (apiData.SeiyuuPurchaseOfDate['data'][i]['date']).split('-');
-        if (exDate[0] == widget.year && exDate[1] == widget.month) {
-          if (RegExp(r'非食品')
-              .hasMatch(apiData.SeiyuuPurchaseOfDate['data'][i]['item'])) {
-            continue;
-          }
-
-          _seiyuPurchase +=
-              int.parse(apiData.SeiyuuPurchaseOfDate['data'][i]['price']);
-        }
-      }
-    }
-    apiData.SeiyuuPurchaseOfDate = {};
-    //----------------------------
-
-    setState(() {});
-  }
+  String _ym = '';
+  String _date = '';
 
   ///
   @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+  Widget build(BuildContext context, WidgetRef ref) {
+    _ym = '$year-$month';
+    _date = '$year-$month-01';
 
-    var sum = (_foodExpenses + _seiyuPurchase + _bentouExpenses);
-    var ave = (sum / _monthEndDay).floor();
+    final monthSummaryState = ref.watch(monthSummaryProvider(_date));
+    final monthSpendSum = getMonthSpendSum(data: monthSummaryState);
+    _monthSpendSum = monthSpendSum;
 
-    var engels = (_monthTotal > 0) ? ((sum / _monthTotal) * 100).floor() : 0;
+    final seiyuPurchaseState = ref.watch(seiyuPurchaseProvider(_date));
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black.withOpacity(0.1),
-        title: const Text('Food Expenses'),
-        centerTitle: true,
+    getFoodExpenses(data: monthSummaryState, data2: seiyuPurchaseState);
 
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: const Icon(
-          Icons.check_box_outline_blank,
-          color: Color(0xFF2e2e2e),
-        ),
-        //-------------------------//これを消すと「←」が出てくる（消さない）
+    print(_foodExpenses);
 
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-            color: Colors.greenAccent,
-          ),
-        ],
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          _utility.getBackGround(context: context),
-          ClipPath(
-            clipper: CustomShapeClipper(),
-            child: Container(
-              height: size.height * 0.7,
-              width: size.width * 0.7,
-              margin: const EdgeInsets.only(top: 5, left: 6),
-              color: Colors.yellowAccent.withOpacity(0.2),
-              child: Text(
-                '■',
-                style: TextStyle(color: Colors.white.withOpacity(0.1)),
-              ),
-            ),
-          ),
-          Column(
-            children: <Widget>[
-              Container(
-                alignment: Alignment.topLeft,
-                padding: const EdgeInsets.only(
-                  top: 20,
-                  left: 20,
-                ),
-                child: Text('${widget.year}-${widget.month}'),
-              ),
-              const Divider(
-                  color: Colors.indigo, indent: 10.0, endIndent: 10.0),
-              Container(
-                padding: const EdgeInsets.only(
-                  right: 20,
-                  left: 20,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1,
-                            color: Colors.white.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                      child: Table(
-                        children: [
-                          TableRow(children: [
-                            const Text('食費'),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: Text(_utility.makeCurrencyDisplay(
-                                  _foodExpenses.toString())),
-                            ),
-                          ]),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1,
-                            color: Colors.white.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                      child: Table(
-                        children: [
-                          TableRow(children: [
-                            const Text('西友購入'),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: Text(_utility.makeCurrencyDisplay(
-                                  _seiyuPurchase.toString())),
-                            ),
-                          ]),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1,
-                            color: Colors.white.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                      child: Table(
-                        children: [
-                          TableRow(children: [
-                            const Text('弁当代'),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: Text(_utility.makeCurrencyDisplay(
-                                  _bentouExpenses.toString())),
-                            ),
-                          ]),
-                        ],
-                      ),
-                    ),
-                    Table(
-                      children: [
-                        TableRow(children: [
-                          Container(
-                            alignment: Alignment.topRight,
-                            child: const Text('計'),
-                          ),
-                          Container(
-                            alignment: Alignment.topRight,
-                            child: Text(
-                                _utility.makeCurrencyDisplay(sum.toString())),
-                          ),
-                        ]),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(
-                  color: Colors.indigo, indent: 10.0, endIndent: 10.0),
-              Container(
-                padding: const EdgeInsets.only(
-                  right: 20,
-                  left: 20,
-                ),
-                child: Table(
-                  children: [
-                    TableRow(children: [
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text('平均（$_monthEndDay日間）'),
-                      ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child:
-                            Text(_utility.makeCurrencyDisplay(ave.toString())),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: const Text('エンゲル係数'),
-                      ),
-                      Container(
-                        alignment: Alignment.topRight,
-                        child: Text('$engels %'),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    return Container();
+  }
+
+  ///
+  int getMonthSpendSum({required List<MonthSummaryData> data}) {
+    int sum = 0;
+
+    for (var i = 0; i < data.length; i++) {
+      sum += data[i].sum;
+    }
+
+    return sum;
+  }
+
+  ///
+  void getFoodExpenses(
+      {required List<MonthSummaryData> data,
+      required List<SeiyuPurchaseData> data2}) {
+    var food = 0;
+    var milk = 0;
+    var bentou = 0;
+    for (var i = 0; i < data.length; i++) {
+      switch (data[i].item) {
+        case '食費':
+          food = data[i].sum;
+          break;
+        case '牛乳代':
+          milk = data[i].sum;
+          break;
+        case '弁当代':
+          bentou = data[i].sum;
+          break;
+      }
+    }
+
+    var seiyu = 0;
+    for (var i = 0; i < data2.length; i++) {
+      final exDate = data2[i].date.toString().split('-');
+      if (_ym == '${exDate[0]}-${exDate[1]}') {
+        if (RegExp(r'非食品').hasMatch(data2[i].item)) {
+          continue;
+        }
+
+        seiyu += int.parse(data2[i].price);
+      }
+    }
+
+    final sum = (food + milk + bentou + seiyu);
+
+    if (sum == 0) {
+      return;
+    }
+
+    final wariai = (sum / _monthSpendSum * 100).floor();
+
+    ////////////////////////////////////////
+    final now = DateTime.now();
+    _utility.makeYMDYData(now.toString(), 0);
+
+    var endDay = 0;
+    if ('$year-$month' == '${_utility.year}-${_utility.month}') {
+      endDay = int.parse(_utility.day);
+    } else {
+      final lastMonthEndDate =
+          DateTime(int.parse(year), (int.parse(month) + 1), 0);
+      _utility.makeYMDYData(lastMonthEndDate.toString(), 0);
+      endDay = int.parse(_utility.day);
+    }
+
+    final average = (sum / endDay).ceil();
+    ////////////////////////////////////////
+
+    _foodExpenses = {
+      "food": food,
+      "milk": milk,
+      "bentou": bentou,
+      "seiyu": seiyu,
+      "sum": sum,
+      "wariai": wariai,
+      "endDay": endDay,
+      "average": average,
+    };
   }
 }

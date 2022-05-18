@@ -74,83 +74,73 @@ class ScoreListScreen extends ConsumerWidget {
 
     final allMoneyState = _ref.watch(allMoneyProvider);
 
-    if (allMoneyState != null) {
-      Map<String, dynamic> allDayMoneyTotalMap =
-          getAllDayMoneyTotalMap(data: allMoneyState);
+    Map<String, dynamic> allDayMoneyTotalMap =
+        getAllDayMoneyTotalMap(data: allMoneyState);
 
-      if (allDayMoneyTotalMap.isNotEmpty) {
-        final exMinimumDate = minimumDate.split('-');
+    if (allDayMoneyTotalMap.isNotEmpty) {
+      final exMinimumDate = minimumDate.split('-');
 
-        final beforeAdmtm = DateTime(
-            int.parse(exMinimumDate[0]), int.parse(exMinimumDate[1]), 0);
+      final beforeAdmtm =
+          DateTime(int.parse(exMinimumDate[0]), int.parse(exMinimumDate[1]), 0);
 
-        final exBeforeAdmtm = beforeAdmtm.toString().split(' ');
+      final exBeforeAdmtm = beforeAdmtm.toString().split(' ');
 
-        final moneyState = _ref.watch(moneyProvider(exBeforeAdmtm[0]));
+      final moneyState = _ref.watch(moneyProvider(exBeforeAdmtm[0]));
 
-        if (moneyState != null) {
-          allDayMoneyTotalMap[moneyState.date] = moneyState.total;
+      allDayMoneyTotalMap[moneyState.date] = moneyState.total;
 
-          List<Map<String, dynamic>> ymMap = getYmMap(data: allMoneyState);
+      List<Map<String, dynamic>> ymMap = getYmMap(data: allMoneyState);
 
-          if (ymMap.isNotEmpty) {
-            final benefitState = _ref.watch(benefitProvider);
+      if (ymMap.isNotEmpty) {
+        final benefitState = _ref.watch(benefitProvider);
 
-            if (benefitState != null) {
-              final benefitData = getBenefitData(data: benefitState);
+        final benefitData = getBenefitData(data: benefitState);
 
-              if (allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']] != null) {
-                final startMoney = int.parse(
-                    allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']]
-                        .toString());
+        if (allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']] != null) {
+          final startMoney = int.parse(
+              allDayMoneyTotalMap[ymMap[0]['lastMonthEndDate']].toString());
 
-                for (var i = 0; i < ymMap.length; i++) {
-                  final totalLmed =
-                      (allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']] !=
-                              null)
-                          ? int.parse(
-                              allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']]
-                                  .toString())
-                          : 0;
-                  final totalTmed =
-                      (allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']] !=
-                              null)
-                          ? allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']]
-                          : 0;
+          for (var i = 0; i < ymMap.length; i++) {
+            final totalLmed =
+                (allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']] != null)
+                    ? int.parse(
+                        allDayMoneyTotalMap[ymMap[i]['lastMonthEndDate']]
+                            .toString())
+                    : 0;
+            final totalTmed =
+                (allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']] != null)
+                    ? allDayMoneyTotalMap[ymMap[i]['thisMonthEndDate']]
+                    : 0;
 
-                  int _lmed = int.parse(totalLmed.toString());
-                  int _tmed = int.parse(totalTmed.toString());
+            int _lmed = int.parse(totalLmed.toString());
+            int _tmed = int.parse(totalTmed.toString());
 
-                  int _benefit = (benefitData[ymMap[i]['ym']] != null)
-                      ? benefitData[ymMap[i]['ym']]['sum']
-                      : 0;
+            int _benefit = (benefitData[ymMap[i]['ym']] != null)
+                ? benefitData[ymMap[i]['ym']]['sum']
+                : 0;
 
-                  String _company = (benefitData[ymMap[i]['ym']] != null)
-                      ? benefitData[ymMap[i]['ym']]['company'].substring(
-                          0, benefitData[ymMap[i]['ym']]['company'].length - 1)
-                      : '';
+            String _company = (benefitData[ymMap[i]['ym']] != null)
+                ? benefitData[ymMap[i]['ym']]['company'].substring(
+                    0, benefitData[ymMap[i]['ym']]['company'].length - 1)
+                : '';
 
-                  int _score = ((_lmed - _tmed) * -1);
-                  int _minus =
-                      (_benefit > 0) ? (_benefit - _score) : (_score * -1);
+            int _score = ((_lmed - _tmed) * -1);
+            int _minus = (_benefit > 0) ? (_benefit - _score) : (_score * -1);
 
-                  int average = ((totalTmed - startMoney) / (i + 1)).floor();
+            int average = ((totalTmed - startMoney) / (i + 1)).floor();
 
-                  _list.add(
-                    Score(
-                      yearmonth: ymMap[i]['ym'],
-                      prevTotal: totalLmed,
-                      thisTotal: totalTmed,
-                      score: _score,
-                      benefit: _benefit,
-                      benefitCompany: _company,
-                      minus: _minus,
-                      average: average,
-                    ),
-                  );
-                }
-              }
-            }
+            _list.add(
+              Score(
+                yearmonth: ymMap[i]['ym'],
+                prevTotal: totalLmed,
+                thisTotal: totalTmed,
+                score: _score,
+                benefit: _benefit,
+                benefitCompany: _company,
+                minus: _minus,
+                average: average,
+              ),
+            );
           }
         }
       }
@@ -237,87 +227,91 @@ class ScoreListScreen extends ConsumerWidget {
 
     for (var i = 0; i < data.length - 1; i++) {
       _list.add(
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 3),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.3),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(data[i].yearmonth),
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility
-                          .makeCurrencyDisplay(data[i].prevTotal.toString())),
+        DefaultTextStyle(
+          style: const TextStyle(fontSize: 12),
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 3),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.3),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(data[i].yearmonth),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        _utility
-                            .makeCurrencyDisplay(data[i].thisTotal.toString()),
-                        style: const TextStyle(color: Colors.yellowAccent),
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(_utility
+                            .makeCurrencyDisplay(data[i].prevTotal.toString())),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility
-                          .makeCurrencyDisplay(data[i].benefit.toString())),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility
-                          .makeCurrencyDisplay(data[i].minus.toString())),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        _utility.makeCurrencyDisplay(data[i].score.toString()),
-                        style: TextStyle(
-                            color: (data[i].benefit > data[i].minus)
-                                ? Colors.greenAccent
-                                : Colors.pinkAccent),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(
+                          _utility.makeCurrencyDisplay(
+                              data[i].thisTotal.toString()),
+                          style: const TextStyle(color: Colors.yellowAccent),
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                ],
-              ),
-              Container(
-                alignment: Alignment.topRight,
-                child: Text((data[i].benefitCompany != '')
-                    ? data[i].benefitCompany
-                    : '-'),
-              ),
-              Container(
-                alignment: Alignment.topRight,
-                child: Text(
-                    _utility.makeCurrencyDisplay(data[i].average.toString())),
-              ),
-            ],
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(_utility
+                            .makeCurrencyDisplay(data[i].benefit.toString())),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(_utility
+                            .makeCurrencyDisplay(data[i].minus.toString())),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(
+                          _utility
+                              .makeCurrencyDisplay(data[i].score.toString()),
+                          style: TextStyle(
+                              color: (data[i].benefit > data[i].minus)
+                                  ? Colors.greenAccent
+                                  : Colors.pinkAccent),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(),
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.topRight,
+                  child: Text((data[i].benefitCompany != '')
+                      ? data[i].benefitCompany
+                      : '-'),
+                ),
+                Container(
+                  alignment: Alignment.topRight,
+                  child: Text(
+                      _utility.makeCurrencyDisplay(data[i].average.toString())),
+                ),
+              ],
+            ),
           ),
         ),
       );
