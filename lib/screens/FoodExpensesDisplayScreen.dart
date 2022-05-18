@@ -8,6 +8,7 @@ import '../riverpod/food_expenses/month_summary_view_model.dart';
 import '../riverpod/food_expenses/seiyu_purchase_model.dart';
 import '../riverpod/food_expenses/seiyu_purchase_view_model.dart';
 
+import '../utilities/CustomShapeClipper.dart';
 import '../utilities/utility.dart';
 
 class FoodExpensesDisplayScreen extends ConsumerWidget {
@@ -32,6 +33,9 @@ class FoodExpensesDisplayScreen extends ConsumerWidget {
     _ym = '$year-$month';
     _date = '$year-$month-01';
 
+    final prevMonth = DateTime(int.parse(year), int.parse(month) - 1, 1);
+    final nextMonth = DateTime(int.parse(year), int.parse(month) + 1, 1);
+
     final monthSummaryState = ref.watch(monthSummaryProvider(_date));
     final monthSpendSum = getMonthSpendSum(data: monthSummaryState);
     _monthSpendSum = monthSpendSum;
@@ -40,9 +44,172 @@ class FoodExpensesDisplayScreen extends ConsumerWidget {
 
     getFoodExpenses(data: monthSummaryState, data2: seiyuPurchaseState);
 
-    print(_foodExpenses);
+    Size size = MediaQuery.of(context).size;
 
-    return Container();
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          _utility.getBackGround(context: context),
+          ClipPath(
+            clipper: CustomShapeClipper(),
+            child: Container(
+              height: size.height * 0.7,
+              width: size.width * 0.7,
+              margin: const EdgeInsets.only(top: 5, left: 6),
+              color: Colors.yellowAccent.withOpacity(0.2),
+              child: Text(
+                '■',
+                style: TextStyle(color: Colors.white.withOpacity(0.1)),
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30, horizontal: 20),
+                    child: Row(
+                      children: [
+                        Text('$year-$month'),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            if ('$year-$month' == '2020-01') {
+                            } else {
+                              final exPrev = prevMonth.toString().split(' ');
+                              final exPrevYmd = exPrev[0].split('-');
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FoodExpensesDisplayScreen(
+                                    year: exPrevYmd[0],
+                                    month: exPrevYmd[1],
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Icon(Icons.skip_previous),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            final exNext = nextMonth.toString().split(' ');
+                            final exNextYmd = exNext[0].split('-');
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FoodExpensesDisplayScreen(
+                                  year: exNextYmd[0],
+                                  month: exNextYmd[1],
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Icon(Icons.skip_next),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30, horizontal: 20),
+                    child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.close)),
+                  ),
+                ],
+              ),
+              if (_foodExpenses['food'] != null)
+                DefaultTextStyle(
+                  style: const TextStyle(fontSize: 12),
+                  child: Column(
+                    children: [
+                      _dispContainer(type: '食費', value: _foodExpenses['food']),
+                      _dispContainer(type: '牛乳代', value: _foodExpenses['milk']),
+                      _dispContainer(
+                          type: '弁当代', value: _foodExpenses['bentou']),
+                      _dispContainer(type: '西友', value: _foodExpenses['seiyu']),
+                      _dispContainer2(type: '合計', value: _foodExpenses['sum']),
+                      Divider(
+                        thickness: 2,
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                      _dispContainer2(type: '当月消費額', value: _monthSpendSum),
+                      _dispContainer2(
+                        type: '平均（${_foodExpenses['endDay']}日間）',
+                        value: _foodExpenses['average'],
+                      ),
+                      _dispContainer2(
+                        type: 'エンゲル係数',
+                        value: _foodExpenses['wariai'],
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///
+  Widget _dispContainer({required String type, required value}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 2, color: Colors.white.withOpacity(0.3)),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(type),
+          ),
+          Expanded(
+            child: Container(
+              alignment: Alignment.topRight,
+              child: Text(
+                _utility.makeCurrencyDisplay(value.toString()),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///
+  Widget _dispContainer2({required String type, required value}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.topRight,
+              child: Text(type),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              alignment: Alignment.topRight,
+              child: Text(
+                _utility.makeCurrencyDisplay(value.toString()),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   ///
