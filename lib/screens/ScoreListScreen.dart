@@ -8,8 +8,8 @@ import '../riverpod/score/benefit_view_model.dart';
 import '../utilities/CustomShapeClipper.dart';
 import '../utilities/utility.dart';
 
-import '../riverpod/score/money_state.dart';
-import '../riverpod/score/money_view_model.dart';
+import '../riverpod/state/money_state.dart';
+import '../riverpod/view_model/money_view_model.dart';
 import '../riverpod/score/score_entity.dart';
 import '../riverpod/score/benefit_entity.dart';
 

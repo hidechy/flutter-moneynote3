@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_final_fields, unnecessary_null_comparison, deprecated_member_use, avoid_init_to_null
 
 import 'package:flutter/material.dart';
-import 'package:moneynote5/screens/SamedayListScreen.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:bubble/bubble.dart';
@@ -21,6 +20,7 @@ import 'OnedayInputScreen.dart';
 import 'ScoreListScreen.dart';
 import 'InvestmentTabScreen.dart';
 import 'BankInputScreen.dart';
+import 'SamedayListScreen.dart';
 
 class DetailDisplayScreen extends StatefulWidget {
   String date;
@@ -309,6 +309,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Column(
                     children: <Widget>[
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
@@ -332,7 +333,6 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                           ),
                         ],
                       ),
-                      const Divider(color: Colors.indigo),
                       _dispTotal(),
                       const Divider(color: Colors.indigo),
                       _dispCurrency(),

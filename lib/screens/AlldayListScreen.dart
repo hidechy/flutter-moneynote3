@@ -1,182 +1,42 @@
-// ignore_for_file: unnecessary_null_comparison, file_names, import_of_legacy_library_into_null_safe, prefer_final_fields
+// ignore_for_file: unnecessary_null_comparison, file_names, import_of_legacy_library_into_null_safe, prefer_final_fields, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:intl/intl.dart';
 
-import '../utilities/utility.dart';
+import '../riverpod/view_model/money_view_model.dart';
+
+import '../riverpod/allday_list/timeplace_zerousedate_view_model.dart';
+import '../riverpod/view_model/holiday_view_model.dart';
+
 import '../utilities/CustomShapeClipper.dart';
+import '../utilities/utility.dart';
 
-import '../data/ApiData.dart';
+class AlldayListScreen extends ConsumerWidget {
+  AlldayListScreen({Key? key, required this.date}) : super(key: key);
 
-class AlldayListScreen extends StatefulWidget {
   final String date;
 
-  const AlldayListScreen({Key? key, required this.date}) : super(key: key);
-
-  @override
-  _AlldayListScreenState createState() => _AlldayListScreenState();
-}
-
-class _AlldayListScreenState extends State<AlldayListScreen> {
-  Utility _utility = Utility();
-  ApiData apiData = ApiData();
-
-  bool _loading = false;
-
-  List<Map<dynamic, dynamic>> _alldayData = [];
-
-  Map<String, dynamic> _holidayList = {};
-
-  ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemScrollController _itemScrollController = ItemScrollController();
 
   ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
 
-  int maxNo = 0;
+  Utility _utility = Utility();
 
-  List<Map<dynamic, dynamic>> _ymList = [];
+  late WidgetRef _ref;
 
-  late TrackballBehavior _trackballBehavior;
-
-  /// 初期動作
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    _ref = ref;
 
-    _trackballBehavior = TrackballBehavior(
-      enable: true,
-      activationMode: ActivationMode.singleTap,
-    );
-
-    _makeDefaultDisplayData();
-  }
-
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    Map zerousedate = {};
-    await apiData.getDateOfTimePlaceZeroUse();
-    if (apiData.DateOfTimePlaceZeroUse != null) {
-      zerousedate = apiData.DateOfTimePlaceZeroUse;
-    }
-    apiData.DateOfTimePlaceZeroUse = {};
-
-    //全データ取得
-    await apiData.getMoneyOfAll();
-    if (apiData.MoneyOfAll != null) {
-      int _keepTotal = 0;
-      int total = 0;
-
-      var _ym = "";
-
-      for (var i = 0; i < apiData.MoneyOfAll['data'].length; i++) {
-        var exData = (apiData.MoneyOfAll['data'][i]).split('|');
-
-        //-------------------------------------//
-        List _list = [];
-        for (var l = 2; l <= 21; l++) {
-          _list.add(exData[l]);
-        }
-        _utility.makeTotal(_list.join('|'), 'one');
-        total = _utility.total;
-        //-------------------------------------//
-
-        var _map = {};
-        _map['date'] = exData[0];
-        _map['total'] = total.toString();
-        _map['pos'] = i;
-        _map['diff'] = ((_keepTotal - total) * -1).toString();
-
-        _map['zeroflag'] = _getZeroUseDate(
-          date: exData[0],
-          zerousedate: zerousedate,
-        );
-
-        _alldayData.add(_map);
-
-        _keepTotal = total;
-
-        //----------------------//
-        var exDate2 = (exData[0]).split('-');
-        if (_ym != "${exDate2[0]}-${exDate2[1]}") {
-          var _map2 = {};
-          _map2['ym'] = "${exDate2[0]}-${exDate2[1]}";
-          _map2['pos'] = i;
-          _ymList.add(_map2);
-        }
-        _ym = "${exDate2[0]}-${exDate2[1]}";
-        //----------------------//
-
-      }
-    }
-    apiData.MoneyOfAll = {};
-
-    maxNo = _alldayData.length;
-
-    //----------------------------//
-    await apiData.getHolidayOfAll();
-    if (apiData.HolidayOfAll != null) {
-      for (var i = 0; i < apiData.HolidayOfAll['data'].length; i++) {
-        _holidayList[apiData.HolidayOfAll['data'][i]] = '';
-      }
-    }
-    apiData.HolidayOfAll = {};
-    //----------------------------//
-
-    setState(() {
-      _loading = true;
-    });
-  }
-
-  ///
-  int _getZeroUseDate({date, required Map zerousedate}) {
-    var _num = 0;
-    for (var i = 0; i < zerousedate['data'].length; i++) {
-      if (zerousedate['data'][i] == date) {
-        _num = 1;
-        break;
-      }
-    }
-    return _num;
-  }
-
-  ///
-  @override
-  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-//      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text('Allday List'),
-        centerTitle: true,
-
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.greenAccent,
-        ),
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.arrow_downward),
-            color: Colors.greenAccent,
-            onPressed: () => _scroll(pos: maxNo),
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            color: Colors.greenAccent,
-            onPressed: () => _goAlldayListScreen(context),
-          ),
-        ],
-      ),
-
       body: Stack(
         fit: StackFit.expand,
-        children: <Widget>[
+        children: [
           _utility.getBackGround(context: context),
           ClipPath(
             clipper: CustomShapeClipper(),
@@ -191,94 +51,175 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
               ),
             ),
           ),
-          (_loading == false)
-              ? Container(
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(),
-                )
-              : _dispPageContent(),
+          Column(
+            children: [
+              const SizedBox(height: 40),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.3),
+                ),
+                child: Wrap(
+                  children: _makeYmBtn(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return AlldayGraphScreen();
+                              },
+                            );
+                          },
+                          child: const Icon(Icons.graphic_eq),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Expanded(
+                child: buildAlldayList(),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   ///
-  Widget _dispPageContent() {
-    return Column(
-      children: <Widget>[
-        _makeGraph(),
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(color: Colors.white.withOpacity(0.3)),
-          child: Wrap(
-            children: _makeYmBtn(),
+  Widget buildAlldayList() {
+    final allMoneyState = _ref.watch(allMoneyProvider);
+
+    //----------------//
+    final holidayState = _ref.watch(holidayProvider);
+    Map<String, dynamic> _holidayList = {};
+    for (var i = 0; i < holidayState.length; i++) {
+      _holidayList[holidayState[i]] = '';
+    }
+    //----------------//
+
+    //----------------//
+    final timeplaceZerousedateState = _ref.watch(timeplaceZerousedateProvider);
+    Map<String, dynamic> _zeroUseDateList = {};
+    for (var i = 0; i < timeplaceZerousedateState.length; i++) {
+      _zeroUseDateList[timeplaceZerousedateState[i]] = '';
+    }
+    //----------------//
+
+    final startMoney = _ref.watch(moneyProvider('2019-12-31'));
+
+    return ScrollablePositionedList.builder(
+      itemBuilder: (context, index) {
+        var prevTotal =
+            (index == 0) ? startMoney.total : allMoneyState[index - 1].total;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 5),
+          decoration: BoxDecoration(
+            color: _utility.getBgColor(allMoneyState[index].date, _holidayList),
           ),
-        ),
-        const Divider(color: Colors.indigo),
-        Expanded(
-          child: ScrollablePositionedList.builder(
-            itemBuilder: (context, index) {
-              return _listItem(position: index);
-            },
-            itemCount: _alldayData.length,
-            itemScrollController: _itemScrollController,
-            itemPositionsListener: _itemPositionsListener,
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: DefaultTextStyle(
+            style: const TextStyle(fontSize: 12),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: Text(
+                      '${allMoneyState[index].date}（${_utility.youbiStr}）'),
+                ),
+                Expanded(
+                  child: Text(_utility.makeCurrencyDisplay(
+                      allMoneyState[index].total.toString())),
+                ),
+                Container(
+                  width: 100,
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    _utility.makeCurrencyDisplay(
+                      (prevTotal - allMoneyState[index].total).toString(),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 50,
+                  alignment: Alignment.topRight,
+                  child: (_zeroUseDateList[allMoneyState[index].date] != null)
+                      ? Icon(
+                          Icons.home,
+                          color: Colors.greenAccent.withOpacity(0.5),
+                          size: 12,
+                        )
+                      : const Icon(
+                          Icons.check_box_outline_blank,
+                          color: Color(0xFF2e2e2e),
+                          size: 12,
+                        ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        );
+      },
+      itemCount: allMoneyState.length,
+      itemScrollController: _itemScrollController,
+      itemPositionsListener: _itemPositionsListener,
     );
   }
 
-  /// リストアイテム表示
-  Widget _listItem({required int position}) {
-    _utility.makeYMDYData(_alldayData[position]['date'], 0);
+  ///
+  List<Widget> _makeYmBtn() {
+    List<Widget> _btnList = [];
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 5),
-      decoration: BoxDecoration(
-        color: _utility.getBgColor(_alldayData[position]['date'], _holidayList),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: DefaultTextStyle(
-        style: const TextStyle(fontSize: 12),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 120,
-              child: Text(
-                  '${_alldayData[position]['date']}（${_utility.youbiStr}）'),
-            ),
-            Container(
+    final allMoneyState = _ref.watch(allMoneyProvider);
+
+    var _ym = "";
+    for (var i = 0; i < allMoneyState.length; i++) {
+      var exDate = allMoneyState[i].date.split('-');
+
+      if (_ym != "${exDate[0]}-${exDate[1]}") {
+        _btnList.add(
+          GestureDetector(
+            onTap: () => _scroll(pos: i),
+            child: Container(
+              color: Colors.green[900]!.withOpacity(0.5),
+              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
               width: 60,
-              alignment: Alignment.topRight,
-              child: Text(
-                  _utility.makeCurrencyDisplay(_alldayData[position]['total'])),
-            ),
-            Container(
-              width: 100,
-              alignment: Alignment.topRight,
-              child: Text(
-                  _utility.makeCurrencyDisplay(_alldayData[position]['diff'])),
-            ),
-            Container(
-              width: 50,
               alignment: Alignment.center,
-              child: (_alldayData[position]['zeroflag'] == 1)
-                  ? Icon(
-                      Icons.star,
-                      color: Colors.greenAccent.withOpacity(0.5),
-                      size: 10,
-                    )
-                  : const Icon(
-                      Icons.check_box_outline_blank,
-                      color: Color(0xFF2e2e2e),
-                      size: 10,
-                    ),
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Text(
+                "${exDate[0]}-${exDate[1]}",
+                style: const TextStyle(fontSize: 10),
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      }
+
+      _ym = "${exDate[0]}-${exDate[1]}";
+    }
+
+    return _btnList;
   }
 
   ///
@@ -289,46 +230,57 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
       curve: Curves.easeInOutCubic,
     );
   }
+}
 
-  ///
-  List<Widget> _makeYmBtn() {
-    List<Widget> _btnList = [];
-    for (var i = 0; i < _ymList.length; i++) {
-      _btnList.add(
-        GestureDetector(
-          onTap: () => _scroll(pos: _ymList[i]['pos']),
-          child: Container(
-            color: Colors.green[900]!.withOpacity(0.5),
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-            child: Text(
-              '${_ymList[i]['ym']}',
-              style: const TextStyle(fontSize: 10),
-            ),
+/////////////////////////////////////////////////////////////
+
+class AlldayGraphScreen extends ConsumerWidget {
+  AlldayGraphScreen({Key? key}) : super(key: key);
+
+  late WidgetRef _ref;
+
+  Utility _utility = Utility();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _ref = ref;
+
+    Size size = MediaQuery.of(context).size;
+
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      contentPadding: EdgeInsets.zero,
+      content: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: size.width * 3,
+          height: size.height - 100,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+          ),
+          child: Column(
+            children: [
+              _makeGraph(),
+            ],
           ),
         ),
-      );
-    }
-    return _btnList;
+      ),
+    );
   }
 
+  ///
   Widget _makeGraph() {
+    final allMoneyState = _ref.watch(allMoneyProvider);
+
     List<ChartData> _list = [];
 
-    _utility.makeYMDYData(DateTime.now().toString(), 0);
-    var thisYear = _utility.year;
-
     int minimumTotal = 0;
-    for (var i = 0; i < _alldayData.length; i++) {
-      _utility.makeYMDYData(_alldayData[i]['date'], 0);
-
-      if (thisYear != _utility.year) {
-        continue;
-      }
+    for (var i = 0; i < allMoneyState.length; i++) {
+      _utility.makeYMDYData(allMoneyState[i].date, 0);
 
       if (minimumTotal == 0) {
-        if (minimumTotal < int.parse(_alldayData[i]['total'])) {
-          minimumTotal = int.parse(_alldayData[i]['total']);
+        if (minimumTotal < allMoneyState[i].total) {
+          minimumTotal = allMoneyState[i].total;
         }
       }
 
@@ -339,55 +291,38 @@ class _AlldayListScreenState extends State<AlldayListScreen> {
             int.parse(_utility.month),
             int.parse(_utility.day),
           ),
-          total: int.parse(_alldayData[i]['total']),
+          total: allMoneyState[i].total,
         ),
       );
     }
 
     var devide1000000 = (minimumTotal / 1000000).floor();
 
-    return SizedBox(
-      height: 250,
-      child: SfCartesianChart(
-        title: ChartTitle(text: thisYear),
-        trackballBehavior: _trackballBehavior,
-        series: <ChartSeries>[
-          LineSeries<ChartData, DateTime>(
-            color: Colors.yellowAccent,
-            dataSource: _list,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.total,
-          ),
-        ],
-        primaryXAxis: DateTimeAxis(
-          majorGridLines: const MajorGridLines(width: 0),
-          dateFormat: DateFormat.MMM(),
+    return SfCartesianChart(
+      series: <ChartSeries>[
+        LineSeries<ChartData, DateTime>(
+          color: Colors.yellowAccent,
+          dataSource: _list,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.total,
         ),
-        primaryYAxis: NumericAxis(
-          majorGridLines: const MajorGridLines(
-            width: 2,
-            color: Colors.white,
-          ),
-          minimum: (devide1000000 * 1000000),
-        ),
+      ],
+      primaryXAxis: DateTimeAxis(
+        majorGridLines: const MajorGridLines(width: 0),
+        dateFormat: DateFormat.MMM(),
       ),
-    );
-  }
-
-////////////////////////////////////////////////////////
-
-  ///
-  void _goAlldayListScreen(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AlldayListScreen(
-          date: widget.date,
+      primaryYAxis: NumericAxis(
+        majorGridLines: const MajorGridLines(
+          width: 2,
+          color: Colors.white,
         ),
+        minimum: (devide1000000 * 1000000),
       ),
     );
   }
 }
+
+/////////////////////////////////////////////////////////////
 
 class ChartData {
   final DateTime x;
