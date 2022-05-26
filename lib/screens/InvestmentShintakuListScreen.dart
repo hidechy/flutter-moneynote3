@@ -50,7 +50,7 @@ class InvestmentShintakuListScreen extends ConsumerWidget {
               _utility.makeYMDYData(exData[1], 0);
 
               return DefaultTextStyle(
-                style: TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 12),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -99,7 +99,7 @@ class InvestmentShintakuListScreen extends ConsumerWidget {
                         ),
                       ),
                       ExpansionTile(
-                        title: Text('data'),
+                        title: const Text('data'),
                         children: _dispDetailData(data: exData[6]),
                       ),
                     ],

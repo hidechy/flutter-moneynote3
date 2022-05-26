@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../riverpod/view_model/money_view_model.dart';
 
-import '../riverpod/allday_list/timeplace_zerousedate_view_model.dart';
+import '../riverpod/view_model/timeplace_zerousedate_view_model.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
 
 import '../utilities/CustomShapeClipper.dart';

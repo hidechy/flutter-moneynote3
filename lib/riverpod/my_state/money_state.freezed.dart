@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
-part of '../state/money_state.dart';
+part of 'money_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -17,47 +17,26 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$MoneyState {
   String get date => throw _privateConstructorUsedError;
-
   int get yen_10000 => throw _privateConstructorUsedError;
-
   int get yen_5000 => throw _privateConstructorUsedError;
-
   int get yen_2000 => throw _privateConstructorUsedError;
-
   int get yen_1000 => throw _privateConstructorUsedError;
-
   int get yen_500 => throw _privateConstructorUsedError;
-
   int get yen_100 => throw _privateConstructorUsedError;
-
   int get yen_50 => throw _privateConstructorUsedError;
-
   int get yen_10 => throw _privateConstructorUsedError;
-
   int get yen_5 => throw _privateConstructorUsedError;
-
   int get yen_1 => throw _privateConstructorUsedError;
-
   int get bankA => throw _privateConstructorUsedError;
-
   int get bankB => throw _privateConstructorUsedError;
-
   int get bankC => throw _privateConstructorUsedError;
-
   int get bankD => throw _privateConstructorUsedError;
-
   int get bankE => throw _privateConstructorUsedError;
-
   int get peyA => throw _privateConstructorUsedError;
-
   int get peyB => throw _privateConstructorUsedError;
-
   int get peyC => throw _privateConstructorUsedError;
-
   int get peyD => throw _privateConstructorUsedError;
-
   int get peyE => throw _privateConstructorUsedError;
-
   int get total => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -70,7 +49,6 @@ abstract class $MoneyStateCopyWith<$Res> {
   factory $MoneyStateCopyWith(
           MoneyState value, $Res Function(MoneyState) then) =
       _$MoneyStateCopyWithImpl<$Res>;
-
   $Res call(
       {String date,
       int yen_10000,
@@ -101,7 +79,6 @@ class _$MoneyStateCopyWithImpl<$Res> implements $MoneyStateCopyWith<$Res> {
   _$MoneyStateCopyWithImpl(this._value, this._then);
 
   final MoneyState _value;
-
   // ignore: unused_field
   final $Res Function(MoneyState) _then;
 
@@ -229,7 +206,6 @@ abstract class _$$_MoneyStateCopyWith<$Res>
   factory _$$_MoneyStateCopyWith(
           _$_MoneyState value, $Res Function(_$_MoneyState) then) =
       __$$_MoneyStateCopyWithImpl<$Res>;
-
   @override
   $Res call(
       {String date,
@@ -550,70 +526,48 @@ abstract class _MoneyState implements MoneyState {
 
   @override
   String get date => throw _privateConstructorUsedError;
-
   @override
   int get yen_10000 => throw _privateConstructorUsedError;
-
   @override
   int get yen_5000 => throw _privateConstructorUsedError;
-
   @override
   int get yen_2000 => throw _privateConstructorUsedError;
-
   @override
   int get yen_1000 => throw _privateConstructorUsedError;
-
   @override
   int get yen_500 => throw _privateConstructorUsedError;
-
   @override
   int get yen_100 => throw _privateConstructorUsedError;
-
   @override
   int get yen_50 => throw _privateConstructorUsedError;
-
   @override
   int get yen_10 => throw _privateConstructorUsedError;
-
   @override
   int get yen_5 => throw _privateConstructorUsedError;
-
   @override
   int get yen_1 => throw _privateConstructorUsedError;
-
   @override
   int get bankA => throw _privateConstructorUsedError;
-
   @override
   int get bankB => throw _privateConstructorUsedError;
-
   @override
   int get bankC => throw _privateConstructorUsedError;
-
   @override
   int get bankD => throw _privateConstructorUsedError;
-
   @override
   int get bankE => throw _privateConstructorUsedError;
-
   @override
   int get peyA => throw _privateConstructorUsedError;
-
   @override
   int get peyB => throw _privateConstructorUsedError;
-
   @override
   int get peyC => throw _privateConstructorUsedError;
-
   @override
   int get peyD => throw _privateConstructorUsedError;
-
   @override
   int get peyE => throw _privateConstructorUsedError;
-
   @override
   int get total => throw _privateConstructorUsedError;
-
   @override
   @JsonKey(ignore: true)
   _$$_MoneyStateCopyWith<_$_MoneyState> get copyWith =>

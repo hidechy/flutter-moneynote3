@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 
-import '../state/money_state.dart';
+import '../my_state/money_state.dart';
 
 import '../../utilities/utility.dart';
 
