@@ -1,211 +1,74 @@
-// ignore_for_file: file_names, must_be_immutable, unused_field, unnecessary_null_comparison
+// ignore_for_file: file_names, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:vibration/vibration.dart';
+import 'package:uuid/uuid.dart';
 
-import 'dart:convert';
+import '../riverpod/bank_input/bank_input_state.dart';
+import '../riverpod/bank_input/bank_input_view_model.dart';
+import '../riverpod/view_model/holiday_view_model.dart';
 
-import '../utilities/utility.dart';
 import '../utilities/CustomShapeClipper.dart';
+import '../utilities/utility.dart';
 
-import '../data/ApiData.dart';
-
-class BankInputScreen extends StatefulWidget {
-  String date;
-
+class BankInputScreen extends ConsumerWidget {
   BankInputScreen({Key? key, required this.date}) : super(key: key);
 
-  @override
-  _BankInputScreenState createState() => _BankInputScreenState();
-}
+  final String date;
 
-class _BankInputScreenState extends State<BankInputScreen> {
+  final List<String> _banks = [
+    'bank_a',
+    'bank_b',
+    'bank_c',
+    'bank_d',
+    'bank_e',
+    'pay_a',
+    'pay_b',
+    'pay_c',
+    'pay_d',
+    'pay_e',
+  ];
+
   final Utility _utility = Utility();
-  ApiData apiData = ApiData();
 
-  String _dialogSelectedDate = "";
+  late WidgetRef _ref;
 
-  String _text = '';
-  final TextEditingController _teContPrice = TextEditingController();
+  final ScrollController _controller = ScrollController();
 
-  final Map _dispFlag = {};
+  var uuid = const Uuid();
 
-  String _chipValue = 'bank_a';
-
-  List<Map<dynamic, dynamic>> _bankData = [];
-
-  String _lastRecordDate = "";
-
-  int maxNo = 0;
-
-  final Map<String, dynamic> _holidayList = {};
-
-  final ItemScrollController _itemScrollController = ItemScrollController();
-
-  final ItemPositionsListener _itemPositionsListener =
-      ItemPositionsListener.create();
-
-  String _lastUpdateDate = "";
-  int _lastUpdateValue = 0;
-
-  /// 初期動作
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    _ref = ref;
 
-    _makeDefaultDisplayData();
-  }
+    var bankState = ref.watch(bankProvider);
+    if (bankState == "") bankState = 'bank_a';
 
-  /// 初期データ作成
-  void _makeDefaultDisplayData() async {
-    _utility.makeYMDYData(widget.date, 0);
+    final bankInputState = ref.watch(bankInputProvider(bankState));
 
-    _dialogSelectedDate = '${_utility.year}-${_utility.month}-01';
+    var lastBankInputState = (bankInputState.isNotEmpty)
+        ? bankInputState[bankInputState.length - 1]
+        : const BankInputState(
+            date: '',
+            price: 0,
+            diff: 0,
+            changeFlag: false,
+            upFlag: false,
+            lastChangeDate: '',
+          );
 
-    _teContPrice.text = '0';
+    final bankNames = _utility.getBankName();
 
-    _getBankValue();
-  }
-
-  /// 表示データ作成
-  void _getBankValue() async {
-    await apiData.getMoneyOfAll();
-    if (apiData.MoneyOfAll != null) {
-      int _value = 0;
-      int _prevValue = 0;
-      var _addFlag = false;
-
-      _bankData = [];
-
-      for (var i = 0; i < apiData.MoneyOfAll['data'].length; i++) {
-        var exData = (apiData.MoneyOfAll['data'][i]).split('|');
-
-        switch (_chipValue) {
-          case 'bank_a':
-            _value = int.parse(exData[12]);
-            break;
-          case 'bank_b':
-            _value = int.parse(exData[13]);
-            break;
-          case 'bank_c':
-            _value = int.parse(exData[14]);
-            break;
-          case 'bank_d':
-            _value = int.parse(exData[15]);
-            break;
-          case 'bank_e':
-            _value = int.parse(exData[16]);
-            break;
-
-          case 'pay_a':
-            _value = int.parse(exData[17]);
-            break;
-          case 'pay_b':
-            _value = int.parse(exData[18]);
-            break;
-          case 'pay_c':
-            _value = int.parse(exData[19]);
-            break;
-          case 'pay_d':
-            _value = int.parse(exData[20]);
-            break;
-          case 'pay_e':
-            _value = int.parse(exData[21]);
-            break;
-        }
-
-        _utility.makeYMDYData(exData[0], 0);
-
-        var _diffMark = 0;
-        var _diffPrice = 0;
-        var _diffShirushi = '0';
-        if (_prevValue != _value) {
-          _diffMark = 1;
-          _diffPrice = (_prevValue - _value) * -1;
-          _diffShirushi = (_value > _prevValue) ? '1' : '0';
-        }
-
-        if (_diffMark == 1) {
-          _lastUpdateDate = exData[0];
-          _lastUpdateValue = _value;
-        }
-
-        var _map = {};
-        _map['date'] = exData[0];
-        _map['value'] = _value.toString();
-        _map['diffMark'] = _diffMark.toString();
-        _map['youbiNo'] = _utility.youbiNo.toString();
-        _map['diffPrice'] = _diffPrice.toString();
-        _map['diffShirushi'] = _diffShirushi;
-
-        if (_value > 0) {
-          _addFlag = true;
-        }
-
-        if (_addFlag) {
-          _bankData.add(_map);
-        }
-
-        _prevValue = _value;
-
-        _lastRecordDate = exData[0];
-      }
-    }
-    apiData.MoneyOfAll = {};
-
-    maxNo = _bankData.length;
-
-    //----------------------------//
-    await apiData.getHolidayOfAll();
-    if (apiData.HolidayOfAll != null) {
-      for (var i = 0; i < apiData.HolidayOfAll['data'].length; i++) {
-        _holidayList[apiData.HolidayOfAll['data'][i]] = '';
-      }
-    }
-    apiData.HolidayOfAll = {};
-    //----------------------------//
-
-    setState(() {});
-  }
-
-  ///
-  @override
-  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text('銀行預金'),
-        centerTitle: true,
-
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_downward),
-          color: Colors.greenAccent,
-          onPressed: () => _scroll(),
-        ),
-        //-------------------------//これを消すと「←」が出てくる（消さない）
-
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-            color: Colors.greenAccent,
-          ),
-        ],
-      ),
       body: Stack(
         fit: StackFit.expand,
-        children: <Widget>[
-          _utility.getBackGround(context: context),
+        children: [
+          _utility.getBackGround(),
           ClipPath(
             clipper: CustomShapeClipper(),
             child: Container(
@@ -221,25 +84,76 @@ class _BankInputScreenState extends State<BankInputScreen> {
           ),
           Column(
             children: [
-              _makeGraph(),
-              _dispInputParts(context),
-              _dispLastValueBox(),
-              Expanded(
+              const SizedBox(height: 40),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return BankInputGraphScreen(
+                                  data: bankInputState,
+                                );
+                              },
+                            );
+                          },
+                          child: const Icon(Icons.graphic_eq),
+                        ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent.withOpacity(0.3),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                height: 40,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: _bankList(),
+                      flex: 2,
+                      child: Text(bankNames[bankState]),
                     ),
-                    SingleChildScrollView(
-                      child: SizedBox(
-                        width: 100,
-                        child: _makeBankChips(),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(lastBankInputState.lastChangeDate),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: Text(
+                          _utility.makeCurrencyDisplay(
+                              lastBankInputState.price.toString()),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
+              bankNameList(bank: bankState, bankNames: bankNames),
             ],
           ),
         ],
@@ -248,128 +162,166 @@ class _BankInputScreenState extends State<BankInputScreen> {
   }
 
   ///
-  void _scroll() {
-    _itemScrollController.scrollTo(
-      index: maxNo,
-      duration: const Duration(seconds: 1),
-      curve: Curves.easeInOutCubic,
+  Widget bankNameList(
+      {required String bank, required Map<dynamic, dynamic> bankNames}) {
+    return Expanded(
+      child: Row(
+        children: [
+          Expanded(child: _bankList(bank: bank)),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 100,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        _controller.animateTo(
+                          _controller.position.maxScrollExtent,
+                          duration: const Duration(seconds: 5),
+                          curve: Curves.bounceIn,
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.pinkAccent.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        margin: const EdgeInsets.only(bottom: 10),
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.arrow_downward),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        _controller.animateTo(
+                          _controller.position.minScrollExtent,
+                          duration: const Duration(seconds: 5),
+                          curve: Curves.bounceIn,
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.pinkAccent.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        margin: const EdgeInsets.only(bottom: 10),
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.arrow_upward),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Divider(color: Colors.white, thickness: 2),
+                const SizedBox(height: 10),
+                Column(
+                  children: _banks.map(
+                    (bank) {
+                      return GestureDetector(
+                        onTap: () {
+                          _ref.watch(bankProvider.notifier).setBank(bank: bank);
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.greenAccent.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.only(bottom: 10),
+                              alignment: Alignment.center,
+                              child: Text(bankNames[bank]),
+                            ),
+                            if (bank == 'bank_e')
+                              Column(
+                                children: const [
+                                  SizedBox(height: 10),
+                                  Divider(color: Colors.white, thickness: 2),
+                                  SizedBox(height: 10),
+                                ],
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ).toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   ///
-  Widget _makeBankChips() {
-    var _bankNames = _utility.getBankName();
+  Widget _bankList({required String bank}) {
+    final bankInputState = _ref.watch(bankInputProvider(bank));
 
-    var _dividerDisp = false;
+    //----------------//
+    final holidayState = _ref.watch(holidayProvider);
+    Map<String, dynamic> _holidayList = {};
+    for (var i = 0; i < holidayState.length; i++) {
+      _holidayList[holidayState[i]] = '';
+    }
+    //----------------//
 
     List<Widget> _list = [];
-    _bankNames.forEach(
-      (key, value) {
-        var exKey = (key).split('_');
-        if (_dividerDisp == false) {
-          if (exKey[0] == "pay") {
-            _list.add(
-              const Divider(
-                color: Colors.white,
-                height: 10,
-              ),
-            );
-            _dividerDisp = true;
-          }
-        }
 
-        _list.add(
-          ChoiceChip(
-            backgroundColor: Colors.black.withOpacity(0.1),
-            selectedColor: Colors.greenAccent.withOpacity(0.5),
-            label: Container(
-              alignment: Alignment.center,
-              width: 60,
-              child: Text(
-                '$value',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                ),
-              ),
-            ),
-            selected: _chipValue == key,
-            onSelected: (bool isSelected) {
-              _chipValue = key;
-              _getBankValue();
-            },
-          ),
-        );
-      },
-    );
+    for (final data in bankInputState) {
+      var exOneDate = data.date.split('-');
 
-    return Column(
-      children: _list,
-    );
-  }
-
-  ///
-  Widget _bankList() {
-    return ScrollablePositionedList.builder(
-      itemBuilder: (context, index) {
-        return Slidable(
-          actionPane: const SlidableDrawerActionPane(),
-          child: _listItem(position: index),
-          secondaryActions: <Widget>[
-            IconSlideAction(
-              color: _getBgColor(_bankData[index]['date']),
-              foregroundColor: Colors.blueAccent,
-              icon: Icons.date_range,
-              onTap: () => _changeSelectedDate(date: _bankData[index]['date']),
-            ),
-          ],
-        );
-      },
-      itemCount: _bankData.length,
-      itemScrollController: _itemScrollController,
-      itemPositionsListener: _itemPositionsListener,
-    );
-  }
-
-  /// リストアイテム表示
-  Widget _listItem({required int position}) {
-    return Card(
-      color: _getBgColor(_bankData[position]['date']),
-      elevation: 10.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: ListTile(
-        leading: _getLeading(mark: _bankData[position]['diffMark']),
-        trailing: _getTrailing(mark: _bankData[position]['diffShirushi']),
-        title: DefaultTextStyle(
-          style: const TextStyle(fontSize: 12),
-          child: Table(
-            children: [
-              TableRow(
-                children: [
-                  Text('${_bankData[position]['date']}'),
-                  Column(
+      _list.add(
+        Card(
+          color: _utility.getBgColor(data.date, _holidayList),
+          child: ListTile(
+            leading: _getLeading(mark: data.changeFlag),
+            trailing: _getTrailing(mark: data.upFlag),
+            title: Row(
+              children: [
+                Expanded(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(exOneDate[0]),
+                    Text('${exOneDate[1]}-${exOneDate[2]}'),
+                  ],
+                )),
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(_utility
-                          .makeCurrencyDisplay(_bankData[position]['value'])),
-                      Text(_utility.makeCurrencyDisplay(
-                          _bankData[position]['diffPrice'])),
+                      Text(_utility.makeCurrencyDisplay(data.price.toString())),
+                      Text(_utility.makeCurrencyDisplay(data.diff.toString())),
                     ],
                   ),
-                ],
-              )
-            ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      );
+    }
+
+    return SingleChildScrollView(
+      controller: _controller,
+      key: PageStorageKey(uuid.v1()),
+      child: Column(children: _list),
     );
   }
 
   /// リーディングマーク取得
-  Widget _getLeading({required String mark}) {
-    if (int.parse(mark) == 1) {
+  Widget _getLeading({required bool mark}) {
+    if (mark) {
       return const Icon(
         Icons.refresh,
         color: Colors.greenAccent,
@@ -383,8 +335,8 @@ class _BankInputScreenState extends State<BankInputScreen> {
   }
 
   ///
-  Widget _getTrailing({mark}) {
-    if (int.parse(mark) == 1) {
+  Widget _getTrailing({required bool mark}) {
+    if (mark) {
       return const Icon(
         FontAwesomeIcons.caretSquareUp,
         color: Colors.greenAccent,
@@ -396,185 +348,36 @@ class _BankInputScreenState extends State<BankInputScreen> {
       );
     }
   }
+}
 
-  /// 背景色取得
-  Color _getBgColor(String date) {
-    _utility.makeYMDYData(date, 0);
+/////////////////////////////////////////////////////////////
 
-    Color _color = Colors.black.withOpacity(0.3);
+class BankInputGraphScreen extends StatelessWidget {
+  BankInputGraphScreen({Key? key, required this.data}) : super(key: key);
 
-    switch (_utility.youbiNo) {
-      case 0:
-        _color = Colors.redAccent[700]!.withOpacity(0.3);
-        break;
+  final List<BankInputState> data;
 
-      case 6:
-        _color = Colors.blueAccent[700]!.withOpacity(0.3);
-        break;
+  final Utility _utility = Utility();
 
-      default:
-        _color = Colors.black.withOpacity(0.3);
-        break;
-    }
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
 
-    if (_holidayList[date] != null) {
-      _color = Colors.greenAccent[700]!.withOpacity(0.3);
-    }
-
-    return _color;
-  }
-
-  ///
-  void _changeSelectedDate({required String date}) {
-    _dialogSelectedDate = date;
-    setState(() {});
-  }
-
-  ///
-  Widget _dispInputParts(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: Colors.black.withOpacity(0.3),
-      child: Row(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              children: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  tooltip: 'jump',
-                  onPressed: () => _showDatepicker(context: context),
-                  color: Colors.blueAccent,
-                ),
-                Text(_dialogSelectedDate),
-              ],
-            ),
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      contentPadding: EdgeInsets.zero,
+      content: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: size.width * 3,
+          height: size.height - 100,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                style: const TextStyle(fontSize: 13),
-                controller: _teContPrice,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.end,
-                onChanged: (value) {
-                  setState(
-                    () {
-                      _text = value;
-                    },
-                  );
-                },
-              ),
-            ),
+          child: Column(
+            children: [_makeGraph()],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-            child: IconButton(
-              icon: const Icon(Icons.input),
-              tooltip: 'input',
-              onPressed: () => _updateRecord(context: context),
-              color: Colors.greenAccent,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// デートピッカー表示
-  void _showDatepicker({required BuildContext context}) async {
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(DateTime.now().year - 3),
-      lastDate: DateTime(DateTime.now().year + 6),
-      locale: const Locale('ja'),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            backgroundColor: Colors.black.withOpacity(0.1),
-            scaffoldBackgroundColor: Colors.black.withOpacity(0.1),
-            canvasColor: Colors.black.withOpacity(0.1),
-            cardColor: Colors.black.withOpacity(0.1),
-            // ignore: deprecated_member_use
-            cursorColor: Colors.white,
-            bottomAppBarColor: Colors.black.withOpacity(0.1),
-            dividerColor: Colors.indigo,
-            primaryColor: Colors.black.withOpacity(0.1),
-            secondaryHeaderColor: Colors.black.withOpacity(0.1),
-            dialogBackgroundColor: Colors.black.withOpacity(0.1),
-            primaryColorDark: Colors.black.withOpacity(0.1),
-            // ignore: deprecated_member_use
-            textSelectionColor: Colors.black.withOpacity(0.1),
-            highlightColor: Colors.black.withOpacity(0.1),
-            selectedRowColor: Colors.black.withOpacity(0.1),
-            colorScheme: ColorScheme.fromSwatch()
-                .copyWith(secondary: Colors.black.withOpacity(0.1)),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (selectedDate != null) {
-      _utility.makeYMDYData(selectedDate.toString(), 0);
-      _dialogSelectedDate =
-          '${_utility.year}-${_utility.month}-${_utility.day}';
-      setState(() {});
-    }
-  }
-
-  void _updateRecord({required BuildContext context}) async {
-    Map<String, dynamic> _uploadData = {};
-
-    _uploadData['date'] = _dialogSelectedDate;
-    _uploadData['bank'] = _chipValue;
-    _uploadData['price'] = _text;
-
-    String url = "http://toyohide.work/BrainLog/api/updateBankMoney";
-    Map<String, String> headers = {'content-type': 'application/json'};
-    String body = json.encode(_uploadData);
-    await post(Uri.parse(url), headers: headers, body: body);
-
-    Fluttertoast.showToast(
-      msg: "登録が完了しました",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-    );
-
-    _text = '';
-    _teContPrice.text = '';
-
-    Vibration.vibrate(pattern: [500, 1000, 500, 2000]);
-
-    _makeDefaultDisplayData();
-  }
-
-  ///
-  Widget _dispLastValueBox() {
-    var _bankNames = _utility.getBankName();
-
-    return Container(
-      decoration: BoxDecoration(color: Colors.yellowAccent.withOpacity(0.3)),
-      child: Table(
-        children: [
-          TableRow(children: [
-            Text('${_bankNames[_chipValue]}'),
-            Container(
-              alignment: Alignment.topRight,
-              child: Text(
-                  _utility.makeCurrencyDisplay(_lastUpdateValue.toString())),
-            ),
-            Container(
-              alignment: Alignment.topRight,
-              child: Text(_lastUpdateDate),
-            ),
-          ]),
-        ],
+        ),
       ),
     );
   }
@@ -583,8 +386,8 @@ class _BankInputScreenState extends State<BankInputScreen> {
   Widget _makeGraph() {
     List<ChartData> _list = [];
 
-    for (var i = 0; i < _bankData.length; i++) {
-      _utility.makeYMDYData(_bankData[i]['date'], 0);
+    for (var i = 0; i < data.length; i++) {
+      _utility.makeYMDYData(data[i].date, 0);
 
       _list.add(
         ChartData(
@@ -593,13 +396,12 @@ class _BankInputScreenState extends State<BankInputScreen> {
             int.parse(_utility.month),
             int.parse(_utility.day),
           ),
-          val: int.parse(_bankData[i]['value']),
+          val: data[i].price,
         ),
       );
     }
 
-    return SizedBox(
-      height: 250,
+    return Expanded(
       child: SfCartesianChart(
         series: <ChartSeries>[
           LineSeries<ChartData, DateTime>(
@@ -623,6 +425,8 @@ class _BankInputScreenState extends State<BankInputScreen> {
     );
   }
 }
+
+/////////////////////////////////////////////////////////////
 
 class ChartData {
   final DateTime x;

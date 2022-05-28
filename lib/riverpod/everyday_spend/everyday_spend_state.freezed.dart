@@ -17,15 +17,10 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$EverydaySpendState {
   String get date => throw _privateConstructorUsedError;
-
   int get spend => throw _privateConstructorUsedError;
-
   String get record => throw _privateConstructorUsedError;
-
   int get diff => throw _privateConstructorUsedError;
-
   String get step => throw _privateConstructorUsedError;
-
   String get distance => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -38,7 +33,6 @@ abstract class $EverydaySpendStateCopyWith<$Res> {
   factory $EverydaySpendStateCopyWith(
           EverydaySpendState value, $Res Function(EverydaySpendState) then) =
       _$EverydaySpendStateCopyWithImpl<$Res>;
-
   $Res call(
       {String date,
       int spend,
@@ -54,7 +48,6 @@ class _$EverydaySpendStateCopyWithImpl<$Res>
   _$EverydaySpendStateCopyWithImpl(this._value, this._then);
 
   final EverydaySpendState _value;
-
   // ignore: unused_field
   final $Res Function(EverydaySpendState) _then;
 
@@ -102,7 +95,6 @@ abstract class _$$_EverydaySpendStateCopyWith<$Res>
   factory _$$_EverydaySpendStateCopyWith(_$_EverydaySpendState value,
           $Res Function(_$_EverydaySpendState) then) =
       __$$_EverydaySpendStateCopyWithImpl<$Res>;
-
   @override
   $Res call(
       {String date,
@@ -232,22 +224,16 @@ abstract class _EverydaySpendState implements EverydaySpendState {
 
   @override
   String get date => throw _privateConstructorUsedError;
-
   @override
   int get spend => throw _privateConstructorUsedError;
-
   @override
   String get record => throw _privateConstructorUsedError;
-
   @override
   int get diff => throw _privateConstructorUsedError;
-
   @override
   String get step => throw _privateConstructorUsedError;
-
   @override
   String get distance => throw _privateConstructorUsedError;
-
   @override
   @JsonKey(ignore: true)
   _$$_EverydaySpendStateCopyWith<_$_EverydaySpendState> get copyWith =>

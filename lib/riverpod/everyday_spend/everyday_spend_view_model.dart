@@ -9,11 +9,12 @@ import 'everyday_spend_state.dart';
 
 //////////////////////////////////////////////////////////////////////
 
-final EverydaySpendProvider = StateNotifierProvider.autoDispose
+final everydaySpendProvider = StateNotifierProvider.autoDispose
     .family<EverydaySpendStateNotifier, List<EverydaySpendState>, String>(
         (ref, date) {
-  return EverydaySpendStateNotifier([])..getEverydaySpendData(date: date);
-});
+      return EverydaySpendStateNotifier([])
+        ..getEverydaySpendData(date: date);
+    });
 
 class EverydaySpendStateNotifier
     extends StateNotifier<List<EverydaySpendState>> {
@@ -25,7 +26,7 @@ class EverydaySpendStateNotifier
     Map<String, String> headers = {'content-type': 'application/json'};
     String body = json.encode({"date": date});
     Response response =
-        await post(Uri.parse(url), headers: headers, body: body);
+    await post(Uri.parse(url), headers: headers, body: body);
 
     var everydaySpend = jsonDecode(response.body);
 

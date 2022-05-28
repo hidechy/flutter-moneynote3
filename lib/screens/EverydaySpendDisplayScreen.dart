@@ -113,7 +113,7 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
     }
     //----------------//
 
-    final everydaySpendState = _ref.watch(EverydaySpendProvider(date));
+    final everydaySpendState = _ref.watch(everydaySpendProvider(date));
 
     for (var i = 0; i < everydaySpendState.length; i++) {
       var exOneDate = everydaySpendState[i].date.split('-');
@@ -122,11 +122,12 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
 
       _list.add(
         DefaultTextStyle(
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
           child: Container(
             decoration: BoxDecoration(
-                color: _utility.getBgColor(
-                    everydaySpendState[i].date, _holidayList)),
+              color:
+                  _utility.getBgColor(everydaySpendState[i].date, _holidayList),
+            ),
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.only(bottom: 10),
@@ -262,7 +263,7 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    Expanded(child: Text('-')),
+                    const Expanded(child: Text('-')),
                     const Expanded(flex: 2, child: Text('差額')),
                     Expanded(
                       child: Container(
