@@ -298,25 +298,27 @@ class AlldayGraphScreen extends ConsumerWidget {
 
     var devide1000000 = (minimumTotal / 1000000).floor();
 
-    return SfCartesianChart(
-      series: <ChartSeries>[
-        LineSeries<ChartData, DateTime>(
-          color: Colors.yellowAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.total,
+    return Expanded(
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          LineSeries<ChartData, DateTime>(
+            color: Colors.yellowAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.total,
+          ),
+        ],
+        primaryXAxis: DateTimeAxis(
+          majorGridLines: const MajorGridLines(width: 0),
+          dateFormat: DateFormat.MMM(),
         ),
-      ],
-      primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-        dateFormat: DateFormat.MMM(),
-      ),
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 2,
+            color: Colors.white,
+          ),
+          minimum: (devide1000000 * 1000000),
         ),
-        minimum: (devide1000000 * 1000000),
       ),
     );
   }

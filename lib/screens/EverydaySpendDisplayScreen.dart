@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../riverpod/everyday_spend/everyday_spend_view_model.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
+
 import '../utilities/CustomShapeClipper.dart';
 import '../utilities/utility.dart';
 
@@ -161,8 +162,10 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                                 ),
                               ),
                               Expanded(
-                                child:
-                                    Text('${everydaySpendState[i].step} stp.'),
+                                child: (everydaySpendState[i].step != '')
+                                    ? Text(
+                                        '${_utility.makeCurrencyDisplay(everydaySpendState[i].step)} stp.')
+                                    : const Text(''),
                               ),
                             ],
                           ),
@@ -176,8 +179,10 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                                 ),
                               ),
                               Expanded(
-                                child: Text(
-                                    '${everydaySpendState[i].distance} m.'),
+                                child: (everydaySpendState[i].distance != '')
+                                    ? Text(
+                                        '${_utility.makeCurrencyDisplay(everydaySpendState[i].distance)} m.')
+                                    : const Text(''),
                               ),
                             ],
                           ),
@@ -219,32 +224,72 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
     for (var i = 0; i < exRecord.length; i++) {
       var exOneRecord = exRecord[i].split('|');
 
+      var match1 = RegExp("rakuten").firstMatch(exOneRecord[1]);
+      var match2 = RegExp("uc card").firstMatch(exOneRecord[1]);
+      var match3 = RegExp("sumitomo").firstMatch(exOneRecord[1]);
+      var match4 = RegExp("amex").firstMatch(exOneRecord[1]);
+
       _list.add(
         Row(
           children: [
             Container(width: 50),
             Expanded(
-              child: Row(
-                children: [
-                  Expanded(child: Text(exOneRecord[0])),
-                  Expanded(
-                    flex: 2,
-                    child: Text(exOneRecord[1]),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.topRight,
-                      child: Text(_utility.makeCurrencyDisplay(exOneRecord[2])),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.white.withOpacity(0.3),
                     ),
                   ),
-                ],
+                ),
+                child: (match1 != null ||
+                        match2 != null ||
+                        match3 != null ||
+                        match4 != null)
+                    ? DefaultTextStyle(
+                        style: const TextStyle(color: Colors.lightBlueAccent),
+                        child: Row(
+                          children: [
+                            const Expanded(child: Text('(credit)')),
+                            Expanded(flex: 2, child: Text(exOneRecord[1])),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.topRight,
+                                child: Text(
+                                  _utility.makeCurrencyDisplay(exOneRecord[2]),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(child: Text(exOneRecord[0])),
+                          Expanded(flex: 2, child: Text(exOneRecord[1])),
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.topRight,
+                              child: Text(
+                                _utility.makeCurrencyDisplay(exOneRecord[2]),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ),
           ],
         ),
       );
 
-      sum += int.parse(exOneRecord[2]);
+      if (match1 != null ||
+          match2 != null ||
+          match3 != null ||
+          match4 != null) {
+      } else {
+        sum += int.parse(exOneRecord[2]);
+      }
     }
 
     if (sum != daySpend) {

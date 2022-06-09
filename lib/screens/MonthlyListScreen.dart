@@ -3,19 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:moneynote5/screens/EverydaySpendDisplayScreen.dart';
-import 'package:moneynote5/screens/OnedayInputScreen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../riverpod/my_state/money_state.dart';
-
 import '../riverpod/view_model/holiday_view_model.dart';
 import '../riverpod/view_model/timeplace_zerousedate_view_model.dart';
 import '../riverpod/view_model/money_view_model.dart';
 
 import '../utilities/CustomShapeClipper.dart';
 import '../utilities/utility.dart';
+
 import 'DetailDisplayScreen.dart';
+import 'EverydaySpendDisplayScreen.dart';
+import 'OnedayInputScreen.dart';
 
 class MonthlyListScreen extends ConsumerWidget {
   MonthlyListScreen({Key? key, required this.date}) : super(key: key);
@@ -170,7 +170,9 @@ class MonthlyListScreen extends ConsumerWidget {
               ),
             ],
           ),
-          Text(monthSpend.toString()),
+          Text(
+            _utility.makeCurrencyDisplay(monthSpend.toString()),
+          ),
         ],
       ),
     );
@@ -290,10 +292,16 @@ class MonthlyListScreen extends ConsumerWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(data[i].total.toString()),
+                          Text(
+                            _utility.makeCurrencyDisplay(
+                              data[i].total.toString(),
+                            ),
+                          ),
                           Row(
                             children: [
-                              Text(diff.toString()),
+                              Text(
+                                _utility.makeCurrencyDisplay(diff.toString()),
+                              ),
                               const SizedBox(width: 10),
                               (_zeroUseDateList[data[i].date] != null)
                                   ? Icon(
@@ -451,13 +459,15 @@ class MonthGraphScreen extends ConsumerWidget {
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Container(
-          width: size.width,
+          width: size.width * 5,
           height: size.height - 100,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
           ),
           child: Column(
-            children: [_makeGraph()],
+            children: [
+              _makeGraph(),
+            ],
           ),
         ),
       ),
@@ -489,30 +499,28 @@ class MonthGraphScreen extends ConsumerWidget {
       );
     }
 
-    return SfCartesianChart(
-      title: ChartTitle(
-        textStyle: const TextStyle(
-          color: Colors.white,
-        ),
-      ),
-      series: <ChartSeries>[
-        LineSeries<MoneyData, double>(
-          color: Colors.yellowAccent,
-          dataSource: _chartData,
-          xValueMapper: (MoneyData data, _) => data.day,
-          yValueMapper: (MoneyData data, _) => data.total,
-        ),
-        LineSeries<MoneyData, double>(
-          color: Colors.orangeAccent,
-          dataSource: _chartData,
-          xValueMapper: (MoneyData data, _) => data.day,
-          yValueMapper: (MoneyData data, _) => data.sagaku,
-        ),
-      ],
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
+    return Expanded(
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          LineSeries<MoneyData, double>(
+            color: Colors.yellowAccent,
+            dataSource: _chartData,
+            xValueMapper: (MoneyData data, _) => data.day,
+            yValueMapper: (MoneyData data, _) => data.total,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
+          ),
+          LineSeries<MoneyData, double>(
+            color: Colors.orangeAccent,
+            dataSource: _chartData,
+            xValueMapper: (MoneyData data, _) => data.day,
+            yValueMapper: (MoneyData data, _) => data.sagaku,
+          ),
+        ],
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 1,
+            color: Colors.white,
+          ),
         ),
       ),
     );

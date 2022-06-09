@@ -33,9 +33,13 @@ class GoldDisplayScreen extends StatelessWidget {
 
   GoldDisplayScreen({Key? key}) : super(key: key);
 
+  late BuildContext _context;
+
   ///
   @override
   Widget build(BuildContext context) {
+    _context = context;
+
     Size size = MediaQuery.of(context).size;
 
     investmentDataController.loadData(kind: 'AllGoldData');
@@ -109,7 +113,37 @@ class GoldDisplayScreen extends StatelessWidget {
   Widget _goldList({data10, data20}) {
     return Column(
       children: [
-        _makeGraph(data: data10),
+        //
+        //
+        //
+        //
+        //
+        // _makeGraph(data: data10),
+        //
+        //
+        //
+        //
+        //
+        //
+
+        Container(
+          alignment: Alignment.topRight,
+          padding: EdgeInsets.only(top: 10, right: 10),
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: _context,
+                builder: (_) {
+                  return GoldGraphScreen(
+                    data: data10,
+                  );
+                },
+              );
+            },
+            child: Icon(Icons.graphic_eq),
+          ),
+        ),
+
         Expanded(
           child: ScrollablePositionedList.builder(
             itemBuilder: (context, index) {
@@ -319,11 +353,48 @@ class GoldDisplayScreen extends StatelessWidget {
     }
     return Container();
   }
+}
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+class GoldGraphScreen extends StatelessWidget {
+  GoldGraphScreen({Key? key, required this.data}) : super(key: key);
+
+  final List<Gold> data;
+
+  final Utility _utility = Utility();
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      contentPadding: EdgeInsets.zero,
+      content: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: size.width * 3,
+          height: size.height - 100,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+          ),
+          child: Column(
+            children: [
+              _makeGraph(data: data),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   ///
   Widget _makeGraph({data}) {
     List<ChartData> _list = [];
-    for (var i = (data.length - 30); i < data.length; i++) {
+    for (var i = 0; i < data.length; i++) {
       if (data[i].goldValue == "-") {
         continue;
       }
@@ -344,33 +415,39 @@ class GoldDisplayScreen extends StatelessWidget {
       );
     }
 
-    return SfCartesianChart(
-      series: <ChartSeries>[
-        LineSeries<ChartData, DateTime>(
-          color: Colors.yellowAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.goldValue,
+    return Expanded(
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          LineSeries<ChartData, DateTime>(
+            color: Colors.yellowAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.goldValue,
+          ),
+          LineSeries<ChartData, DateTime>(
+            color: Colors.orangeAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.payPrice,
+          ),
+        ],
+        primaryXAxis: DateTimeAxis(
+          majorGridLines: const MajorGridLines(width: 0),
         ),
-        LineSeries<ChartData, DateTime>(
-          color: Colors.orangeAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.payPrice,
-        ),
-      ],
-      primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 2,
+            color: Colors.white,
+          ),
         ),
       ),
     );
   }
 }
+
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 
 class ChartData {
   final DateTime x;

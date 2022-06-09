@@ -341,22 +341,24 @@ class SamedayGraphScreen extends ConsumerWidget {
       );
     }
 
-    return SfCartesianChart(
-      series: <ChartSeries>[
-        ColumnSeries<ChartData, DateTime>(
-          color: Colors.yellowAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.val,
-        )
-      ],
-      primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
+    return Expanded(
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          ColumnSeries<ChartData, DateTime>(
+            color: Colors.yellowAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.val,
+          )
+        ],
+        primaryXAxis: DateTimeAxis(
+          majorGridLines: const MajorGridLines(width: 0),
+        ),
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 2,
+            color: Colors.white,
+          ),
         ),
       ),
     );

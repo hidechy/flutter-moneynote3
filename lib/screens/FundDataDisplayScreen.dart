@@ -17,9 +17,13 @@ class FundDataDisplayScreen extends StatelessWidget {
 
   FundDataDisplayScreen({Key? key}) : super(key: key);
 
+  late BuildContext _context;
+
   ///
   @override
   Widget build(BuildContext context) {
+    _context = context;
+
     Size size = MediaQuery.of(context).size;
 
     investmentDataController.loadData(kind: 'AllFundData');
@@ -116,8 +120,22 @@ class FundDataDisplayScreen extends StatelessWidget {
                 child: Text('${exFunddata[0]}'),
               ),
               const Divider(color: Colors.indigo),
-              _makeGraph(data: exFunddata[1]),
-              const Divider(color: Colors.indigo),
+              Container(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: _context,
+                      builder: (_) {
+                        return FundGraphScreen(
+                          data: exFunddata[1],
+                        );
+                      },
+                    );
+                  },
+                  child: Icon(Icons.graphic_eq),
+                ),
+              ),
               _dispFundData(data: exFunddata[1]),
             ],
           ),
@@ -162,11 +180,43 @@ class FundDataDisplayScreen extends StatelessWidget {
       );
     }
 
-    return DefaultTextStyle(
-      style: const TextStyle(fontSize: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _list,
+    return ExpansionTile(
+      title: const Text('data'),
+      children: _list,
+    );
+  }
+}
+
+/////////////////////////////////////////////////////////////
+
+class FundGraphScreen extends StatelessWidget {
+  FundGraphScreen({Key? key, required this.data}) : super(key: key);
+
+  final String data;
+
+  final Utility _utility = Utility();
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      contentPadding: EdgeInsets.zero,
+      content: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: size.width * 3,
+          height: size.height - 100,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+          ),
+          child: Column(
+            children: [
+              _makeGraph(data: data),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -193,27 +243,31 @@ class FundDataDisplayScreen extends StatelessWidget {
           val: int.parse(exLine[1])));
     }
 
-    return SfCartesianChart(
-      series: <ChartSeries>[
-        LineSeries<ChartData, DateTime>(
-          color: Colors.yellowAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.val,
+    return Expanded(
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          LineSeries<ChartData, DateTime>(
+            color: Colors.yellowAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.val,
+          ),
+        ],
+        primaryXAxis: DateTimeAxis(
+          majorGridLines: const MajorGridLines(width: 0),
         ),
-      ],
-      primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 2,
+            color: Colors.white,
+          ),
         ),
       ),
     );
   }
 }
+
+/////////////////////////////////////////////////////////////
 
 class ChartData {
   final DateTime x;

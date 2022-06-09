@@ -221,28 +221,30 @@ class InvestmentShintakuGraphScreen extends StatelessWidget {
       );
     }
 
-    return SfCartesianChart(
-      series: <ChartSeries>[
-        LineSeries<ChartData, DateTime>(
-          color: Colors.yellowAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.val,
+    return Expanded(
+      child: SfCartesianChart(
+        series: <ChartSeries>[
+          LineSeries<ChartData, DateTime>(
+            color: Colors.yellowAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.val,
+          ),
+          LineSeries<ChartData, DateTime>(
+            color: Colors.orangeAccent,
+            dataSource: _list,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.pay,
+          ),
+        ],
+        primaryXAxis: DateTimeAxis(
+          majorGridLines: const MajorGridLines(width: 0),
         ),
-        LineSeries<ChartData, DateTime>(
-          color: Colors.orangeAccent,
-          dataSource: _list,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.pay,
-        ),
-      ],
-      primaryXAxis: DateTimeAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(
-          width: 2,
-          color: Colors.white,
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 2,
+            color: Colors.white,
+          ),
         ),
       ),
     );
