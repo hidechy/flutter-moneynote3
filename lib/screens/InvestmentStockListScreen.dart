@@ -225,9 +225,11 @@ class InvestmentStockGraphScreen extends StatelessWidget {
         series: <ChartSeries>[
           LineSeries<ChartData, DateTime>(
             color: Colors.yellowAccent,
+            width: 3,
             dataSource: _list,
             xValueMapper: (ChartData data, _) => data.x,
             yValueMapper: (ChartData data, _) => data.val,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
           ),
           LineSeries<ChartData, DateTime>(
             color: Colors.orangeAccent,
@@ -242,7 +244,7 @@ class InvestmentStockGraphScreen extends StatelessWidget {
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 2,
-            color: Colors.white,
+            color: Colors.white30,
           ),
         ),
       ),

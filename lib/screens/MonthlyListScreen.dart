@@ -504,6 +504,7 @@ class MonthGraphScreen extends ConsumerWidget {
         series: <ChartSeries>[
           LineSeries<MoneyData, double>(
             color: Colors.yellowAccent,
+            width: 3,
             dataSource: _chartData,
             xValueMapper: (MoneyData data, _) => data.day,
             yValueMapper: (MoneyData data, _) => data.total,
@@ -519,7 +520,7 @@ class MonthGraphScreen extends ConsumerWidget {
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 1,
-            color: Colors.white,
+            color: Colors.white30,
           ),
         ),
       ),

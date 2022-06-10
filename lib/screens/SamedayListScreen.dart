@@ -306,7 +306,7 @@ class SamedayGraphScreen extends ConsumerWidget {
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Container(
-          width: size.width * 3,
+          width: size.width * 5,
           height: size.height - 100,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
@@ -349,6 +349,7 @@ class SamedayGraphScreen extends ConsumerWidget {
             dataSource: _list,
             xValueMapper: (ChartData data, _) => data.x,
             yValueMapper: (ChartData data, _) => data.val,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
           )
         ],
         primaryXAxis: DateTimeAxis(
@@ -357,7 +358,7 @@ class SamedayGraphScreen extends ConsumerWidget {
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 2,
-            color: Colors.white,
+            color: Colors.white30,
           ),
         ),
       ),

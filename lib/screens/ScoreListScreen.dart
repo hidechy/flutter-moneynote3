@@ -340,9 +340,11 @@ class ScoreListScreen extends ConsumerWidget {
       series: <ChartSeries>[
         LineSeries<ChartData, DateTime>(
           color: Colors.yellowAccent,
+          width: 3,
           dataSource: _list,
           xValueMapper: (ChartData data, _) => data.x,
           yValueMapper: (ChartData data, _) => data.val,
+          dataLabelSettings: const DataLabelSettings(isVisible: true),
         ),
       ],
       primaryXAxis: DateTimeAxis(
@@ -351,7 +353,7 @@ class ScoreListScreen extends ConsumerWidget {
       primaryYAxis: NumericAxis(
         majorGridLines: MajorGridLines(
           width: 2,
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white30,
         ),
       ),
     );

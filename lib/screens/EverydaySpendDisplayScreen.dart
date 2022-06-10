@@ -249,8 +249,8 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                     ? DefaultTextStyle(
                         style: const TextStyle(color: Colors.lightBlueAccent),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Expanded(child: Text('(credit)')),
                             Expanded(flex: 2, child: Text(exOneRecord[1])),
                             Expanded(
                               child: Container(

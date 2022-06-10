@@ -113,22 +113,9 @@ class GoldDisplayScreen extends StatelessWidget {
   Widget _goldList({data10, data20}) {
     return Column(
       children: [
-        //
-        //
-        //
-        //
-        //
-        // _makeGraph(data: data10),
-        //
-        //
-        //
-        //
-        //
-        //
-
         Container(
           alignment: Alignment.topRight,
-          padding: EdgeInsets.only(top: 10, right: 10),
+          padding: const EdgeInsets.only(top: 10, right: 10),
           child: GestureDetector(
             onTap: () {
               showDialog(
@@ -140,10 +127,9 @@ class GoldDisplayScreen extends StatelessWidget {
                 },
               );
             },
-            child: Icon(Icons.graphic_eq),
+            child: const Icon(Icons.graphic_eq),
           ),
         ),
-
         Expanded(
           child: ScrollablePositionedList.builder(
             itemBuilder: (context, index) {
@@ -420,9 +406,11 @@ class GoldGraphScreen extends StatelessWidget {
         series: <ChartSeries>[
           LineSeries<ChartData, DateTime>(
             color: Colors.yellowAccent,
+            width: 3,
             dataSource: _list,
             xValueMapper: (ChartData data, _) => data.x,
             yValueMapper: (ChartData data, _) => data.goldValue,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
           ),
           LineSeries<ChartData, DateTime>(
             color: Colors.orangeAccent,
@@ -437,7 +425,7 @@ class GoldGraphScreen extends StatelessWidget {
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 2,
-            color: Colors.white,
+            color: Colors.white30,
           ),
         ),
       ),

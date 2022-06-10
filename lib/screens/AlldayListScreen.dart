@@ -253,7 +253,7 @@ class AlldayGraphScreen extends ConsumerWidget {
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Container(
-          width: size.width * 3,
+          width: size.width * 10,
           height: size.height - 100,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
@@ -303,9 +303,11 @@ class AlldayGraphScreen extends ConsumerWidget {
         series: <ChartSeries>[
           LineSeries<ChartData, DateTime>(
             color: Colors.yellowAccent,
+            width: 3,
             dataSource: _list,
             xValueMapper: (ChartData data, _) => data.x,
             yValueMapper: (ChartData data, _) => data.total,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
           ),
         ],
         primaryXAxis: DateTimeAxis(
@@ -315,7 +317,7 @@ class AlldayGraphScreen extends ConsumerWidget {
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 2,
-            color: Colors.white,
+            color: Colors.white30,
           ),
           minimum: (devide1000000 * 1000000),
         ),

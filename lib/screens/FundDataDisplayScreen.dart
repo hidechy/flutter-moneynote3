@@ -133,7 +133,7 @@ class FundDataDisplayScreen extends StatelessWidget {
                       },
                     );
                   },
-                  child: Icon(Icons.graphic_eq),
+                  child: const Icon(Icons.graphic_eq),
                 ),
               ),
               _dispFundData(data: exFunddata[1]),
@@ -248,9 +248,11 @@ class FundGraphScreen extends StatelessWidget {
         series: <ChartSeries>[
           LineSeries<ChartData, DateTime>(
             color: Colors.yellowAccent,
+            width: 3,
             dataSource: _list,
             xValueMapper: (ChartData data, _) => data.x,
             yValueMapper: (ChartData data, _) => data.val,
+            dataLabelSettings: const DataLabelSettings(isVisible: true),
           ),
         ],
         primaryXAxis: DateTimeAxis(
@@ -259,7 +261,7 @@ class FundGraphScreen extends StatelessWidget {
         primaryYAxis: NumericAxis(
           majorGridLines: const MajorGridLines(
             width: 2,
-            color: Colors.white,
+            color: Colors.white30,
           ),
         ),
       ),
