@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../riverpod/monthly_list/monthly_list_view_model.dart';
 import '../riverpod/my_state/money_state.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
 import '../riverpod/view_model/timeplace_zerousedate_view_model.dart';
@@ -92,7 +93,32 @@ class MonthlyListScreen extends ConsumerWidget {
               Container(
                 width: double.infinity,
                 alignment: Alignment.topCenter,
-                child: Text(_yearmonth),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => (prevMonth.toString() == '2019-12')
+                              ? null
+                              : _goMonthlyListScreen(
+                                  date: prevMonth.toString(),
+                                ),
+                          child: const Icon(Icons.skip_previous),
+                        ),
+                        const SizedBox(width: 30),
+                        Text(_yearmonth),
+                        const SizedBox(width: 30),
+                        GestureDetector(
+                          onTap: () => _goMonthlyListScreen(
+                            date: nextMonth.toString(),
+                          ),
+                          child: const Icon(Icons.skip_next),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               topButtonLine(
                 prevMonth: prevMonth,
@@ -116,6 +142,9 @@ class MonthlyListScreen extends ConsumerWidget {
       required int monthSpend}) {
     final allMoneyState = _ref.watch(allMoneyProvider);
     final monthData = getMonthData(date: date, data: allMoneyState);
+
+    final graphSelectState = _ref.watch(graphSelectProvider);
+    final graphSelectViewModel = _ref.watch(graphSelectProvider.notifier);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -142,36 +171,41 @@ class MonthlyListScreen extends ConsumerWidget {
                 },
                 child: const Icon(Icons.list),
               ),
-              const SizedBox(width: 10),
+            ],
+          ),
+          Row(
+            children: [
               GestureDetector(
                 onTap: () {
                   showDialog(
                     context: _context,
                     builder: (_) {
-                      return MonthGraphScreen(monthData: monthData);
+                      return MonthGraphScreen(
+                        monthData: monthData,
+                        graphSelect: graphSelectState,
+                      );
                     },
                   );
                 },
                 child: const Icon(Icons.graphic_eq),
               ),
-              const SizedBox(width: 30),
-              GestureDetector(
-                onTap: () => (prevMonth.toString() == '2019-12')
-                    ? null
-                    : _goMonthlyListScreen(
-                        date: prevMonth.toString(),
-                      ),
-                child: const Icon(Icons.skip_previous),
+              Switch(
+                value: graphSelectState,
+                onChanged: (bool value) => graphSelectViewModel.toggleGraph(),
+                activeColor: Colors.white,
+                inactiveThumbColor: Colors.white,
+                activeTrackColor: Colors.orangeAccent,
+                inactiveTrackColor: Colors.orangeAccent,
               ),
-              const SizedBox(width: 10),
-              GestureDetector(
-                onTap: () => _goMonthlyListScreen(date: nextMonth.toString()),
-                child: const Icon(Icons.skip_next),
-              ),
+              const Text('mini', style: TextStyle(fontSize: 10)),
             ],
           ),
-          Text(
-            _utility.makeCurrencyDisplay(monthSpend.toString()),
+          Row(
+            children: [
+              Text(
+                _utility.makeCurrencyDisplay(monthSpend.toString()),
+              ),
+            ],
           ),
         ],
       ),
@@ -445,9 +479,12 @@ class MonthlyListScreen extends ConsumerWidget {
 /////////////////////////////////////////////////////////////
 
 class MonthGraphScreen extends ConsumerWidget {
-  MonthGraphScreen({Key? key, required this.monthData}) : super(key: key);
+  MonthGraphScreen(
+      {Key? key, required this.monthData, required this.graphSelect})
+      : super(key: key);
 
   final List<MoneyState> monthData;
+  final bool graphSelect;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -459,14 +496,14 @@ class MonthGraphScreen extends ConsumerWidget {
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Container(
-          width: size.width * 5,
-          height: size.height - 100,
+          width: (graphSelect) ? (size.width - 100) : size.width * 5,
+          height: size.height - 50,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
           ),
           child: Column(
             children: [
-              _makeGraph(),
+              _makeGraph(graphSelect: graphSelect),
             ],
           ),
         ),
@@ -475,7 +512,7 @@ class MonthGraphScreen extends ConsumerWidget {
   }
 
   ///
-  Widget _makeGraph() {
+  Widget _makeGraph({required bool graphSelect}) {
     List<MoneyData> _chartData = [];
 
     var _graphLength = monthData.length;
@@ -508,7 +545,7 @@ class MonthGraphScreen extends ConsumerWidget {
             dataSource: _chartData,
             xValueMapper: (MoneyData data, _) => data.day,
             yValueMapper: (MoneyData data, _) => data.total,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
+            dataLabelSettings: DataLabelSettings(isVisible: !graphSelect),
           ),
           LineSeries<MoneyData, double>(
             color: Colors.orangeAccent,

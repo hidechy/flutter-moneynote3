@@ -239,7 +239,10 @@ class BankInputScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(5),
                               margin: const EdgeInsets.only(bottom: 10),
                               alignment: Alignment.center,
-                              child: Text(bankNames[bank]),
+                              child: Text(
+                                bankNames[bank],
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                             if (bank == 'bank_e')
                               Column(
@@ -289,20 +292,28 @@ class BankInputScreen extends ConsumerWidget {
             title: Row(
               children: [
                 Expanded(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(exOneDate[0]),
-                    Text('${exOneDate[1]}-${exOneDate[2]}'),
-                  ],
+                    child: DefaultTextStyle(
+                  style: const TextStyle(fontSize: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(exOneDate[0]),
+                      Text('${exOneDate[1]}-${exOneDate[2]}'),
+                    ],
+                  ),
                 )),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(_utility.makeCurrencyDisplay(data.price.toString())),
-                      Text(_utility.makeCurrencyDisplay(data.diff.toString())),
-                    ],
+                  child: DefaultTextStyle(
+                    style: const TextStyle(fontSize: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(_utility
+                            .makeCurrencyDisplay(data.price.toString())),
+                        Text(
+                            _utility.makeCurrencyDisplay(data.diff.toString())),
+                      ],
+                    ),
                   ),
                 ),
               ],
