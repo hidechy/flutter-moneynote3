@@ -3,12 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 import '../riverpod/everyday_spend/everyday_spend_view_model.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
 
 import '../utilities/CustomShapeClipper.dart';
 import '../utilities/utility.dart';
+
+import 'BankMoveInfoSetScreen.dart';
 
 class EverydaySpendDisplayScreen extends ConsumerWidget {
   EverydaySpendDisplayScreen({Key? key, required this.date}) : super(key: key);
@@ -198,6 +201,7 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                 _dispRecord(
                   record: everydaySpendState[i].record,
                   daySpend: everydaySpendState[i].spend,
+                  date: everydaySpendState[i].date,
                 ),
               ],
             ),
@@ -215,7 +219,8 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
   }
 
   ///
-  Widget _dispRecord({required String record, required int daySpend}) {
+  Widget _dispRecord(
+      {required String record, required int daySpend, required String date}) {
     List<Widget> _list = [];
 
     var exRecord = record.split('/');
@@ -266,7 +271,31 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                     : Row(
                         children: [
                           Expanded(child: Text(exOneRecord[0])),
-                          Expanded(flex: 2, child: Text(exOneRecord[1])),
+                          (exOneRecord[1] == "Bank_Departure (D)")
+                              ? Expanded(
+                                  flex: 2,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(exOneRecord[1]),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Get.to(
+                                            () => BankMoveInfoSetScreen(
+                                              date: DateTime.parse(date),
+                                              record: exRecord[i],
+                                            ),
+                                          );
+                                        },
+                                        child: Icon(FontAwesomeIcons.building),
+                                      ),
+                                    ],
+                                  ))
+                              : Expanded(
+                                  flex: 2,
+                                  child: Text(exOneRecord[1]),
+                                ),
                           Expanded(
                             child: Container(
                               alignment: Alignment.topRight,
