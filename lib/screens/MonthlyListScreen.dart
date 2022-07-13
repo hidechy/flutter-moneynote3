@@ -1,5 +1,8 @@
 // ignore_for_file: file_names, must_be_immutable, prefer_const_constructors_in_immutables
 
+import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -34,6 +37,8 @@ class MonthlyListScreen extends ConsumerWidget {
 
   late WidgetRef _ref;
   late BuildContext _context;
+
+  List<Map<String, int>> graphData = [];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -143,6 +148,8 @@ class MonthlyListScreen extends ConsumerWidget {
     final allMoneyState = _ref.watch(allMoneyProvider);
     final monthData = getMonthData(date: date, data: allMoneyState);
 
+    makeGraphData(data: monthData);
+
     final graphSelectState = _ref.watch(graphSelectProvider);
     final graphSelectViewModel = _ref.watch(graphSelectProvider.notifier);
 
@@ -173,43 +180,35 @@ class MonthlyListScreen extends ConsumerWidget {
               ),
             ],
           ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: _context,
-                    builder: (_) {
-                      return MonthGraphScreen(
-                        monthData: monthData,
-                        graphSelect: graphSelectState,
-                      );
-                    },
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                context: _context,
+                builder: (_) {
+                  return MonthGraphScreen(
+                    graphData: graphData,
                   );
                 },
-                child: const Icon(Icons.graphic_eq),
-              ),
-              Switch(
-                value: graphSelectState,
-                onChanged: (bool value) => graphSelectViewModel.toggleGraph(),
-                activeColor: Colors.white,
-                inactiveThumbColor: Colors.white,
-                activeTrackColor: Colors.orangeAccent,
-                inactiveTrackColor: Colors.orangeAccent,
-              ),
-              const Text('mini', style: TextStyle(fontSize: 10)),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                _utility.makeCurrencyDisplay(monthSpend.toString()),
-              ),
-            ],
+              );
+            },
+            child: Icon(Icons.graphic_eq),
           ),
         ],
       ),
     );
+  }
+
+  ///
+  void makeGraphData({required List<MoneyState> data}) {
+    graphData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var exDate = data[i].date.split('-');
+      graphData.add({
+        'day': int.parse(exDate[2]),
+        'total': data[i].total,
+      });
+    }
   }
 
   ///
@@ -478,17 +477,45 @@ class MonthlyListScreen extends ConsumerWidget {
 
 /////////////////////////////////////////////////////////////
 
-class MonthGraphScreen extends ConsumerWidget {
-  MonthGraphScreen(
-      {Key? key, required this.monthData, required this.graphSelect})
-      : super(key: key);
+class MonthGraphScreen extends StatelessWidget {
+  MonthGraphScreen({Key? key, required this.graphData}) : super(key: key);
 
-  final List<MoneyState> monthData;
-  final bool graphSelect;
+  final List<Map<String, int>> graphData;
+
+  List<FlSpot> flspots = [];
+
+  int graphMax = 0;
+  int graphMin = 0;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    List<int> list = [];
+    for (var i = 0; i < graphData.length; i++) {
+      flspots.add(
+        FlSpot(
+          double.parse((i + 1).toString()),
+          double.parse(graphData[i]['total'].toString()),
+        ),
+      );
+
+      list.add(int.parse(graphData[i]['total'].toString()));
+    }
+
+    //-----------------------//
+    var minValue = list.reduce(min);
+    var maxValue = list.reduce(max);
+
+    var warisuu = 500000;
+
+    graphMin = ((minValue / warisuu).floor()) * warisuu;
+    graphMax = ((maxValue / warisuu).ceil()) * warisuu;
+    //-----------------------//
+
+    setChartData();
+
     Size size = MediaQuery.of(context).size;
+
+    int graphWidth = (graphData.length > 20) ? 3 : 2;
 
     return AlertDialog(
       backgroundColor: Colors.transparent,
@@ -496,82 +523,84 @@ class MonthGraphScreen extends ConsumerWidget {
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Container(
-          width: (graphSelect) ? (size.width - 100) : size.width * 5,
+          width: size.width * graphWidth,
           height: size.height - 50,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
           ),
-          child: Column(
-            children: [
-              _makeGraph(graphSelect: graphSelect),
-            ],
-          ),
+          child: LineChart(data),
         ),
       ),
     );
   }
 
   ///
-  Widget _makeGraph({required bool graphSelect}) {
-    List<MoneyData> _chartData = [];
+  LineChartData data = LineChartData();
 
-    var _graphLength = monthData.length;
-    var _startPrice = monthData[0].total;
-    var _endPrice = monthData[_graphLength - 1].total;
-    var _priceDiff = (_startPrice - _endPrice);
-    var _onedayDiff = (_priceDiff / (_graphLength - 1)).ceil();
-    var _katamukiDown = (_priceDiff > 0) ? 'right' : 'left';
+  void setChartData() {
+    data = LineChartData(
+      ///
+      minX: 1,
+      maxX: double.parse(flspots.length.toString()),
+      //
+      minY: double.parse(graphMin.toString()),
+      maxY: double.parse(graphMax.toString()),
 
-    for (var i = 0; i < monthData.length; i++) {
-      var exDate = monthData[i].date.toString().split('-');
-
-      _chartData.add(
-        MoneyData(
-          double.parse(exDate[2]),
-          double.parse(monthData[i].total.toString()),
-          (_katamukiDown == 'right')
-              ? double.parse((_startPrice - (_onedayDiff * i)).toString())
-              : double.parse((_startPrice + (_onedayDiff * i) * -1).toString()),
-        ),
-      );
-    }
-
-    return Expanded(
-      child: SfCartesianChart(
-        series: <ChartSeries>[
-          LineSeries<MoneyData, double>(
-            color: Colors.yellowAccent,
-            width: 3,
-            dataSource: _chartData,
-            xValueMapper: (MoneyData data, _) => data.day,
-            yValueMapper: (MoneyData data, _) => data.total,
-            dataLabelSettings: DataLabelSettings(isVisible: !graphSelect),
-          ),
-          LineSeries<MoneyData, double>(
-            color: Colors.orangeAccent,
-            dataSource: _chartData,
-            xValueMapper: (MoneyData data, _) => data.day,
-            yValueMapper: (MoneyData data, _) => data.sagaku,
-          ),
-        ],
-        primaryYAxis: NumericAxis(
-          majorGridLines: const MajorGridLines(
-            width: 1,
-            color: Colors.white30,
-          ),
+      ///
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          tooltipBgColor: Colors.white.withOpacity(0.3),
         ),
       ),
+
+      ///
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: true,
+
+        //横線
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.white30,
+            strokeWidth: 1,
+          );
+        },
+
+        //縦線
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.white38,
+            strokeWidth: 1,
+          );
+        },
+      ),
+
+      ///
+      /// 全体の枠
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: Colors.white38,
+          width: 2,
+        ),
+      ),
+
+      ///
+      lineBarsData: [
+        LineChartBarData(
+          spots: flspots,
+//          isCurved: true,//グラフを曲線にするか
+          barWidth: 5,
+          isStrokeCapRound: true,
+          color: Colors.yellowAccent,
+          belowBarData: BarAreaData(
+            show: true,
+            color: Colors.yellowAccent.withOpacity(0.1),
+          ), // グラフの下の塗り
+        ),
+      ],
+
+      ///
     );
   }
-}
-
-/////////////////////////////////////////////////////////////
-
-//graph
-class MoneyData {
-  double day;
-  double total;
-  double sagaku;
-
-  MoneyData(this.day, this.total, this.sagaku);
 }
