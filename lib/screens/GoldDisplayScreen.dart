@@ -14,6 +14,10 @@ import '../controllers/HolidayDataController.dart';
 import '../models/GoldRecord.dart';
 
 class GoldDisplayScreen extends StatelessWidget {
+  GoldDisplayScreen({Key? key, required this.closeMethod}) : super(key: key);
+
+  final String closeMethod;
+
   InvestmentDataController investmentDataController = Get.put(
     InvestmentDataController(),
   );
@@ -30,8 +34,6 @@ class GoldDisplayScreen extends StatelessWidget {
       ItemPositionsListener.create();
 
   int maxNo = 0;
-
-  GoldDisplayScreen({Key? key}) : super(key: key);
 
   late BuildContext _context;
 
@@ -58,7 +60,13 @@ class GoldDisplayScreen extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+
+              if (closeMethod == "double") {
+                Navigator.pop(context);
+              }
+            },
             color: Colors.greenAccent,
           ),
         ],

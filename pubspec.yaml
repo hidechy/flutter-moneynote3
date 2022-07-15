@@ -37,8 +37,9 @@ dependencies:
   grouped_list: ^4.2.0
 
   freezed_annotation:
-  json_annotation:
   uuid:
+
+  json_annotation: ^4.6.0
 
   fl_chart: ^0.55.0
 

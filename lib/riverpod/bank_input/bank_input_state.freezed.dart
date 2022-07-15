@@ -31,15 +31,15 @@ mixin _$BankInputState {
 /// @nodoc
 abstract class $BankInputStateCopyWith<$Res> {
   factory $BankInputStateCopyWith(
-          BankInputState value, $Res Function(BankInputState) then) =
-      _$BankInputStateCopyWithImpl<$Res>;
+      BankInputState value, $Res Function(BankInputState) then) =
+  _$BankInputStateCopyWithImpl<$Res>;
   $Res call(
       {String date,
-      int price,
-      int diff,
-      bool changeFlag,
-      bool upFlag,
-      String lastChangeDate});
+        int price,
+        int diff,
+        bool changeFlag,
+        bool upFlag,
+        String lastChangeDate});
 }
 
 /// @nodoc
@@ -64,27 +64,27 @@ class _$BankInputStateCopyWithImpl<$Res>
       date: date == freezed
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
       price: price == freezed
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as int,
+      as int,
       diff: diff == freezed
           ? _value.diff
           : diff // ignore: cast_nullable_to_non_nullable
-              as int,
+      as int,
       changeFlag: changeFlag == freezed
           ? _value.changeFlag
           : changeFlag // ignore: cast_nullable_to_non_nullable
-              as bool,
+      as bool,
       upFlag: upFlag == freezed
           ? _value.upFlag
           : upFlag // ignore: cast_nullable_to_non_nullable
-              as bool,
+      as bool,
       lastChangeDate: lastChangeDate == freezed
           ? _value.lastChangeDate
           : lastChangeDate // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
     ));
   }
 }
@@ -93,16 +93,16 @@ class _$BankInputStateCopyWithImpl<$Res>
 abstract class _$$_BankInputStateCopyWith<$Res>
     implements $BankInputStateCopyWith<$Res> {
   factory _$$_BankInputStateCopyWith(
-          _$_BankInputState value, $Res Function(_$_BankInputState) then) =
-      __$$_BankInputStateCopyWithImpl<$Res>;
+      _$_BankInputState value, $Res Function(_$_BankInputState) then) =
+  __$$_BankInputStateCopyWithImpl<$Res>;
   @override
   $Res call(
       {String date,
-      int price,
-      int diff,
-      bool changeFlag,
-      bool upFlag,
-      String lastChangeDate});
+        int price,
+        int diff,
+        bool changeFlag,
+        bool upFlag,
+        String lastChangeDate});
 }
 
 /// @nodoc
@@ -129,41 +129,40 @@ class __$$_BankInputStateCopyWithImpl<$Res>
       date: date == freezed
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
       price: price == freezed
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
-              as int,
+      as int,
       diff: diff == freezed
           ? _value.diff
           : diff // ignore: cast_nullable_to_non_nullable
-              as int,
+      as int,
       changeFlag: changeFlag == freezed
           ? _value.changeFlag
           : changeFlag // ignore: cast_nullable_to_non_nullable
-              as bool,
+      as bool,
       upFlag: upFlag == freezed
           ? _value.upFlag
           : upFlag // ignore: cast_nullable_to_non_nullable
-              as bool,
+      as bool,
       lastChangeDate: lastChangeDate == freezed
           ? _value.lastChangeDate
           : lastChangeDate // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
     ));
   }
 }
 
 /// @nodoc
-
 class _$_BankInputState implements _BankInputState {
   const _$_BankInputState(
       {required this.date,
-      required this.price,
-      required this.diff,
-      required this.changeFlag,
-      required this.upFlag,
-      required this.lastChangeDate});
+        required this.price,
+        required this.diff,
+        required this.changeFlag,
+        required this.upFlag,
+        required this.lastChangeDate});
 
   @override
   final String date;
@@ -217,11 +216,11 @@ class _$_BankInputState implements _BankInputState {
 abstract class _BankInputState implements BankInputState {
   const factory _BankInputState(
       {required final String date,
-      required final int price,
-      required final int diff,
-      required final bool changeFlag,
-      required final bool upFlag,
-      required final String lastChangeDate}) = _$_BankInputState;
+        required final int price,
+        required final int diff,
+        required final bool changeFlag,
+        required final bool upFlag,
+        required final String lastChangeDate}) = _$_BankInputState;
 
   @override
   String get date => throw _privateConstructorUsedError;

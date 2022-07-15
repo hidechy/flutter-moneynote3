@@ -10,7 +10,10 @@ import '../utilities/CustomShapeClipper.dart';
 import '../data/ApiData.dart';
 
 class YearHomeFixScreen extends StatefulWidget {
-  const YearHomeFixScreen({Key? key}) : super(key: key);
+  const YearHomeFixScreen({Key? key, required this.closeMethod})
+      : super(key: key);
+
+  final String closeMethod;
 
   ///
   @override
@@ -241,7 +244,13 @@ class _YearHomeFixScreenState extends State<YearHomeFixScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+
+              if (widget.closeMethod == "double") {
+                Navigator.pop(context);
+              }
+            },
             color: Colors.greenAccent,
           ),
         ],

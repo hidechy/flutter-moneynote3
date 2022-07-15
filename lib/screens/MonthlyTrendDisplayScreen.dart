@@ -114,7 +114,10 @@ class _MonthlyTrendDisplayScreenState extends State<MonthlyTrendDisplayScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
             color: Colors.greenAccent,
           ),
         ],
@@ -201,35 +204,35 @@ class _MonthlyTrendDisplayScreenState extends State<MonthlyTrendDisplayScreen> {
         _listRow.add(
           (i == 0)
               ? Container(
-            decoration: (i != 0) ? _decoration : _decoration2,
-            margin: const EdgeInsets.all(2),
-            width: 80,
-            height: _cellHeight,
-            child: Text('${exPrice[i]}'),
-          )
+                  decoration: (i != 0) ? _decoration : _decoration2,
+                  margin: const EdgeInsets.all(2),
+                  width: 80,
+                  height: _cellHeight,
+                  child: Text('${exPrice[i]}'),
+                )
               : Container(
-            decoration: (i != 0) ? _decoration : _decoration2,
-            margin: const EdgeInsets.all(2),
-            padding: const EdgeInsets.all(5),
-            width: 80,
-            height: _cellHeight,
-            alignment: Alignment.topCenter,
-            child: (exPrice[i] == '-')
-                ? const Text(
-              '',
-              style: TextStyle(fontSize: 12),
-            )
-                : _getOneBlockItem(
-              year: _trendData[j]['year'],
-              month: i,
-              cellNo: i,
-              price: exPrice,
-              manen: exManen,
-              updown: exUpdown,
-              sagaku: exSagaku,
-              salary: exSalary,
-            ),
-          ),
+                  decoration: (i != 0) ? _decoration : _decoration2,
+                  margin: const EdgeInsets.all(2),
+                  padding: const EdgeInsets.all(5),
+                  width: 80,
+                  height: _cellHeight,
+                  alignment: Alignment.topCenter,
+                  child: (exPrice[i] == '-')
+                      ? const Text(
+                          '',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      : _getOneBlockItem(
+                          year: _trendData[j]['year'],
+                          month: i,
+                          cellNo: i,
+                          price: exPrice,
+                          manen: exManen,
+                          updown: exUpdown,
+                          sagaku: exSagaku,
+                          salary: exSalary,
+                        ),
+                ),
         );
         ////////////////////////////////////
 

@@ -88,6 +88,7 @@ class AlldayListScreen extends ConsumerWidget {
                         child: GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pop(context);
                           },
                           child: const Icon(Icons.close),
                         ),

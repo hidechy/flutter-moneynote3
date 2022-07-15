@@ -78,6 +78,7 @@ class SamedayListScreen extends ConsumerWidget {
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pop(context);
                           },
                           child: const Icon(Icons.close),
                         ),

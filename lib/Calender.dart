@@ -493,6 +493,7 @@ class _CalenderState extends State<Calender> {
       MaterialPageRoute(
         builder: (context) => OnedayInputScreen(
           date: _utility.year + "-" + _utility.month + "-" + _utility.day,
+          closeMethod: 'single',
         ),
       ),
     );
@@ -505,7 +506,9 @@ class _CalenderState extends State<Calender> {
     Navigator.push(
       context!,
       MaterialPageRoute(
-        builder: (context) => ScoreListScreen(),
+        builder: (context) => ScoreListScreen(
+          closeMethod: 'single',
+        ),
       ),
     );
   }
@@ -519,6 +522,7 @@ class _CalenderState extends State<Calender> {
       MaterialPageRoute(
         builder: (context) => MonthlyListScreen(
           date: _utility.year + "-" + _utility.month + "-" + _utility.day,
+          closeMethod: 'single',
         ),
       ),
     );

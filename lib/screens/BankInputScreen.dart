@@ -2,13 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:moneynote5/riverpod/bank_update/bank_update_state.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:uuid/uuid.dart';
 
 import '../riverpod/bank_input/bank_input_state.dart';
 import '../riverpod/bank_input/bank_input_view_model.dart';
+import '../riverpod/bank_update/bank_update_view_model.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
 
 import '../utilities/CustomShapeClipper.dart';
@@ -40,9 +43,16 @@ class BankInputScreen extends ConsumerWidget {
 
   var uuid = const Uuid();
 
+  final TextEditingController updatePriceTextController =
+      TextEditingController();
+
+  late BuildContext _context;
+
+  ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     _ref = ref;
+    _context = context;
 
     var bankState = ref.watch(bankProvider);
     if (bankState == "") bankState = 'bank_a';
@@ -63,6 +73,9 @@ class BankInputScreen extends ConsumerWidget {
     final bankNames = _utility.getBankName();
 
     Size size = MediaQuery.of(context).size;
+
+    var bankUpdateState = ref.watch(bankUpdateProvider);
+    if (bankUpdateState == "") bankUpdateState = '-';
 
     return Scaffold(
       body: Stack(
@@ -85,41 +98,6 @@ class BankInputScreen extends ConsumerWidget {
           Column(
             children: [
               const SizedBox(height: 40),
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) {
-                                return BankInputGraphScreen(
-                                  data: bankInputState,
-                                );
-                              },
-                            );
-                          },
-                          child: const Icon(Icons.graphic_eq),
-                        ),
-                        const SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Icon(Icons.close),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.yellowAccent.withOpacity(0.3),
@@ -152,8 +130,97 @@ class BankInputScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          border: Border.all(
+                            color: Colors.greenAccent.withOpacity(0.5),
+                            width: 2,
+                          )),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 10,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => _showDatepicker(context: context),
+                                child: const Icon(Icons.calendar_today),
+                              ),
+                              const SizedBox(width: 20),
+                              SizedBox(
+                                width: 100,
+                                child: Text(bankUpdateState),
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: Text(bankState),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  style: const TextStyle(fontSize: 13),
+                                  controller: updatePriceTextController,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                              const SizedBox(width: 30),
+                              IconButton(
+                                onPressed: () => _bankMoneyUpdate(),
+                                icon: const Icon(
+                                  Icons.cloud_upload,
+                                  color: Colors.greenAccent,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 50,
+                    alignment: Alignment.topCenter,
+                    child: Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.close),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return BankInputGraphScreen(
+                                  data: bankInputState,
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.graphic_eq),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
-              bankNameList(bank: bankState, bankNames: bankNames),
+              _bankNameList(bank: bankState, bankNames: bankNames),
             ],
           ),
         ],
@@ -162,7 +229,72 @@ class BankInputScreen extends ConsumerWidget {
   }
 
   ///
-  Widget bankNameList(
+  void _bankMoneyUpdate() async {
+    var bankUpdateState = _ref.watch(bankUpdateProvider);
+    var price = updatePriceTextController.text;
+
+    if (bankUpdateState == "" || price == "") {
+      Fluttertoast.showToast(
+        msg: "日付、または金額が未入力",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+      );
+    }
+
+    var bankState = _ref.watch(bankProvider);
+    if (bankState == "") bankState = 'bank_a';
+
+    _ref.watch(
+      bankMoneyUpdateProvider(
+        BankUpdateState(
+          date: bankUpdateState,
+          bank: bankState,
+          price: int.parse(price),
+        ),
+      ),
+    );
+
+    Navigator.pop(_context);
+    Navigator.pop(_context);
+  }
+
+  ///
+  void _showDatepicker({required BuildContext context}) async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(DateTime.now().year - 3),
+      lastDate: DateTime(DateTime.now().year + 6),
+      locale: const Locale('ja'),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            backgroundColor: Colors.black.withOpacity(0.1),
+            scaffoldBackgroundColor: Colors.black.withOpacity(0.1),
+            canvasColor: Colors.black.withOpacity(0.1),
+            cardColor: Colors.black.withOpacity(0.1),
+            bottomAppBarColor: Colors.black.withOpacity(0.1),
+            dividerColor: Colors.indigo,
+            primaryColor: Colors.black.withOpacity(0.1),
+            secondaryHeaderColor: Colors.black.withOpacity(0.1),
+            dialogBackgroundColor: Colors.black.withOpacity(0.1),
+            primaryColorDark: Colors.black.withOpacity(0.1),
+            highlightColor: Colors.black.withOpacity(0.1),
+            selectedRowColor: Colors.black.withOpacity(0.1),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (selectedDate != null) {
+      final exSelectedDate = selectedDate.toString().split(' ');
+      _ref.watch(bankUpdateProvider.notifier).setDate(date: exSelectedDate[0]);
+    }
+  }
+
+  ///
+  Widget _bankNameList(
       {required String bank, required Map<dynamic, dynamic> bankNames}) {
     return Expanded(
       child: Row(

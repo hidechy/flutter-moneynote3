@@ -844,7 +844,9 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => GoldDisplayScreen());
+                              Get.to(() => GoldDisplayScreen(
+                                    closeMethod: 'single',
+                                  ));
                             },
                             child: const Icon(
                               Icons.label,
@@ -1047,7 +1049,10 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => OnedayInputScreen(date: _displayDate));
+                    Get.to(() => OnedayInputScreen(
+                          date: _displayDate,
+                          closeMethod: 'double',
+                        ));
                   },
                 ),
                 ListTile(
@@ -1083,7 +1088,10 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                       style: TextStyle(fontSize: 14),
                     ),
                     onTap: () {
-                      Get.to(() => MonthlyListScreen(date: _displayDate));
+                      Get.to(() => MonthlyListScreen(
+                            date: _displayDate,
+                            closeMethod: 'double',
+                          ));
                     }),
                 ListTile(
                   leading: const Icon(Icons.trending_up),
@@ -1092,7 +1100,7 @@ class _DetailDisplayScreenState extends State<DetailDisplayScreen> {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => ScoreListScreen());
+                    Get.to(() => ScoreListScreen(closeMethod: 'double'));
                   },
                 ),
                 ListTile(

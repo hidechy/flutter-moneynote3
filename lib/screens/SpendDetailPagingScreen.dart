@@ -379,7 +379,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
                 onTap: () {
-                  Get.to(() => const YearHomeFixScreen());
+                  Get.to(() => const YearHomeFixScreen(
+                        closeMethod: 'double',
+                      ));
                 },
               ),
 
@@ -433,7 +435,9 @@ class _SpendDetailPagingScreenState extends State<SpendDetailPagingScreen> {
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
                 onTap: () {
-                  Get.to(() => GoldDisplayScreen());
+                  Get.to(() => GoldDisplayScreen(
+                        closeMethod: 'double',
+                      ));
                 },
               ),
 

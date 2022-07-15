@@ -19,7 +19,10 @@ import 'MonthlyListScreen.dart';
 class OnedayInputScreen extends StatefulWidget {
   String date;
 
-  OnedayInputScreen({Key? key, required this.date}) : super(key: key);
+  final String closeMethod;
+
+  OnedayInputScreen({Key? key, required this.date, required this.closeMethod})
+      : super(key: key);
 
   @override
   _OnedayInputScreenState createState() => _OnedayInputScreenState();
@@ -151,7 +154,13 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
         //-------------------------//これを消すと「←」が出てくる（消さない）
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+
+            if (widget.closeMethod == "double") {
+              Navigator.pop(context);
+            }
+          },
           color: Colors.greenAccent,
         ),
 
@@ -315,7 +324,10 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
                             // onPressed: () => _goMonthlyListScreen(
                             //     context: context, date: _date),
                             onPressed: () {
-                              Get.to(() => MonthlyListScreen(date: _date));
+                              Get.to(() => MonthlyListScreen(
+                                    date: _date,
+                                    closeMethod: 'single',
+                                  ));
                             },
                             color: Colors.blueAccent,
                           ),
@@ -644,6 +656,7 @@ class _OnedayInputScreenState extends State<OnedayInputScreen> {
       MaterialPageRoute(
         builder: (context) => OnedayInputScreen(
           date: date,
+          closeMethod: widget.closeMethod,
         ),
       ),
     );

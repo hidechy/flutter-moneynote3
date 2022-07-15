@@ -6,9 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../riverpod/monthly_list/monthly_list_view_model.dart';
 import '../riverpod/my_state/money_state.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
 import '../riverpod/view_model/timeplace_zerousedate_view_model.dart';
@@ -22,9 +20,12 @@ import 'EverydaySpendDisplayScreen.dart';
 import 'OnedayInputScreen.dart';
 
 class MonthlyListScreen extends ConsumerWidget {
-  MonthlyListScreen({Key? key, required this.date}) : super(key: key);
+  MonthlyListScreen({Key? key, required this.date, required this.closeMethod})
+      : super(key: key);
 
   final String date;
+
+  final String closeMethod;
 
   final Utility _utility = Utility();
 
@@ -150,9 +151,6 @@ class MonthlyListScreen extends ConsumerWidget {
 
     makeGraphData(data: monthData);
 
-    final graphSelectState = _ref.watch(graphSelectProvider);
-    final graphSelectViewModel = _ref.watch(graphSelectProvider.notifier);
-
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
@@ -168,6 +166,10 @@ class MonthlyListScreen extends ConsumerWidget {
               GestureDetector(
                 onTap: () {
                   Navigator.pop(_context);
+
+                  if (closeMethod == "double") {
+                    Navigator.pop(_context);
+                  }
                 },
                 child: const Icon(Icons.close),
               ),
@@ -191,7 +193,7 @@ class MonthlyListScreen extends ConsumerWidget {
                 },
               );
             },
-            child: Icon(Icons.graphic_eq),
+            child: const Icon(Icons.graphic_eq),
           ),
         ],
       ),
@@ -430,7 +432,10 @@ class MonthlyListScreen extends ConsumerWidget {
     Navigator.pushReplacement(
       _context,
       MaterialPageRoute(
-        builder: (context) => MonthlyListScreen(date: date),
+        builder: (context) => MonthlyListScreen(
+          date: date,
+          closeMethod: closeMethod,
+        ),
       ),
     );
   }
@@ -469,7 +474,10 @@ class MonthlyListScreen extends ConsumerWidget {
     Navigator.pushReplacement(
       _context,
       MaterialPageRoute(
-        builder: (context) => OnedayInputScreen(date: date),
+        builder: (context) => OnedayInputScreen(
+          date: date,
+          closeMethod: 'single',
+        ),
       ),
     );
   }

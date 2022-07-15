@@ -81,7 +81,10 @@ class _WellsDataDisplayScreenState extends State<WellsDataDisplayScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
             color: Colors.greenAccent,
           ),
         ],

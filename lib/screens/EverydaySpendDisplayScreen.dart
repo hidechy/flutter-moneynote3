@@ -288,7 +288,7 @@ class EverydaySpendDisplayScreen extends ConsumerWidget {
                                             ),
                                           );
                                         },
-                                        child: Icon(FontAwesomeIcons.building),
+                                        child: const Icon(FontAwesomeIcons.building),
                                       ),
                                     ],
                                   ))

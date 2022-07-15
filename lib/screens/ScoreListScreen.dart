@@ -14,7 +14,9 @@ import '../riverpod/score/score_entity.dart';
 import '../riverpod/score/benefit_entity.dart';
 
 class ScoreListScreen extends ConsumerWidget {
-  ScoreListScreen({Key? key}) : super(key: key);
+  ScoreListScreen({Key? key, required this.closeMethod}) : super(key: key);
+
+  final String closeMethod;
 
   late WidgetRef _ref;
 
@@ -50,11 +52,18 @@ class ScoreListScreen extends ConsumerWidget {
           ),
           Column(
             children: [
+              SizedBox(height: 20),
               Container(
                 margin: const EdgeInsets.only(top: 30, bottom: 10, right: 10),
                 alignment: Alignment.topRight,
                 child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      if (closeMethod == "double") {
+                        Navigator.pop(context);
+                      }
+                    },
                     child: const Icon(Icons.close)),
               ),
               makeGraph(data: scoreData),

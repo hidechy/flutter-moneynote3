@@ -105,7 +105,10 @@ class _DutyDataDisplayScreenState extends State<DutyDataDisplayScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
             color: Colors.greenAccent,
           ),
         ],
