@@ -7,6 +7,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../riverpod/my_state/money_state.dart';
 import '../riverpod/view_model/benefit_view_model.dart';
@@ -107,11 +108,29 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Icon(Icons.close),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: _context,
+                              builder: (_) {
+                                return YearlySpendGraphScreen(
+                                  graphData: yearlySpendState,
+                                );
+                              },
+                            );
+                          },
+                          child: const Icon(Icons.graphic_eq),
+                        ),
+                        const SizedBox(width: 30),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(Icons.close),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -142,57 +161,61 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
                       monthSpendTotal[groupValue]['score'].toString(),
                     );
 
-                    return Container(
-                      color: Colors.black,
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(groupValue),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('spend: $monthSpend'),
-                              Text(
-                                'start: $start / end: $end',
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              Text(
-                                'benefit: $benefit',
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              Text(
-                                'score: $score',
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ],
+                    return DefaultTextStyle(
+                      style: TextStyle(fontSize: 12),
+                      child: Container(
+                        color: Colors.black,
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(groupValue),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('spend: $monthSpend'),
+                                Text(
+                                  'start: $start / end: $end',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                                Text(
+                                  'benefit: $benefit',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                                Text(
+                                  'score: $score',
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
                   itemBuilder: (context, item) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.white.withOpacity(0.3),
-                          ),
+                    return DefaultTextStyle(
+                      style: TextStyle(fontSize: 12),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
                         ),
-                        color: _utility.getBgColor(item['date'], _holidayList),
-                      ),
-                      child: DefaultTextStyle(
-                        style: const TextStyle(fontSize: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                          ),
+                          color:
+                              _utility.getBgColor(item['date'], _holidayList),
+                        ),
                         child: Column(
                           children: [
                             Row(
@@ -378,12 +401,274 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
   }
 }
 
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 
+class YearlySpendGraphScreen extends StatelessWidget {
+  YearlySpendGraphScreen({Key? key, required this.graphData}) : super(key: key);
+
+  final List graphData;
+
+  final Utility _utility = Utility();
+
+  ///
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      contentPadding: EdgeInsets.zero,
+      content: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: size.width * 7,
+          height: size.height - 50,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+          ),
+          child: Column(
+            children: [
+              _makeGraph(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  Widget _makeGraph() {
+    var graphMakeData = makeGraphData();
+
+    var twelveColor = _utility.getTwelveColor();
+
+    return Expanded(
+      child: SfCartesianChart(
+        legend: Legend(isVisible: true),
+        tooltipBehavior: TooltipBehavior(enable: true),
+        series: <ChartSeries>[
+          LineSeries<SpendData, double>(
+            name: 'January',
+            color: twelveColor[0],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point01,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'February',
+            color: twelveColor[1],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point02,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'March',
+            color: twelveColor[2],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point03,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'April',
+            color: twelveColor[3],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point04,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'May',
+            color: twelveColor[4],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point05,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'June',
+            color: twelveColor[5],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point06,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'July',
+            color: twelveColor[6],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point07,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'August',
+            color: twelveColor[7],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point08,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'September',
+            color: twelveColor[8],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point09,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'October',
+            color: twelveColor[9],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point10,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'November',
+            color: twelveColor[10],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point11,
+          ),
+          LineSeries<SpendData, double>(
+            name: 'December',
+            color: twelveColor[11],
+            width: 3,
+            dataSource: graphMakeData,
+            xValueMapper: (SpendData data, _) => data.day,
+            yValueMapper: (SpendData data, _) => data.point12,
+          ),
+        ],
+        primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 1,
+            color: Colors.white30,
+          ),
+        ),
+        primaryXAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(
+            width: 1,
+            color: Colors.white30,
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  List<SpendData> makeGraphData() {
+    List<SpendData> list = [];
+
+    final year = graphData[0]['date'].split('-')[0];
+
+    //-------------------------//
+    Map<String, Map<dynamic, dynamic>> spendMap = {};
+    var keepMonth = '';
+    var sum = 0;
+    for (var p = 0; p < graphData.length; p++) {
+      var exDate = graphData[p]['date'].split('-');
+      if (keepMonth != exDate[1]) {
+        sum = 0;
+      }
+      sum += int.parse(graphData[p]['spend'].toString());
+
+      spendMap[graphData[p]['date']] = {
+        "month": int.parse(exDate[1]),
+        "spend": sum
+      };
+
+      keepMonth = exDate[1];
+    }
+    //-------------------------//
+
+    //-------------------------//
+    Map<dynamic, List<double>> map = {};
+    for (var i = 1; i <= 31; i++) {
+      var day = i.toString().padLeft(2, '0');
+      map[i] = [];
+      for (var j = 1; j <= 12; j++) {
+        var month = j.toString().padLeft(2, '0');
+        var spend = (spendMap['$year-$month-$day'] != null)
+            ? double.parse(
+                spendMap['$year-$month-$day']!['spend'].toString(),
+              )
+            : 0.0;
+
+        map[i]?.add(spend);
+      }
+    }
+    //-------------------------//
+
+    //-------------------------//
+    for (var i = 1; i <= 31; i++) {
+      list.add(
+        SpendData(
+          double.parse(i.toString()),
+          map[i]![0],
+          map[i]![1],
+          map[i]![2],
+          map[i]![3],
+          map[i]![4],
+          map[i]![5],
+          map[i]![6],
+          map[i]![7],
+          map[i]![8],
+          map[i]![9],
+          map[i]![10],
+          map[i]![11],
+        ),
+      );
+    }
+    //-------------------------//
+
+    return list;
+  }
+}
+
+/////////////////////////////////////////////////////////////
+//graph
+class SpendData {
+  double day;
+  double point01;
+  double point02;
+  double point03;
+  double point04;
+  double point05;
+  double point06;
+  double point07;
+  double point08;
+  double point09;
+  double point10;
+  double point11;
+  double point12;
+
+  SpendData(
+    this.day,
+    this.point01,
+    this.point02,
+    this.point03,
+    this.point04,
+    this.point05,
+    this.point06,
+    this.point07,
+    this.point08,
+    this.point09,
+    this.point10,
+    this.point11,
+    this.point12,
+  );
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 final yearlySpendProvider = StateNotifierProvider.autoDispose
     .family<YearlySpendStateNotifier, List<dynamic>, String>((ref, date) {
   return YearlySpendStateNotifier([])..getYearlySpend(date: date);
