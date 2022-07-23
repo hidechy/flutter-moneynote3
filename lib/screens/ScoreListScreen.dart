@@ -52,7 +52,7 @@ class ScoreListScreen extends ConsumerWidget {
           ),
           Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 margin: const EdgeInsets.only(top: 30, bottom: 10, right: 10),
                 alignment: Alignment.topRight,

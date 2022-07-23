@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:moneynote5/screens/YearlySpendDisplayScreen.dart';
 
 import '../riverpod/my_state/money_state.dart';
 import '../riverpod/view_model/holiday_view_model.dart';
@@ -179,6 +180,13 @@ class MonthlyListScreen extends ConsumerWidget {
                   _goEverydaySpendDisplayScreen(date: date);
                 },
                 child: const Icon(Icons.list),
+              ),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: () {
+                  _goYearlySpendDisplayScreen(date: date);
+                },
+                child: const Icon(Icons.list_alt),
               ),
             ],
           ),
@@ -478,6 +486,16 @@ class MonthlyListScreen extends ConsumerWidget {
           date: date,
           closeMethod: 'single',
         ),
+      ),
+    );
+  }
+
+  ///
+  void _goYearlySpendDisplayScreen({required String date}) {
+    Navigator.push(
+      _context,
+      MaterialPageRoute(
+        builder: (context) => YearlySpendDisplayScreen(date: date),
       ),
     );
   }

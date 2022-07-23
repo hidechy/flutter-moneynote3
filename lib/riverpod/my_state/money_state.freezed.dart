@@ -47,31 +47,31 @@ mixin _$MoneyState {
 /// @nodoc
 abstract class $MoneyStateCopyWith<$Res> {
   factory $MoneyStateCopyWith(
-      MoneyState value, $Res Function(MoneyState) then) =
-  _$MoneyStateCopyWithImpl<$Res>;
+          MoneyState value, $Res Function(MoneyState) then) =
+      _$MoneyStateCopyWithImpl<$Res>;
   $Res call(
       {String date,
-        int yen_10000,
-        int yen_5000,
-        int yen_2000,
-        int yen_1000,
-        int yen_500,
-        int yen_100,
-        int yen_50,
-        int yen_10,
-        int yen_5,
-        int yen_1,
-        int bankA,
-        int bankB,
-        int bankC,
-        int bankD,
-        int bankE,
-        int peyA,
-        int peyB,
-        int peyC,
-        int peyD,
-        int peyE,
-        int total});
+      int yen_10000,
+      int yen_5000,
+      int yen_2000,
+      int yen_1000,
+      int yen_500,
+      int yen_100,
+      int yen_50,
+      int yen_10,
+      int yen_5,
+      int yen_1,
+      int bankA,
+      int bankB,
+      int bankC,
+      int bankD,
+      int bankE,
+      int peyA,
+      int peyB,
+      int peyC,
+      int peyD,
+      int peyE,
+      int total});
 }
 
 /// @nodoc
@@ -111,91 +111,91 @@ class _$MoneyStateCopyWithImpl<$Res> implements $MoneyStateCopyWith<$Res> {
       date: date == freezed
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
-      as String,
+              as String,
       yen_10000: yen_10000 == freezed
           ? _value.yen_10000
           : yen_10000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_5000: yen_5000 == freezed
           ? _value.yen_5000
           : yen_5000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_2000: yen_2000 == freezed
           ? _value.yen_2000
           : yen_2000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_1000: yen_1000 == freezed
           ? _value.yen_1000
           : yen_1000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_500: yen_500 == freezed
           ? _value.yen_500
           : yen_500 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_100: yen_100 == freezed
           ? _value.yen_100
           : yen_100 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_50: yen_50 == freezed
           ? _value.yen_50
           : yen_50 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_10: yen_10 == freezed
           ? _value.yen_10
           : yen_10 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_5: yen_5 == freezed
           ? _value.yen_5
           : yen_5 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_1: yen_1 == freezed
           ? _value.yen_1
           : yen_1 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankA: bankA == freezed
           ? _value.bankA
           : bankA // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankB: bankB == freezed
           ? _value.bankB
           : bankB // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankC: bankC == freezed
           ? _value.bankC
           : bankC // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankD: bankD == freezed
           ? _value.bankD
           : bankD // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankE: bankE == freezed
           ? _value.bankE
           : bankE // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyA: peyA == freezed
           ? _value.peyA
           : peyA // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyB: peyB == freezed
           ? _value.peyB
           : peyB // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyC: peyC == freezed
           ? _value.peyC
           : peyC // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyD: peyD == freezed
           ? _value.peyD
           : peyD // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyE: peyE == freezed
           ? _value.peyE
           : peyE // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       total: total == freezed
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
     ));
   }
 }
@@ -204,32 +204,32 @@ class _$MoneyStateCopyWithImpl<$Res> implements $MoneyStateCopyWith<$Res> {
 abstract class _$$_MoneyStateCopyWith<$Res>
     implements $MoneyStateCopyWith<$Res> {
   factory _$$_MoneyStateCopyWith(
-      _$_MoneyState value, $Res Function(_$_MoneyState) then) =
-  __$$_MoneyStateCopyWithImpl<$Res>;
+          _$_MoneyState value, $Res Function(_$_MoneyState) then) =
+      __$$_MoneyStateCopyWithImpl<$Res>;
   @override
   $Res call(
       {String date,
-        int yen_10000,
-        int yen_5000,
-        int yen_2000,
-        int yen_1000,
-        int yen_500,
-        int yen_100,
-        int yen_50,
-        int yen_10,
-        int yen_5,
-        int yen_1,
-        int bankA,
-        int bankB,
-        int bankC,
-        int bankD,
-        int bankE,
-        int peyA,
-        int peyB,
-        int peyC,
-        int peyD,
-        int peyE,
-        int total});
+      int yen_10000,
+      int yen_5000,
+      int yen_2000,
+      int yen_1000,
+      int yen_500,
+      int yen_100,
+      int yen_50,
+      int yen_10,
+      int yen_5,
+      int yen_1,
+      int bankA,
+      int bankB,
+      int bankC,
+      int bankD,
+      int bankE,
+      int peyA,
+      int peyB,
+      int peyC,
+      int peyD,
+      int peyE,
+      int total});
 }
 
 /// @nodoc
@@ -271,120 +271,121 @@ class __$$_MoneyStateCopyWithImpl<$Res> extends _$MoneyStateCopyWithImpl<$Res>
       date: date == freezed
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
-      as String,
+              as String,
       yen_10000: yen_10000 == freezed
           ? _value.yen_10000
           : yen_10000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_5000: yen_5000 == freezed
           ? _value.yen_5000
           : yen_5000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_2000: yen_2000 == freezed
           ? _value.yen_2000
           : yen_2000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_1000: yen_1000 == freezed
           ? _value.yen_1000
           : yen_1000 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_500: yen_500 == freezed
           ? _value.yen_500
           : yen_500 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_100: yen_100 == freezed
           ? _value.yen_100
           : yen_100 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_50: yen_50 == freezed
           ? _value.yen_50
           : yen_50 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_10: yen_10 == freezed
           ? _value.yen_10
           : yen_10 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_5: yen_5 == freezed
           ? _value.yen_5
           : yen_5 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       yen_1: yen_1 == freezed
           ? _value.yen_1
           : yen_1 // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankA: bankA == freezed
           ? _value.bankA
           : bankA // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankB: bankB == freezed
           ? _value.bankB
           : bankB // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankC: bankC == freezed
           ? _value.bankC
           : bankC // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankD: bankD == freezed
           ? _value.bankD
           : bankD // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       bankE: bankE == freezed
           ? _value.bankE
           : bankE // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyA: peyA == freezed
           ? _value.peyA
           : peyA // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyB: peyB == freezed
           ? _value.peyB
           : peyB // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyC: peyC == freezed
           ? _value.peyC
           : peyC // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyD: peyD == freezed
           ? _value.peyD
           : peyD // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       peyE: peyE == freezed
           ? _value.peyE
           : peyE // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
       total: total == freezed
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
-      as int,
+              as int,
     ));
   }
 }
 
 /// @nodoc
+
 class _$_MoneyState implements _MoneyState {
   const _$_MoneyState(
       {required this.date,
-        required this.yen_10000,
-        required this.yen_5000,
-        required this.yen_2000,
-        required this.yen_1000,
-        required this.yen_500,
-        required this.yen_100,
-        required this.yen_50,
-        required this.yen_10,
-        required this.yen_5,
-        required this.yen_1,
-        required this.bankA,
-        required this.bankB,
-        required this.bankC,
-        required this.bankD,
-        required this.bankE,
-        required this.peyA,
-        required this.peyB,
-        required this.peyC,
-        required this.peyD,
-        required this.peyE,
-        required this.total});
+      required this.yen_10000,
+      required this.yen_5000,
+      required this.yen_2000,
+      required this.yen_1000,
+      required this.yen_500,
+      required this.yen_100,
+      required this.yen_50,
+      required this.yen_10,
+      required this.yen_5,
+      required this.yen_1,
+      required this.bankA,
+      required this.bankB,
+      required this.bankC,
+      required this.bankD,
+      required this.bankE,
+      required this.peyA,
+      required this.peyB,
+      required this.peyC,
+      required this.peyD,
+      required this.peyE,
+      required this.total});
 
   @override
   final String date;
@@ -467,30 +468,30 @@ class _$_MoneyState implements _MoneyState {
 
   @override
   int get hashCode => Object.hashAll([
-    runtimeType,
-    const DeepCollectionEquality().hash(date),
-    const DeepCollectionEquality().hash(yen_10000),
-    const DeepCollectionEquality().hash(yen_5000),
-    const DeepCollectionEquality().hash(yen_2000),
-    const DeepCollectionEquality().hash(yen_1000),
-    const DeepCollectionEquality().hash(yen_500),
-    const DeepCollectionEquality().hash(yen_100),
-    const DeepCollectionEquality().hash(yen_50),
-    const DeepCollectionEquality().hash(yen_10),
-    const DeepCollectionEquality().hash(yen_5),
-    const DeepCollectionEquality().hash(yen_1),
-    const DeepCollectionEquality().hash(bankA),
-    const DeepCollectionEquality().hash(bankB),
-    const DeepCollectionEquality().hash(bankC),
-    const DeepCollectionEquality().hash(bankD),
-    const DeepCollectionEquality().hash(bankE),
-    const DeepCollectionEquality().hash(peyA),
-    const DeepCollectionEquality().hash(peyB),
-    const DeepCollectionEquality().hash(peyC),
-    const DeepCollectionEquality().hash(peyD),
-    const DeepCollectionEquality().hash(peyE),
-    const DeepCollectionEquality().hash(total)
-  ]);
+        runtimeType,
+        const DeepCollectionEquality().hash(date),
+        const DeepCollectionEquality().hash(yen_10000),
+        const DeepCollectionEquality().hash(yen_5000),
+        const DeepCollectionEquality().hash(yen_2000),
+        const DeepCollectionEquality().hash(yen_1000),
+        const DeepCollectionEquality().hash(yen_500),
+        const DeepCollectionEquality().hash(yen_100),
+        const DeepCollectionEquality().hash(yen_50),
+        const DeepCollectionEquality().hash(yen_10),
+        const DeepCollectionEquality().hash(yen_5),
+        const DeepCollectionEquality().hash(yen_1),
+        const DeepCollectionEquality().hash(bankA),
+        const DeepCollectionEquality().hash(bankB),
+        const DeepCollectionEquality().hash(bankC),
+        const DeepCollectionEquality().hash(bankD),
+        const DeepCollectionEquality().hash(bankE),
+        const DeepCollectionEquality().hash(peyA),
+        const DeepCollectionEquality().hash(peyB),
+        const DeepCollectionEquality().hash(peyC),
+        const DeepCollectionEquality().hash(peyD),
+        const DeepCollectionEquality().hash(peyE),
+        const DeepCollectionEquality().hash(total)
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -501,27 +502,27 @@ class _$_MoneyState implements _MoneyState {
 abstract class _MoneyState implements MoneyState {
   const factory _MoneyState(
       {required final String date,
-        required final int yen_10000,
-        required final int yen_5000,
-        required final int yen_2000,
-        required final int yen_1000,
-        required final int yen_500,
-        required final int yen_100,
-        required final int yen_50,
-        required final int yen_10,
-        required final int yen_5,
-        required final int yen_1,
-        required final int bankA,
-        required final int bankB,
-        required final int bankC,
-        required final int bankD,
-        required final int bankE,
-        required final int peyA,
-        required final int peyB,
-        required final int peyC,
-        required final int peyD,
-        required final int peyE,
-        required final int total}) = _$_MoneyState;
+      required final int yen_10000,
+      required final int yen_5000,
+      required final int yen_2000,
+      required final int yen_1000,
+      required final int yen_500,
+      required final int yen_100,
+      required final int yen_50,
+      required final int yen_10,
+      required final int yen_5,
+      required final int yen_1,
+      required final int bankA,
+      required final int bankB,
+      required final int bankC,
+      required final int bankD,
+      required final int bankE,
+      required final int peyA,
+      required final int peyB,
+      required final int peyC,
+      required final int peyD,
+      required final int peyE,
+      required final int total}) = _$_MoneyState;
 
   @override
   String get date => throw _privateConstructorUsedError;
