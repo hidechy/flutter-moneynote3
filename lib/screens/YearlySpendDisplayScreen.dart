@@ -419,17 +419,19 @@ class YearlySpendGraphScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       contentPadding: EdgeInsets.zero,
       content: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Container(
-          width: size.width * 7,
-          height: size.height - 50,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-          ),
-          child: Column(
-            children: [
-              _makeGraph(),
-            ],
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Container(
+            width: size.width * 7,
+            height: size.height * 3,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+            ),
+            child: Column(
+              children: [
+                _makeGraph(),
+              ],
+            ),
           ),
         ),
       ),
