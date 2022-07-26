@@ -42,74 +42,72 @@ class InvestmentStockListScreen extends ConsumerWidget {
             ),
           ),
         ),
-        Expanded(
-          child: ListView.separated(
-            itemBuilder: (context, index) {
-              var exData = investmentStockState[index].toString().split(';');
+        ListView.separated(
+          itemBuilder: (context, index) {
+            var exData = investmentStockState[index].toString().split(';');
 
-              _utility.makeYMDYData(exData[1], 0);
+            _utility.makeYMDYData(exData[1], 0);
 
-              return DefaultTextStyle(
-                style: const TextStyle(fontSize: 12),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
-                  ),
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 5),
-                      Text(exData[0]),
-                      const SizedBox(height: 20),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.yellowAccent.withOpacity(0.3),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 3),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text('${exData[1]}（${_utility.youbiStr}）'),
-                            ),
-                            Expanded(child: Text(exData[2])),
-                            Expanded(child: Text(exData[3])),
-                            Expanded(child: Text(exData[4])),
-                            Expanded(child: Text(exData[5])),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        alignment: Alignment.topRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) {
-                                return InvestmentStockGraphScreen(
-                                  data: exData[6],
-                                );
-                              },
-                            );
-                          },
-                          child: const Icon(Icons.graphic_eq),
-                        ),
-                      ),
-                      ExpansionTile(
-                        title: const Text('data'),
-                        children: _dispDetailData(data: exData[6]),
-                      ),
-                    ],
-                  ),
+            return DefaultTextStyle(
+              style: const TextStyle(fontSize: 12),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.3),
                 ),
-              );
-            },
-            separatorBuilder: (context, index) => Container(),
-            itemCount: investmentStockState.length,
-          ),
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
+                    Text(exData[0]),
+                    const SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.yellowAccent.withOpacity(0.3),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text('${exData[1]}（${_utility.youbiStr}）'),
+                          ),
+                          Expanded(child: Text(exData[2])),
+                          Expanded(child: Text(exData[3])),
+                          Expanded(child: Text(exData[4])),
+                          Expanded(child: Text(exData[5])),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      alignment: Alignment.topRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) {
+                              return InvestmentStockGraphScreen(
+                                data: exData[6],
+                              );
+                            },
+                          );
+                        },
+                        child: const Icon(Icons.graphic_eq),
+                      ),
+                    ),
+                    ExpansionTile(
+                      title: const Text('data'),
+                      children: _dispDetailData(data: exData[6]),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (context, index) => Container(),
+          itemCount: investmentStockState.length,
         ),
       ],
     );

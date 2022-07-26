@@ -162,7 +162,7 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
                     );
 
                     return DefaultTextStyle(
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                       child: Container(
                         color: Colors.black,
                         padding: const EdgeInsets.all(8),
@@ -197,7 +197,7 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
                   },
                   itemBuilder: (context, item) {
                     return DefaultTextStyle(
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                       child: Container(
                         margin: const EdgeInsets.symmetric(
                           horizontal: 10,
