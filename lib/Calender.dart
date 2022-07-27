@@ -1,5 +1,6 @@
 // ignore_for_file: file_names, import_of_legacy_library_into_null_safe, unnecessary_null_comparison, prefer_final_fields
 
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_calendar_carousel/classes/event.dart';
@@ -18,6 +19,7 @@ import './screens/DetailDisplayScreen.dart';
 import './screens/MonthlyListScreen.dart';
 import './screens/OnedayInputScreen.dart';
 import './screens/ScoreListScreen.dart';
+import 'screens/DetailScreen.dart';
 
 class Calender extends StatefulWidget {
   const Calender({Key? key}) : super(key: key);
@@ -43,6 +45,8 @@ class _CalenderState extends State<Calender> {
   late Widget _summaryDataWidget = Container();
 
   num _total = 0;
+
+  bool _detailScreenCallMode = true;
 
   /// 初期動作
   @override
@@ -101,7 +105,6 @@ class _CalenderState extends State<Calender> {
         fit: StackFit.expand,
         children: <Widget>[
           _utility.getBackGround(context: context),
-
           ClipPath(
             clipper: CustomShapeClipper(),
             child: Container(
@@ -115,7 +118,6 @@ class _CalenderState extends State<Calender> {
               ),
             ),
           ),
-
           CalendarCarousel<Event>(
             minSelectedDate: DateTime(2020, 1, 1),
 
@@ -159,135 +161,113 @@ class _CalenderState extends State<Calender> {
 //inactiveDaysTextStyle: TextStyle(fontFamily: 'Yomogi'),
 //inactiveWeekendTextStyle: TextStyle(fontFamily: 'Yomogi'),
           ),
-          //////////////////////////////////
           Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
+            children: [
+              Expanded(child: Container(width: 1)),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Row(
+                          children: [
+                            const Text('false'),
+                            Switch(
+                              value: _detailScreenCallMode,
+                              onChanged: _changeSwitch,
+                              activeColor: Colors.white,
+                              activeTrackColor: Colors.orangeAccent,
+                              inactiveThumbColor: Colors.white,
+                              inactiveTrackColor: Colors.orangeAccent,
+                            ),
+                            const Text('true'),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            width: 150,
+                            padding: const EdgeInsets.all(5),
+                            alignment: Alignment.topRight,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.8),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                            ),
+                            child: Text(_utility
+                                .makeCurrencyDisplay(_total.toString())),
+                          ),
+                          IconButton(
+                            color: Colors.greenAccent,
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () => _reloadSummaryData(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   Container(
-                    width: 150,
-                    padding: const EdgeInsets.all(5),
-                    alignment: Alignment.topRight,
+                    width: double.infinity,
+                    height: 210,
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.8),
                       border: Border.all(
                         color: Colors.white.withOpacity(0.3),
                       ),
                     ),
-                    child:
-                        Text(_utility.makeCurrencyDisplay(_total.toString())),
-                  ),
-                  IconButton(
-                    color: Colors.greenAccent,
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () => _reloadSummaryData(),
+                    child: _summaryDataWidget,
                   ),
                 ],
               ),
-              Container(
-                width: double.infinity,
-                height: 210,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.8),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                ),
-                child: _summaryDataWidget,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      ElevatedButton(
-                        //color: Colors.black.withOpacity(0.5),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black.withOpacity(0.5),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                        ),
-                        onPressed: () => _goOnedayInputScreen(
-                            context: context, date: _currentDate.toString()),
-                        child: const Icon(
-                          Icons.input,
-                          color: Colors.greenAccent,
-                        ),
-                        // shape: RoundedRectangleBorder(
-                        //   borderRadius: BorderRadius.circular(20.0),
-                        // ),
-                      ),
-                      ElevatedButton(
-                        //color: Colors.black.withOpacity(0.5),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black.withOpacity(0.5),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                        ),
-                        onPressed: () => _goScoreDisplayScreen(
-                            context: context, date: _currentDate.toString()),
-                        child: const Icon(
-                          Icons.trending_up,
-                          color: Colors.blueAccent,
-                        ),
-                        // shape: RoundedRectangleBorder(
-                        //   borderRadius: BorderRadius.circular(20.0),
-                        // ),
-                      ),
-                      ElevatedButton(
-                        //color: Colors.black.withOpacity(0.5),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black.withOpacity(0.5),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                        ),
-                        onPressed: () => _goMonthlyScreen(
-                            context: context, date: _currentDate.toString()),
-                        child: const Icon(
-                          Icons.list,
-                          color: Colors.blueAccent,
-                        ),
-                        // shape: RoundedRectangleBorder(
-                        //   borderRadius: BorderRadius.circular(20.0),
-                        // ),
-                      ),
-                      ElevatedButton(
-                        //color: Colors.black.withOpacity(0.5),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black.withOpacity(0.5),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Icon(Icons.close),
-                        // shape: RoundedRectangleBorder(
-                        //   borderRadius: BorderRadius.circular(20.0),
-                        // ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              const SizedBox(height: 50),
             ],
           ),
         ],
       ),
+      floatingActionButton: FabCircularMenu(
+        ringColor: Colors.black.withOpacity(0.3),
+        fabOpenColor: Colors.black.withOpacity(0.3),
+        fabCloseColor: Colors.black.withOpacity(0.3),
+        ringWidth: 10,
+        ringDiameter: 250,
+        children: <Widget>[
+          IconButton(
+            onPressed: () => _goScoreDisplayScreen(
+                context: context, date: _currentDate.toString()),
+            icon: const Icon(Icons.graphic_eq),
+          ),
+          IconButton(
+            onPressed: () => _goMonthlyScreen(
+                context: context, date: _currentDate.toString()),
+            icon: const Icon(Icons.list),
+          ),
+          IconButton(
+            onPressed: () => _goOnedayInputScreen(
+                context: context, date: _currentDate.toString()),
+            icon: const Icon(Icons.input),
+          ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.close,
+              color: Colors.yellowAccent,
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  ///
+  void _changeSwitch(bool e) {
+    setState(() {
+      _detailScreenCallMode = e;
+    });
   }
 
   /// カレンダー日付クリック
@@ -295,7 +275,17 @@ class _CalenderState extends State<Calender> {
     setState(() => _currentDate = date);
 
     //画面遷移
-    _goDetailDisplayScreen(context: context, date: _currentDate.toString());
+    if (_detailScreenCallMode) {
+      _goDetailDisplayScreen(
+        context: context,
+        date: _currentDate.toString(),
+      );
+    } else {
+      _goDetailScreen(
+        context: context,
+        date: _currentDate.toString(),
+      );
+    }
   }
 
   ///
@@ -467,7 +457,7 @@ class _CalenderState extends State<Calender> {
   ///////////////////////////////////////////////////////////////////// 画面遷移
 
   /// 画面遷移（DetailDisplayScreen）
-  _goDetailDisplayScreen({BuildContext? context, String? date}) async {
+  void _goDetailDisplayScreen({BuildContext? context, String? date}) async {
     var detailDisplayArgs = await _utility.getDetailDisplayArgs(date!);
 
     _utility.makeYMDYData(date, 0);
@@ -484,8 +474,20 @@ class _CalenderState extends State<Calender> {
     );
   }
 
+  ///
+  void _goDetailScreen({BuildContext? context, String? date}) async {
+    Navigator.push(
+      context!,
+      MaterialPageRoute(
+        builder: (context) => DetailScreen(
+          date: date!,
+        ),
+      ),
+    );
+  }
+
   /// 画面遷移（OnedayInputScreen）
-  _goOnedayInputScreen({BuildContext? context, String? date}) {
+  void _goOnedayInputScreen({BuildContext? context, String? date}) {
     _utility.makeYMDYData(date!, 0);
 
     Navigator.push(
@@ -500,7 +502,7 @@ class _CalenderState extends State<Calender> {
   }
 
   /// 画面遷移（ScoreListScreen）
-  _goScoreDisplayScreen({BuildContext? context, String? date}) {
+  void _goScoreDisplayScreen({BuildContext? context, String? date}) {
     _utility.makeYMDYData(date!, 0);
 
     Navigator.push(
@@ -514,7 +516,7 @@ class _CalenderState extends State<Calender> {
   }
 
   /// 画面遷移（MonthlyListScreen）
-  _goMonthlyScreen({BuildContext? context, String? date}) {
+  void _goMonthlyScreen({BuildContext? context, String? date}) {
     _utility.makeYMDYData(date!, 0);
 
     Navigator.push(
