@@ -118,8 +118,10 @@ class DetailLeft extends ConsumerWidget {
                       IconButton(
                         icon: const Icon(Icons.skip_previous),
                         tooltip: '前日',
-                        onPressed: () => _goDetailScreen(
-                            monthDate: prevDate.toString().split(' ')[0]),
+                        onPressed: () {
+                          _goDetailScreen(
+                              monthDate: prevDate.toString().split(' ')[0]);
+                        },
                       ),
                       Container(
                         alignment: Alignment.topLeft,
@@ -133,8 +135,10 @@ class DetailLeft extends ConsumerWidget {
                       IconButton(
                         icon: const Icon(Icons.skip_next),
                         tooltip: '翌日',
-                        onPressed: () => _goDetailScreen(
-                            monthDate: nextDate.toString().split(' ')[0]),
+                        onPressed: () {
+                          _goDetailScreen(
+                              monthDate: nextDate.toString().split(' ')[0]);
+                        },
                       ),
                     ],
                   ),
@@ -167,7 +171,9 @@ class DetailLeft extends ConsumerWidget {
                     ),
                   ),
                 ),
-                onPressed: () => _showUnderMenu(),
+                onPressed: () {
+                  _showUnderMenu();
+                },
 
                 child: const Icon(
                   Icons.keyboard_arrow_up,
@@ -209,10 +215,12 @@ class DetailLeft extends ConsumerWidget {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => OnedayInputScreen(
-                          date: date,
-                          closeMethod: 'double',
-                        ));
+                    Get.to(() {
+                      return OnedayInputScreen(
+                        date: date,
+                        closeMethod: 'double',
+                      );
+                    });
                   },
                 ),
                 ListTile(
@@ -222,7 +230,9 @@ class DetailLeft extends ConsumerWidget {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => BankInputScreen(date: date));
+                    Get.to(() {
+                      return BankInputScreen(date: date);
+                    });
                   },
                 ),
                 ListTile(
@@ -232,7 +242,9 @@ class DetailLeft extends ConsumerWidget {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => BenefitInputScreen());
+                    Get.to(() {
+                      return BenefitInputScreen();
+                    });
                   },
                 ),
                 const Divider(
@@ -248,10 +260,12 @@ class DetailLeft extends ConsumerWidget {
                       style: TextStyle(fontSize: 14),
                     ),
                     onTap: () {
-                      Get.to(() => MonthlyListScreen(
-                            date: date,
-                            closeMethod: 'double',
-                          ));
+                      Get.to(() {
+                        return MonthlyListScreen(
+                          date: date,
+                          closeMethod: 'double',
+                        );
+                      });
                     }),
                 ListTile(
                   leading: const Icon(Icons.trending_up),
@@ -260,7 +274,9 @@ class DetailLeft extends ConsumerWidget {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => ScoreListScreen(closeMethod: 'double'));
+                    Get.to(() {
+                      return ScoreListScreen(closeMethod: 'double');
+                    });
                   },
                 ),
                 ListTile(
@@ -269,10 +285,10 @@ class DetailLeft extends ConsumerWidget {
                     'AllDay List',
                     style: TextStyle(fontSize: 14),
                   ),
-                  // onTap: () =>
-                  //     _goAlldayListScreen(context: context, date: _displayDate),
                   onTap: () {
-                    Get.to(() => AlldayListScreen(date: date));
+                    Get.to(() {
+                      return AlldayListScreen(date: date);
+                    });
                   },
                 ),
                 ListTile(
@@ -282,7 +298,9 @@ class DetailLeft extends ConsumerWidget {
                     style: TextStyle(fontSize: 14),
                   ),
                   onTap: () {
-                    Get.to(() => SamedayListScreen(date: date));
+                    Get.to(() {
+                      return SamedayListScreen(date: date);
+                    });
                   },
                 ),
               ],
@@ -487,7 +505,9 @@ class DetailLeft extends ConsumerWidget {
                   color: Colors.greenAccent,
                   icon: const Icon(Icons.info),
                   onPressed: () {
-                    Get.to(() => SpendDetailPagingScreen(date: date));
+                    Get.to(() {
+                      return SpendDetailPagingScreen(date: date);
+                    });
                   },
                 ),
               ),
@@ -912,6 +932,8 @@ class DetailLeft extends ConsumerWidget {
 
   ///
   Widget _dispToushiData() {
+    final exDate = date.split(' ');
+
     //---------------------------------// GoldData
     final investmentGoldState = _ref.watch(investmentGoldProvider);
 
@@ -1021,9 +1043,11 @@ class DetailLeft extends ConsumerWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => GoldDisplayScreen(
-                                    closeMethod: 'single',
-                                  ));
+                              Get.to(() {
+                                return GoldDisplayScreen(
+                                  closeMethod: 'single',
+                                );
+                              });
                             },
                             child: const Icon(
                               Icons.label,
@@ -1033,7 +1057,9 @@ class DetailLeft extends ConsumerWidget {
                           const SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => InvestmentTabScreen());
+                              Get.to(() {
+                                return InvestmentTabScreen();
+                              });
                             },
                             child: const Icon(
                               Icons.comment,
@@ -1085,7 +1111,7 @@ class DetailLeft extends ConsumerWidget {
                               alignment: Alignment.topRight,
                               child: Icon(Icons.star,
                                   size: 16,
-                                  color: (goldMap['date'] == date)
+                                  color: (goldMap['date'] == exDate[0])
                                       ? Colors.yellowAccent
                                       : Colors.grey.withOpacity(0.3)),
                             ),
@@ -1128,7 +1154,7 @@ class DetailLeft extends ConsumerWidget {
                               alignment: Alignment.topRight,
                               child: Icon(Icons.star,
                                   size: 16,
-                                  color: (stockMap['date'] == date)
+                                  color: (stockMap['date'] == exDate[0])
                                       ? Colors.yellowAccent
                                       : Colors.grey.withOpacity(0.3)),
                             ),
@@ -1171,7 +1197,7 @@ class DetailLeft extends ConsumerWidget {
                               alignment: Alignment.topRight,
                               child: Icon(Icons.star,
                                   size: 16,
-                                  color: (shintakuMap['date'] == date)
+                                  color: (shintakuMap['date'] == exDate[0])
                                       ? Colors.yellowAccent
                                       : Colors.grey.withOpacity(0.3)),
                             ),
@@ -1242,6 +1268,11 @@ class DetailRight extends ConsumerWidget {
         i.toString().padLeft(2, '0'),
       ]);
     }
+
+    _controller.scrollToIndex(
+      int.parse(exOneDate[2]),
+      preferPosition: AutoScrollPosition.begin,
+    );
     //------------------------------------
 
     return SizedBox(
@@ -1276,7 +1307,9 @@ class DetailRight extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.calendar_today),
-                  onPressed: () => _showDatepicker(context: context),
+                  onPressed: () {
+                    _showDatepicker(context: context);
+                  },
                   color: Colors.blueAccent,
                 ),
               ],
@@ -1391,9 +1424,7 @@ class DetailRight extends ConsumerWidget {
                         alignment: Alignment.center,
                         child: Text(
                           '${data[1]}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ),
                       key: ValueKey(data[0]),

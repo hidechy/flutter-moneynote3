@@ -173,7 +173,7 @@ class _CalenderState extends State<Calender> {
                         padding: const EdgeInsets.only(left: 20),
                         child: Row(
                           children: [
-                            const Text('false'),
+                            const Text('2'),
                             Switch(
                               value: _detailScreenCallMode,
                               onChanged: _changeSwitch,
@@ -182,7 +182,7 @@ class _CalenderState extends State<Calender> {
                               inactiveThumbColor: Colors.white,
                               inactiveTrackColor: Colors.orangeAccent,
                             ),
-                            const Text('true'),
+                            const Text('1'),
                           ],
                         ),
                       ),
