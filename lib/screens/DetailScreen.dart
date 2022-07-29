@@ -291,18 +291,18 @@ class DetailLeft extends ConsumerWidget {
                     });
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.animation),
-                  title: const Text(
-                    'SameDay List',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  onTap: () {
-                    Get.to(() {
-                      return SamedayListScreen(date: date);
-                    });
-                  },
-                ),
+                // ListTile(
+                //   leading: const Icon(Icons.animation),
+                //   title: const Text(
+                //     'SameDay List',
+                //     style: TextStyle(fontSize: 14),
+                //   ),
+                //   onTap: () {
+                //     Get.to(() {
+                //       return SamedayListScreen(date: date);
+                //     });
+                //   },
+                // ),
               ],
             ),
           ),
@@ -506,7 +506,7 @@ class DetailLeft extends ConsumerWidget {
                   icon: const Icon(Icons.info),
                   onPressed: () {
                     Get.to(() {
-                      return SpendDetailPagingScreen(date: date);
+                      return SpendDetailPagingScreen(date: exDate[0]);
                     });
                   },
                 ),

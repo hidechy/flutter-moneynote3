@@ -295,6 +295,9 @@ class SamedayGraphScreen extends ConsumerWidget {
 
   late WidgetRef _ref;
 
+  final ScrollController _controller = ScrollController();
+
+  ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     _ref = ref;
@@ -306,6 +309,7 @@ class SamedayGraphScreen extends ConsumerWidget {
       contentPadding: EdgeInsets.zero,
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        controller: _controller,
         child: Container(
           width: size.width * 5,
           height: size.height - 100,
@@ -343,25 +347,51 @@ class SamedayGraphScreen extends ConsumerWidget {
     }
 
     return Expanded(
-      child: SfCartesianChart(
-        series: <ChartSeries>[
-          ColumnSeries<ChartData, DateTime>(
-            color: Colors.yellowAccent,
-            dataSource: _list,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.val,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
-          )
-        ],
-        primaryXAxis: DateTimeAxis(
-          majorGridLines: const MajorGridLines(width: 0),
-        ),
-        primaryYAxis: NumericAxis(
-          majorGridLines: const MajorGridLines(
-            width: 2,
-            color: Colors.white30,
+      child: Column(
+        children: [
+          Expanded(
+            child: SfCartesianChart(
+              series: <ChartSeries>[
+                ColumnSeries<ChartData, DateTime>(
+                  color: Colors.yellowAccent,
+                  dataSource: _list,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.val,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+                )
+              ],
+              primaryXAxis: DateTimeAxis(
+                majorGridLines: const MajorGridLines(width: 0),
+              ),
+              primaryYAxis: NumericAxis(
+                majorGridLines: const MajorGridLines(
+                  width: 2,
+                  color: Colors.white30,
+                ),
+              ),
+            ),
           ),
-        ),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.white)),
+              color: Colors.white.withOpacity(0.2),
+            ),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.pinkAccent.withOpacity(0.3),
+                  ),
+                  onPressed: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  },
+                  child: Text('jump'),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

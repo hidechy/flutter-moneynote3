@@ -199,6 +199,9 @@ class FundGraphScreen extends StatelessWidget {
 
   final Utility _utility = Utility();
 
+  final ScrollController _controller = ScrollController();
+
+  ///
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -208,6 +211,7 @@ class FundGraphScreen extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        controller: _controller,
         child: Container(
           width: size.width * 3,
           height: size.height - 100,
@@ -247,26 +251,62 @@ class FundGraphScreen extends StatelessWidget {
     }
 
     return Expanded(
-      child: SfCartesianChart(
-        series: <ChartSeries>[
-          LineSeries<ChartData, DateTime>(
-            color: Colors.yellowAccent,
-            width: 3,
-            dataSource: _list,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.val,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
+      child: Column(
+        children: [
+          Expanded(
+            child: SfCartesianChart(
+              series: <ChartSeries>[
+                LineSeries<ChartData, DateTime>(
+                  color: Colors.yellowAccent,
+                  width: 3,
+                  dataSource: _list,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.val,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+                ),
+              ],
+              primaryXAxis: DateTimeAxis(
+                majorGridLines: const MajorGridLines(width: 0),
+              ),
+              primaryYAxis: NumericAxis(
+                majorGridLines: const MajorGridLines(
+                  width: 2,
+                  color: Colors.white30,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.white)),
+              color: Colors.white.withOpacity(0.2),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.pinkAccent.withOpacity(0.3),
+                  ),
+                  onPressed: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  },
+                  child: Text('jump'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.pinkAccent.withOpacity(0.3),
+                  ),
+                  onPressed: () {
+                    _controller.jumpTo(_controller.position.minScrollExtent);
+                  },
+                  child: Text('back'),
+                ),
+              ],
+            ),
           ),
         ],
-        primaryXAxis: DateTimeAxis(
-          majorGridLines: const MajorGridLines(width: 0),
-        ),
-        primaryYAxis: NumericAxis(
-          majorGridLines: const MajorGridLines(
-            width: 2,
-            color: Colors.white30,
-          ),
-        ),
       ),
     );
   }

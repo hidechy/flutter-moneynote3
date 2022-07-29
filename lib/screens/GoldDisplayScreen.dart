@@ -360,6 +360,8 @@ class GoldGraphScreen extends StatelessWidget {
 
   final Utility _utility = Utility();
 
+  final ScrollController _controller = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -368,6 +370,7 @@ class GoldGraphScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       contentPadding: EdgeInsets.zero,
       content: SingleChildScrollView(
+        controller: _controller,
         scrollDirection: Axis.horizontal,
         child: Container(
           width: size.width * 3,
@@ -410,32 +413,69 @@ class GoldGraphScreen extends StatelessWidget {
     }
 
     return Expanded(
-      child: SfCartesianChart(
-        series: <ChartSeries>[
-          LineSeries<ChartData, DateTime>(
-            color: Colors.yellowAccent,
-            width: 3,
-            dataSource: _list,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.goldValue,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SfCartesianChart(
+              series: <ChartSeries>[
+                LineSeries<ChartData, DateTime>(
+                  color: Colors.yellowAccent,
+                  width: 3,
+                  dataSource: _list,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.goldValue,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
+                ),
+                LineSeries<ChartData, DateTime>(
+                  color: Colors.orangeAccent,
+                  dataSource: _list,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.payPrice,
+                ),
+              ],
+              primaryXAxis: DateTimeAxis(
+                majorGridLines: const MajorGridLines(width: 0),
+              ),
+              primaryYAxis: NumericAxis(
+                majorGridLines: const MajorGridLines(
+                  width: 2,
+                  color: Colors.white30,
+                ),
+              ),
+            ),
           ),
-          LineSeries<ChartData, DateTime>(
-            color: Colors.orangeAccent,
-            dataSource: _list,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.payPrice,
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.white)),
+              color: Colors.white.withOpacity(0.2),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.pinkAccent.withOpacity(0.3),
+                  ),
+                  onPressed: () {
+                    _controller.jumpTo(_controller.position.maxScrollExtent);
+                  },
+                  child: Text('jump'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.pinkAccent.withOpacity(0.3),
+                  ),
+                  onPressed: () {
+                    _controller.jumpTo(_controller.position.minScrollExtent);
+                  },
+                  child: Text('back'),
+                ),
+              ],
+            ),
           ),
         ],
-        primaryXAxis: DateTimeAxis(
-          majorGridLines: const MajorGridLines(width: 0),
-        ),
-        primaryYAxis: NumericAxis(
-          majorGridLines: const MajorGridLines(
-            width: 2,
-            color: Colors.white30,
-          ),
-        ),
       ),
     );
   }
