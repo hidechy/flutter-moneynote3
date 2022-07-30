@@ -1,5 +1,6 @@
 // ignore_for_file: file_names, import_of_legacy_library_into_null_safe, unnecessary_null_comparison, prefer_final_fields
 
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 
@@ -212,7 +213,7 @@ class _CalenderState extends State<Calender> {
                   ),
                   Container(
                     width: double.infinity,
-                    height: 210,
+                    height: 170,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.8),
@@ -224,41 +225,44 @@ class _CalenderState extends State<Calender> {
                   ),
                 ],
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 15),
             ],
           ),
         ],
       ),
-      floatingActionButton: FabCircularMenu(
-        ringColor: Colors.black.withOpacity(0.3),
-        fabOpenColor: Colors.black.withOpacity(0.3),
-        fabCloseColor: Colors.black.withOpacity(0.3),
-        ringWidth: 10,
-        ringDiameter: 250,
-        children: <Widget>[
-          IconButton(
-            onPressed: () => _goScoreDisplayScreen(
-                context: context, date: _currentDate.toString()),
-            icon: const Icon(Icons.graphic_eq),
-          ),
-          IconButton(
-            onPressed: () => _goMonthlyScreen(
-                context: context, date: _currentDate.toString()),
-            icon: const Icon(Icons.list),
-          ),
-          IconButton(
-            onPressed: () => _goOnedayInputScreen(
-                context: context, date: _currentDate.toString()),
-            icon: const Icon(Icons.input),
-          ),
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(
-              Icons.close,
-              color: Colors.yellowAccent,
-            ),
+      bottomNavigationBar: CurvedNavigationBar(
+        color: Colors.black,
+        backgroundColor: Colors.black38,
+        items: <Widget>[
+          Icon(Icons.graphic_eq),
+          Icon(Icons.input),
+          Icon(Icons.list),
+          Icon(
+            Icons.close,
+            color: Colors.yellowAccent,
           ),
         ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              return _goScoreDisplayScreen(
+                context: context,
+                date: _currentDate.toString(),
+              );
+            case 1:
+              return _goOnedayInputScreen(
+                context: context,
+                date: _currentDate.toString(),
+              );
+            case 2:
+              return _goMonthlyScreen(
+                context: context,
+                date: _currentDate.toString(),
+              );
+            case 3:
+              Navigator.pop(context);
+          }
+        },
       ),
     );
   }

@@ -1261,7 +1261,7 @@ class DetailRight extends ConsumerWidget {
         DateTime(int.parse(exOneDate[0]), int.parse(exOneDate[1]) + 1, 0);
 
     for (var i = 1;
-        i < int.parse(monthEnd.toString().split(' ')[0].split('-')[2]);
+        i <= int.parse(monthEnd.toString().split(' ')[0].split('-')[2]);
         i++) {
       _monthDays.add([
         i,
