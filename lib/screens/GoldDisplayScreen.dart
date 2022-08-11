@@ -408,6 +408,7 @@ class GoldGraphScreen extends StatelessWidget {
           ),
           goldValue: data[i].goldValue,
           payPrice: data[i].payPrice,
+          diff: (data[i].goldValue - data[i].payPrice),
         ),
       );
     }
@@ -432,6 +433,13 @@ class GoldGraphScreen extends StatelessWidget {
                   dataSource: _list,
                   xValueMapper: (ChartData data, _) => data.x,
                   yValueMapper: (ChartData data, _) => data.payPrice,
+                ),
+                LineSeries<ChartData, DateTime>(
+                  color: Colors.greenAccent,
+                  dataSource: _list,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.diff,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
                 ),
               ],
               primaryXAxis: DateTimeAxis(
@@ -489,6 +497,11 @@ class ChartData {
   final DateTime x;
   final num goldValue;
   final num payPrice;
+  final num diff;
 
-  ChartData({required this.x, required this.goldValue, required this.payPrice});
+  ChartData(
+      {required this.x,
+      required this.goldValue,
+      required this.payPrice,
+      required this.diff});
 }
