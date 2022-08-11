@@ -29,6 +29,8 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
 
   late BuildContext _context;
 
+  final ScrollController _controller = ScrollController();
+
   ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -135,8 +137,36 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              Container(
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pinkAccent.withOpacity(0.3),
+                      ),
+                      onPressed: () {
+                        _controller
+                            .jumpTo(_controller.position.maxScrollExtent);
+                      },
+                      child: const Text('jump'),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pinkAccent.withOpacity(0.3),
+                      ),
+                      onPressed: () {
+                        _controller
+                            .jumpTo(_controller.position.minScrollExtent);
+                      },
+                      child: const Text('back'),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: GroupedListView<dynamic, dynamic>(
+                  controller: _controller,
                   padding: EdgeInsets.zero,
                   elements: yearlySpendState,
                   groupBy: (item) => item['group'],

@@ -374,7 +374,7 @@ class SamedayGraphScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.white)),
+              border: const Border(top: BorderSide(color: Colors.white)),
               color: Colors.white.withOpacity(0.2),
             ),
             child: Row(
@@ -386,7 +386,7 @@ class SamedayGraphScreen extends ConsumerWidget {
                   onPressed: () {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   },
-                  child: Text('jump'),
+                  child: const Text('jump'),
                 ),
               ],
             ),

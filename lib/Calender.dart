@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, import_of_legacy_library_into_null_safe, unnecessary_null_comparison, prefer_final_fields
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_calendar_carousel/classes/event.dart';
@@ -233,7 +232,7 @@ class _CalenderState extends State<Calender> {
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.black,
         backgroundColor: Colors.black38,
-        items: <Widget>[
+        items: const <Widget>[
           Icon(Icons.graphic_eq),
           Icon(Icons.input),
           Icon(Icons.list),

@@ -23,7 +23,6 @@ import 'GoldDisplayScreen.dart';
 import 'InvestmentTabScreen.dart';
 import 'MonthlyListScreen.dart';
 import 'OnedayInputScreen.dart';
-import 'SamedayListScreen.dart';
 import 'ScoreListScreen.dart';
 import 'SpendDetailPagingScreen.dart';
 

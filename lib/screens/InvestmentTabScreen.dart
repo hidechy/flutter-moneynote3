@@ -237,7 +237,7 @@ class InvestmentGraphScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.white)),
+              border: const Border(top: BorderSide(color: Colors.white)),
               color: Colors.white.withOpacity(0.2),
             ),
             child: Row(
@@ -250,7 +250,7 @@ class InvestmentGraphScreen extends ConsumerWidget {
                   onPressed: () {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   },
-                  child: Text('jump'),
+                  child: const Text('jump'),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -259,7 +259,7 @@ class InvestmentGraphScreen extends ConsumerWidget {
                   onPressed: () {
                     _controller.jumpTo(_controller.position.minScrollExtent);
                   },
-                  child: Text('back'),
+                  child: const Text('back'),
                 ),
               ],
             ),
@@ -348,7 +348,7 @@ class InvestmentGraphScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: Colors.white)),
+              border: const Border(top: BorderSide(color: Colors.white)),
               color: Colors.white.withOpacity(0.2),
             ),
             child: Row(
@@ -361,7 +361,7 @@ class InvestmentGraphScreen extends ConsumerWidget {
                   onPressed: () {
                     _controller.jumpTo(_controller.position.maxScrollExtent);
                   },
-                  child: Text('jump'),
+                  child: const Text('jump'),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -370,7 +370,7 @@ class InvestmentGraphScreen extends ConsumerWidget {
                   onPressed: () {
                     _controller.jumpTo(_controller.position.minScrollExtent);
                   },
-                  child: Text('back'),
+                  child: const Text('back'),
                 ),
               ],
             ),
