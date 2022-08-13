@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -267,7 +268,6 @@ class SamedayListScreen extends ConsumerWidget {
   }
 
   ///////////////////////////////////////////////////////
-
   ///
   void _makeDateForGoSamedayListScreen({required int day}) {
     var exDate = (date).split('-');
@@ -287,20 +287,23 @@ class SamedayListScreen extends ConsumerWidget {
 }
 
 /////////////////////////////////////////////////////////////
-
 class SamedayGraphScreen extends ConsumerWidget {
   SamedayGraphScreen({Key? key, required this.date}) : super(key: key);
 
   final String date;
 
   late WidgetRef _ref;
+  late BuildContext _context;
 
   final ScrollController _controller = ScrollController();
+
+  final Utility _utility = Utility();
 
   ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     _ref = ref;
+    _context = context;
 
     Size size = MediaQuery.of(context).size;
 
@@ -311,8 +314,8 @@ class SamedayGraphScreen extends ConsumerWidget {
         scrollDirection: Axis.horizontal,
         controller: _controller,
         child: Container(
-          width: size.width * 5,
-          height: size.height - 100,
+          width: size.width,
+          height: size.height * 3,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),
           ),
@@ -328,65 +331,90 @@ class SamedayGraphScreen extends ConsumerWidget {
 
   ///
   Widget _makeGraph() {
-    List<ChartData> _list = [];
+    final exDate = date.split('-');
+
+    _utility.makeYMDYData(date, 0);
+
+    var _prevDate = DateTime(int.parse(_utility.year),
+        int.parse(_utility.month), int.parse(_utility.day) - 1);
+    var _nextDate = DateTime(int.parse(_utility.year),
+        int.parse(_utility.month), int.parse(_utility.day) + 1);
+
+    _utility.makeYMDYData(_prevDate.toString(), 0);
+    var pDate = "${_utility.year}-${_utility.month}-${_utility.day}";
+
+    _utility.makeYMDYData(_nextDate.toString(), 0);
+    var nDate = "${_utility.year}-${_utility.month}-${_utility.day}";
+
+    List<ChartData> list = [];
 
     final samedaySpendState = _ref.watch(samedaySpendProvider(date));
 
-    for (var element in samedaySpendState) {
-      var exElement = (element.ym).split('-');
-
-      var _datetime =
-          DateTime(int.parse(exElement[0]), int.parse(exElement[1]), 1);
-
-      _list.add(
+    for (var i = 0; i < samedaySpendState.length; i++) {
+      list.add(
         ChartData(
-          x: _datetime,
-          val: element.sum,
+          ym: samedaySpendState[i].ym,
+          sum: double.parse(samedaySpendState[i].sum.toString()),
         ),
       );
     }
 
     return Expanded(
-      child: Column(
+      child: Row(
         children: [
-          Expanded(
-            child: SfCartesianChart(
-              series: <ChartSeries>[
-                ColumnSeries<ChartData, DateTime>(
-                  color: Colors.yellowAccent,
-                  dataSource: _list,
-                  xValueMapper: (ChartData data, _) => data.x,
-                  yValueMapper: (ChartData data, _) => data.val,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                )
-              ],
-              primaryXAxis: DateTimeAxis(
-                majorGridLines: const MajorGridLines(width: 0),
-              ),
-              primaryYAxis: NumericAxis(
-                majorGridLines: const MajorGridLines(
-                  width: 2,
-                  color: Colors.white30,
-                ),
+          SizedBox(
+            width: 40,
+            child: DefaultTextStyle(
+              style: const TextStyle(fontSize: 12),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      goSamedayGraphScreen(date: nDate);
+                    },
+                    child: const Icon(Icons.arrow_upward),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(exDate[2]),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      goSamedayGraphScreen(date: pDate);
+                    },
+                    child: const Icon(Icons.arrow_downward),
+                  ),
+                  const SizedBox(height: 40),
+                  GestureDetector(
+                    onTap: () {
+                      goSamedayListScreen();
+                    },
+                    child: const Icon(
+                      FontAwesomeIcons.replyAll,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: const Border(top: BorderSide(color: Colors.white)),
-              color: Colors.white.withOpacity(0.2),
-            ),
-            child: Row(
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.pinkAccent.withOpacity(0.3),
-                  ),
-                  onPressed: () {
-                    _controller.jumpTo(_controller.position.maxScrollExtent);
-                  },
-                  child: const Text('jump'),
+          Expanded(
+            child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(),
+
+//        primaryYAxis: NumericAxis(minimum: 0, maximum: 40, interval: 10),
+              primaryYAxis: NumericAxis(
+                minimum: 0,
+                maximum: 1000000,
+              ),
+
+              series: <ChartSeries<ChartData, String>>[
+                BarSeries<ChartData, String>(
+                  dataSource: list,
+                  xValueMapper: (ChartData data, _) => data.ym,
+                  yValueMapper: (ChartData data, _) => data.sum,
+                  color: Colors.yellowAccent,
+                  dataLabelSettings: const DataLabelSettings(isVisible: true),
                 ),
               ],
             ),
@@ -395,13 +423,36 @@ class SamedayGraphScreen extends ConsumerWidget {
       ),
     );
   }
+
+  //-------------------------
+
+  ///
+  void goSamedayGraphScreen({required String date}) {
+    Navigator.push(
+      _context,
+      MaterialPageRoute(
+        builder: (context) => SamedayGraphScreen(date: date),
+      ),
+    );
+  }
+
+  ///
+  void goSamedayListScreen() {
+    Navigator.pushReplacement(
+      _context,
+      MaterialPageRoute(
+        builder: (context) => SamedayListScreen(
+          date: DateTime.now().toString().split(' ')[0],
+        ),
+      ),
+    );
+  }
 }
 
 /////////////////////////////////////////////////////////////
-
 class ChartData {
-  final DateTime x;
-  final num val;
+  final String ym;
+  final double sum;
 
-  ChartData({required this.x, required this.val});
+  ChartData({required this.ym, required this.sum});
 }

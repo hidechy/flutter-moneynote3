@@ -137,32 +137,28 @@ class YearlySpendDisplayScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              Container(
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.pinkAccent.withOpacity(0.3),
-                      ),
-                      onPressed: () {
-                        _controller
-                            .jumpTo(_controller.position.maxScrollExtent);
-                      },
-                      child: const Text('jump'),
+              Row(
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.pinkAccent.withOpacity(0.3),
                     ),
-                    SizedBox(width: 10),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.pinkAccent.withOpacity(0.3),
-                      ),
-                      onPressed: () {
-                        _controller
-                            .jumpTo(_controller.position.minScrollExtent);
-                      },
-                      child: const Text('back'),
+                    onPressed: () {
+                      _controller.jumpTo(_controller.position.maxScrollExtent);
+                    },
+                    child: const Text('jump'),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.pinkAccent.withOpacity(0.3),
                     ),
-                  ],
-                ),
+                    onPressed: () {
+                      _controller.jumpTo(_controller.position.minScrollExtent);
+                    },
+                    child: const Text('back'),
+                  ),
+                ],
               ),
               Expanded(
                 child: GroupedListView<dynamic, dynamic>(
