@@ -41,11 +41,19 @@ class BankInputStateNotifier extends StateNotifier<List<BankInputState>> {
   ///
   void getBankInputData(
       {required String bank, required List<MoneyState> data}) async {
+    var exNow = DateTime.now().toString().split('-');
+
     List<BankInputState> _list = [];
 
     var lastChangeDate = '';
 //    var skipFlag = true;
     for (var i = 0; i < data.length; i++) {
+      var exDate = (data[i].date).split('-');
+
+      if (int.parse(exDate[0]) < int.parse(exNow[0])) {
+        continue;
+      }
+
       var _price = 0;
       var _prev = 0;
       switch (bank) {

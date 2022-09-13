@@ -19,6 +19,7 @@ import 'MonthlyListScreen.dart';
 import 'OnedayInputScreen.dart';
 import 'ScoreListScreen.dart';
 import 'InvestmentTabScreen.dart';
+
 import 'BankInputScreen.dart';
 import 'SamedayListScreen.dart';
 
